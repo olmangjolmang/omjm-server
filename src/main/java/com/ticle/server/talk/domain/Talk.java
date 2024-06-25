@@ -1,6 +1,5 @@
 package com.ticle.server.talk.domain;
 
-import com.ticle.server.mypage.domain.type.Category;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,8 +14,8 @@ public class Talk {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "question_id")
-    private Long questionId;
+    @Column(name = "talk_id")
+    private Long talkId;
 
     @Column(name = "question", length = 200)
     private String question;
