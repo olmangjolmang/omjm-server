@@ -21,6 +21,9 @@ public class Post {
     @Column(name="post_id")
     private Long post_id;
 
+    @Column(name="title",nullable = false)
+    private String title;
+
     @Column(name="content",nullable = false)
     private String content;
 
