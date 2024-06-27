@@ -42,7 +42,7 @@ public class Post {
     @Column(name = "post_category")
     private Category post_category;
 
-    @Column(name="image")
+    @Column
     private S3Info image;
 
     @ManyToOne
