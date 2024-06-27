@@ -4,8 +4,10 @@ import com.ticle.server.mypage.domain.User;
 import com.ticle.server.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Table(name="Memo")
 @Entity
@@ -23,8 +25,10 @@ public class Memo {
     @Column(name="content")
     private String content;
 
-    @Column(name="memo_date")
-    private Timestamp memo_date;
+    @CreatedDate
+    @Column(name="memo_date",nullable = false)
+    private LocalDateTime memo_date;
+
 
     @ManyToOne
     @JoinColumn(name="user_id")
