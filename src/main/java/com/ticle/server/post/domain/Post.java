@@ -36,7 +36,7 @@ public class Post {
 
     @CreatedDate
     @Column(name="create_date",nullable = false)
-    private LocalDateTime createdDate;
+    private LocalDateTime created_date;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "post_category")
