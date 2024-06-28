@@ -7,32 +7,28 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "comment")
+@Table(name = "heart")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Comment {
+public class Heart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
-    private Long commentId;
-
-    @Column(name = "content", length = 500)
-    private String content;
+    @Column(name = "heart_id")
+    private Long heartId;
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @JoinColumn(name = "talk_id")
+    @JoinColumn(name = "comment_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Talk talk;
+    private Comment comment;
 
     @Builder
-    public Comment(String content, User user, Talk talk) {
-        this.content = content;
+    public Heart(User user, Comment comment) {
         this.user = user;
-        this.talk = talk;
+        this.comment = comment;
     }
 }
