@@ -34,4 +34,17 @@ public class TalkController {
                 .status(HttpStatus.OK)
                 .body(EMPTY_RESPONSE);
     }
+
+    @Operation(summary = "좋아요 기능", description = "댓글에 대하여 좋아요 및 취소 기능")
+    @PostMapping("/comment/{commentId}/heart/{userId}")
+    public ResponseEntity<ResponseTemplate<Object>> heartComment(
+            @PathVariable Long commentId,
+            @PathVariable Long userId) {
+
+        talkService.heartComment(commentId, userId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(EMPTY_RESPONSE);
+    }
 }

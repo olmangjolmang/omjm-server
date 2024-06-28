@@ -33,12 +33,14 @@ public class Talk {
 
     @OneToMany(mappedBy = "talk", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+    private Long commentCount;
 
     @Builder
-    public Talk(String question, Long view, User user, List<Comment> comments) {
+    public Talk(String question, Long view, User user, List<Comment> comments, Long commentCount) {
         this.question = question;
         this.view = view;
         this.user = user;
         this.comments = comments;
+        this.commentCount = commentCount;
     }
 }

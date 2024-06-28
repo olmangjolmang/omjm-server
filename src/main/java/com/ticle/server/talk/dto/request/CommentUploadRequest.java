@@ -14,7 +14,7 @@ public record CommentUploadRequest(
                 .builder()
                 .talk(talk)
                 .content(content)
-                .heart(0L)
+                .heartCount(0L)
                 .user(user)
                 .build();
     }

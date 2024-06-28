@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Table(name = "comment")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,10 +32,20 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     private Talk talk;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Heart> hearts = new ArrayList<>();
+    private Long heartCount;
+
     @Builder
-    public Comment(String content, User user, Talk talk) {
+    public Comment(String content, User user, Talk talk, List<Heart> hearts, Long heartCount) {
         this.content = content;
         this.user = user;
         this.talk = talk;
+        this.hearts = hearts;
+        this.heartCount = heartCount;
+    }
+
+    public void heartChange(Long heartCount) {
+        this.heartCount = heartCount;
     }
 }
