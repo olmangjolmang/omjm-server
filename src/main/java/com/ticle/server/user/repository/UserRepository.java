@@ -2,7 +2,11 @@ package com.ticle.server.user.repository;
 
 import com.ticle.server.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public class UserRepository extends JpaRepository<User,Long> {
+import java.util.Optional;
 
+@Repository
+public interface UserRepository extends JpaRepository<User,Long> {
+    Optional<User> findById(Long userId);
 }
