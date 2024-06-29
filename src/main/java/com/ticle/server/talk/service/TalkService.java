@@ -7,6 +7,7 @@ import com.ticle.server.talk.domain.Heart;
 import com.ticle.server.talk.domain.Talk;
 import com.ticle.server.talk.dto.request.CommentUploadRequest;
 import com.ticle.server.talk.dto.response.CommentResponse;
+import com.ticle.server.talk.dto.response.TalkResponse;
 import com.ticle.server.talk.exception.CommentNotFoundException;
 import com.ticle.server.talk.exception.TalkNotFoundException;
 import com.ticle.server.talk.repository.CommentRepository;
@@ -93,6 +94,16 @@ public class TalkService {
                 .map(comment -> {
                     boolean isHeart = heartRepository.existsByUserAndComment(user, comment);
                     return CommentResponse.of(comment, isHeart);})
+                .toList();
+    }
+
+    public List<TalkResponse> getTalks() {
+        Sort sort = Sort.by(Sort.Order.desc("createdDate"));
+
+        List<Talk> talks = talkRepository.findAll(sort);
+
+        return talks.stream()
+                .map(TalkResponse::of)
                 .toList();
     }
 }

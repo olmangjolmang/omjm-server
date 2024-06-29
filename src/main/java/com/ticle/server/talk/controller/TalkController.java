@@ -3,6 +3,7 @@ package com.ticle.server.talk.controller;
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.talk.dto.request.CommentUploadRequest;
 import com.ticle.server.talk.dto.response.CommentResponse;
+import com.ticle.server.talk.dto.response.TalkResponse;
 import com.ticle.server.talk.service.TalkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -62,6 +63,17 @@ public class TalkController {
             @RequestParam(required = false, defaultValue = "time") String orderBy) {
 
         List<CommentResponse> responses = talkService.getComments(talkId, userId, orderBy);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.from(responses));
+    }
+
+    @Operation(summary = "물어봥 질문 리스트 조회", description = "물어봥 모든 질문과 함께 인기댓글 2개 조회 가능")
+    @GetMapping()
+    public ResponseEntity<ResponseTemplate<Object>> getTalks() {
+
+        List<TalkResponse> responses = talkService.getTalks();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
