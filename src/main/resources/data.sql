@@ -39,7 +39,8 @@ INSERT INTO users (email, nickname, password, category) VALUES
 -- Post mockup data
 
 
-SELECT * FROM ticledb.post;INSERT INTO Post (title, content, author, create_date, post_category, image_file_name, image_folder_name, image_url, user_id)
+
+INSERT INTO post (title, content, author, create_date, post_category, image_file_name, image_folder_name, image_url, user_id)
                            VALUES
                                ('Sample Title 1', 'Sample content for post 1', 'Author 1', '2024-06-27 12:00:00', 'BACKEND', 'image1.png', 'folder1', 'https://example.com/image1.png', 1),
                                ('Sample Title 2', 'Sample content for post 2', 'Author 2', '2024-06-26 12:00:00', 'WEB_FRONT', 'image2.png', 'folder2', 'https://example.com/image2.png', 2),
