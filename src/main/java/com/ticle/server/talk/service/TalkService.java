@@ -6,6 +6,7 @@ import com.ticle.server.talk.domain.Comment;
 import com.ticle.server.talk.domain.Heart;
 import com.ticle.server.talk.domain.Talk;
 import com.ticle.server.talk.dto.request.CommentUploadRequest;
+import com.ticle.server.talk.dto.response.TalkResponse;
 import com.ticle.server.talk.exception.CommentNotFoundException;
 import com.ticle.server.talk.exception.TalkNotFoundException;
 import com.ticle.server.talk.repository.CommentRepository;
@@ -13,9 +14,11 @@ import com.ticle.server.talk.repository.HeartRepository;
 import com.ticle.server.talk.repository.TalkRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.ticle.server.talk.exception.errorcode.TalkErrorCode.COMMENT_NOT_FOUND;
@@ -68,5 +71,28 @@ public class TalkService {
             heartRepository.save(heart);
             comment.heartChange(comment.getHeartCount() + 1);
         }
+    }
+
+    public List<TalkResponse> getComments(Long talkId, Long userId, String orderBy) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(RuntimeException::new);
+
+        Talk talk = talkRepository.findByTalkId(talkId)
+                .orElseThrow(() -> new TalkNotFoundException(TALK_NOT_FOUND));
+
+        Sort sort;
+        if ("heart".equalsIgnoreCase(orderBy)) {
+            sort = Sort.by(Sort.Order.desc("heartCount"), Sort.Order.desc("createdDate"));
+        } else {
+            sort = Sort.by(Sort.Order.desc("createdDate"));
+        }
+
+        List<Comment> comments = commentRepository.findAllByTalk(talk, sort);
+
+        return comments.stream()
+                .map(comment -> {
+                    boolean isHeart = heartRepository.existsByUserAndComment(user, comment);
+                    return TalkResponse.of(comment, isHeart);})
+                .toList();
     }
 }

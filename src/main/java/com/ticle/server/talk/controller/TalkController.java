@@ -2,6 +2,7 @@ package com.ticle.server.talk.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.talk.dto.request.CommentUploadRequest;
+import com.ticle.server.talk.dto.response.TalkResponse;
 import com.ticle.server.talk.service.TalkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.ticle.server.global.dto.ResponseTemplate.EMPTY_RESPONSE;
 
@@ -46,5 +49,19 @@ public class TalkController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(EMPTY_RESPONSE);
+    }
+
+    @Operation(summary = "댓글 가져오기", description = "질문에 대한 모든 댓글 가져오기")
+    @PostMapping("/{talkId}/{userId}")
+    public ResponseEntity<ResponseTemplate<Object>> getComments(
+            @PathVariable Long talkId,
+            @PathVariable Long userId,
+            @RequestParam(required = false, defaultValue = "time") String orderBy) {
+
+        List<TalkResponse> responses = talkService.getComments(talkId, userId, orderBy);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.from(responses));
     }
 }
