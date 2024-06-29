@@ -2,7 +2,7 @@ package com.ticle.server.talk.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.talk.dto.request.CommentUploadRequest;
-import com.ticle.server.talk.dto.response.TalkResponse;
+import com.ticle.server.talk.dto.response.CommentResponse;
 import com.ticle.server.talk.service.TalkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,7 +38,8 @@ public class TalkController {
                 .body(EMPTY_RESPONSE);
     }
 
-    @Operation(summary = "좋아요 기능", description = "댓글에 대하여 좋아요 및 취소 기능")
+    @Operation(summary = "좋아요/취소 기능", description = "댓글에 대하여 좋아요 및 취소 기능<br>" +
+            "유저가 좋아요 했던 댓글이라면 취소를, 좋아요 하지 않았던 댓글이라면 좋아요를 할 수 있습니다.")
     @PostMapping("/comment/{commentId}/heart/{userId}")
     public ResponseEntity<ResponseTemplate<Object>> heartComment(
             @PathVariable Long commentId,
@@ -51,14 +52,16 @@ public class TalkController {
                 .body(EMPTY_RESPONSE);
     }
 
-    @Operation(summary = "댓글 가져오기", description = "질문에 대한 모든 댓글 가져오기")
-    @PostMapping("/{talkId}/{userId}")
+    @Operation(summary = "질문에 대한 모든 댓글 가져오기", description = "질문에 대한 모든 댓글 가져오는 API입니다.<br>" +
+            "orderBy에는 시간순이라면 time, 좋아요순이라면 heart를 넣어주시면 됩니다.(default는 시간순) <br>" +
+            "isHeart는 해당 유저가 좋아요를 눌렀는지 유무를 나타냅니다.")
+    @GetMapping("/{talkId}/{userId}")
     public ResponseEntity<ResponseTemplate<Object>> getComments(
             @PathVariable Long talkId,
             @PathVariable Long userId,
             @RequestParam(required = false, defaultValue = "time") String orderBy) {
 
-        List<TalkResponse> responses = talkService.getComments(talkId, userId, orderBy);
+        List<CommentResponse> responses = talkService.getComments(talkId, userId, orderBy);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

@@ -4,14 +4,14 @@ import com.ticle.server.talk.domain.Comment;
 import lombok.Builder;
 
 @Builder
-public record TalkResponse(
+public record CommentResponse(
     String nickname,
     String content,
     Long heartCount,
     Boolean isHeart
 ) {
-    public static TalkResponse of(Comment comment, Boolean isHeart) {
-        return TalkResponse.builder()
+    public static CommentResponse of(Comment comment, Boolean isHeart) {
+        return CommentResponse.builder()
                 .nickname(comment.getUser().getNickname())
                 .content(comment.getContent())
                 .heartCount(comment.getHeartCount())
