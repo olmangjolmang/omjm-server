@@ -103,7 +103,7 @@ public class TalkService {
         List<Talk> talks = talkRepository.findAll(sort);
 
         return talks.stream()
-                .map(TalkResponse::of)
+                .map(TalkResponse::from)
                 .toList();
     }
 }

@@ -8,7 +8,7 @@ public record CommentShortResponse(
         String nickname,
         String content
 ) {
-    public static CommentShortResponse of(Comment comment) {
+    public static CommentShortResponse from(Comment comment) {
         return CommentShortResponse.builder()
                 .nickname(comment.getUser().getNickname())
                 .content(comment.getContent())

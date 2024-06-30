@@ -14,7 +14,7 @@ public record TalkResponse(
         @Size(max = 2, message = "최대 2개의 인기 댓글만 표시할 수 있습니다.")
         List<CommentShortResponse> comments
 ) {
-    public static TalkResponse of(Talk talk) {
+    public static TalkResponse from(Talk talk) {
         return TalkResponse.builder()
                 .question(talk.getQuestion())
                 .view(talk.getView())
@@ -22,7 +22,7 @@ public record TalkResponse(
                 .comments(talk.getComments().stream()
                         .sorted((c1, c2) -> Long.compare(c2.getHeartCount(), c1.getHeartCount()))
                         .limit(2)
-                        .map(CommentShortResponse::of)
+                        .map(CommentShortResponse::from)
                         .toList())
                 .build();
     }
