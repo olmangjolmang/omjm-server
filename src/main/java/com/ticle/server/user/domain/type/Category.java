@@ -1,4 +1,4 @@
-package com.ticle.server.mypage.domain.type;
+package com.ticle.server.user.domain.type;
 
 public enum Category {
     BACKEND,

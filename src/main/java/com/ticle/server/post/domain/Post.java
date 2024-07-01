@@ -1,14 +1,12 @@
 package com.ticle.server.post.domain;
 
-import com.ticle.server.global.domain.BaseTimeEntity;
 import com.ticle.server.global.domain.S3Info;
-import com.ticle.server.mypage.domain.User;
-import com.ticle.server.mypage.domain.type.Category;
+import com.ticle.server.user.domain.User;
+import com.ticle.server.user.domain.type.Category;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 
@@ -48,5 +46,4 @@ public class Post {
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
-
 }

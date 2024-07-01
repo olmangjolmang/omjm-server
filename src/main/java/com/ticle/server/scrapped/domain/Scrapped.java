@@ -1,7 +1,7 @@
 package com.ticle.server.scrapped.domain;
 
-import com.ticle.server.mypage.domain.User;
 import com.ticle.server.post.domain.Post;
+import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
