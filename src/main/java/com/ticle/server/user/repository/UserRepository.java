@@ -3,6 +3,10 @@ package com.ticle.server.user.repository;
 import com.ticle.server.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public class UserRepository extends JpaRepository<User,Long> {
+import java.util.Optional;
 
+public interface UserRepository extends JpaRepository<User,Long> {
+    boolean existsByEmail(String email);
+    boolean existsByNickname(String nickname);
+    Optional<User> findByEmail(String email);
 }

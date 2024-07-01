@@ -1,14 +1,16 @@
 package com.ticle.server.user.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
+    // 애플리케이션의 핵심 비즈니스 로직을 담고 있는 개체
+    // 주로 데이터베이스와 직접적으로 연관되어 있음
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id")
@@ -20,8 +22,8 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "nick_name")
-    private String name;
+    @Column(name = "nickname")
+    private String nickname;
 
     @Column(name = "category")
     private String category;
