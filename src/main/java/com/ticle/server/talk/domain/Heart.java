@@ -1,6 +1,6 @@
 package com.ticle.server.talk.domain;
 
-import com.ticle.server.mypage.domain.User;
+import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

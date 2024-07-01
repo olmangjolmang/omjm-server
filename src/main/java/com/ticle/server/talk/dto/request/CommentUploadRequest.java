@@ -1,8 +1,8 @@
 package com.ticle.server.talk.dto.request;
 
-import com.ticle.server.mypage.domain.User;
 import com.ticle.server.talk.domain.Comment;
 import com.ticle.server.talk.domain.Talk;
+import com.ticle.server.user.domain.User;
 import jakarta.validation.constraints.NotNull;
 
 public record CommentUploadRequest(

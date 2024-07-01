@@ -1,7 +1,5 @@
 package com.ticle.server.talk.service;
 
-import com.ticle.server.mypage.domain.User;
-import com.ticle.server.mypage.repository.UserRepository;
 import com.ticle.server.talk.domain.Comment;
 import com.ticle.server.talk.domain.Heart;
 import com.ticle.server.talk.domain.Talk;
@@ -13,6 +11,8 @@ import com.ticle.server.talk.exception.TalkNotFoundException;
 import com.ticle.server.talk.repository.CommentRepository;
 import com.ticle.server.talk.repository.HeartRepository;
 import com.ticle.server.talk.repository.TalkRepository;
+import com.ticle.server.user.domain.User;
+import com.ticle.server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -38,7 +38,7 @@ public class TalkService {
 
     @Transactional
     public void uploadComment(CommentUploadRequest request, Long talkId, Long userId) {
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
 
         Talk talk = talkRepository.findByTalkId(talkId)
@@ -51,7 +51,7 @@ public class TalkService {
 
     @Transactional
     public void heartComment(Long commentId, Long userId) {
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
 
         Comment comment = commentRepository.findByCommentId(commentId)
@@ -75,7 +75,7 @@ public class TalkService {
     }
 
     public List<CommentResponse> getComments(Long talkId, Long userId, String orderBy) {
-        User user = userRepository.findByUserId(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
 
         Talk talk = talkRepository.findByTalkId(talkId)
