@@ -15,7 +15,7 @@ public class EmailService {
     private String authNum;
 
     private void checkDuplicatedEmail(String email){
-        userRepository.findByEmail
+        userRepository.findByEmail(email);
     }
 
 
