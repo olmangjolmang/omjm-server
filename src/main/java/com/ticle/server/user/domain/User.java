@@ -1,12 +1,23 @@
 package com.ticle.server.user.domain;
 
+import com.ticle.server.user.domain.type.Category;
 import jakarta.persistence.*;
-import lombok.*;
 
+import lombok.AccessLevel;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Table(name = "users")
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class User {
     // 애플리케이션의 핵심 비즈니스 로직을 담고 있는 개체
@@ -16,19 +27,40 @@ public class User {
     @Column(name="user_id")
     private Long id;
 
-    @Column(name="email")
+    @Column(name="email",nullable = false)
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password",nullable = false)
     private String password;
 
-    @Column(name = "nickname")
-    private String nickname;
 
+    @Column(name = "nick_name")
+    private String nickName;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private String category;
+    private Category category;
 
     @Column(name = "agree_terms")
-    private boolean agree_terms;
+    private boolean agreeTerms;
 
+    @ElementCollection(fetch=FetchType.EAGER)
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
+
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+
+//    @Builder
+//    public User(String email, String nickname, String password, Category category, Boolean agreeTerms) {
+//        this.email = email;
+//        this.nickName = nickname;
+//        this.password = password;
+//        this.category = category;
+//        this.agreeTerms = agreeTerms;
+//    }
 }

@@ -2,50 +2,94 @@ package com.ticle.server.user.service;
 
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.dto.JoinRequest;
+import com.ticle.server.user.dto.JwtToken;
 import com.ticle.server.user.dto.LoginRequest;
+import com.ticle.server.user.dto.UserDto;
+import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
-public class UserService {
+@Transactional
+@Slf4j
+public class UserService{
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder encoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
-    public boolean checkEmailDuplicate(String email){
-        return userRepository.existsByEmail(email);
+    @Transactional
+    public JwtToken signIn(String email,String password){
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
+
+        return jwtToken;
     }
 
-    public boolean checkNicknameDuplicate(String nickname){
-        return userRepository.existsByNickname(nickname);
-    }
-
-    public void signup(JoinRequest req){
-        userRepository.save(req.toEntity(encoder.encode(req.getPassword())));
-    }
-
-    public User login(LoginRequest req){
-        Optional<User> optionalUser = userRepository.findByEmail(req.getEmail());
-
-        if(optionalUser.isEmpty()){
-            return null;
+    @Transactional
+    public UserDto signUp(JoinRequest joinRequest){
+        if(userRepository.existsByemail(joinRequest.getEmail())){
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다");
         }
-        User user = optionalUser.get();
-
-        if(!user.getPassword().equals(req.getPassword())){
-            return null;
-        }
-        return user;
+        String encodedPassword = passwordEncoder.encode(joinRequest.getPassword());
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        return UserDto.toDto(userRepository.save(joinRequest.toEntity(encodedPassword,roles)));
     }
+
+
+//    public boolean checkEmailDuplicate(String email){
+//        return userRepository.existsByEmail(email);
+//    }
+//
+//    public boolean checkNicknameDuplicate(String nickname){
+//        return userRepository.existsByNickname(nickname);
+//    }
+//
+//    public void signup(JoinRequest req){
+//        userRepository.save(req.toEntity(encoder.encode(req.getPassword())));
+//    }
+
+//    public User login(LoginRequest req){
+//        Optional<User> optionalUser = userRepository.findByEmail(req.getEmail());
+//
+//        if(optionalUser.isEmpty()){
+//            return null;
+//        }
+//        User user = optionalUser.get();
+//
+//        if(!user.getPassword().equals(req.getPassword())){
+//            return null;
+//        }
+//        return user;
+//    }
 
     public User getLoginUserByEmail(String email){
+        if(email == null)
+            return null;
 
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if(optionalUser.isEmpty())
+            return null;
+
+        return optionalUser.get();
     }
 
 }
