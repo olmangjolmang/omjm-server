@@ -1,8 +1,8 @@
 package com.ticle.server.post.service;
 
-import com.ticle.server.mypage.domain.type.Category;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
+import com.ticle.server.user.domain.type.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

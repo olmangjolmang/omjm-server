@@ -2,7 +2,7 @@ package com.ticle.server.post.dto;
 
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.global.domain.S3Info;
-import com.ticle.server.mypage.domain.type.Category;
+import com.ticle.server.user.domain.type.Category;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
 
@@ -30,7 +30,7 @@ public class PostResponse {
                 post.getCreatedDate(),
                 post.getCategory(),
                 post.getImage(),
-                post.getUser() != null ? post.getUser().getUserId() : null
+                post.getUser() != null ? post.getUser().getId() : null
         );
     }
 }
