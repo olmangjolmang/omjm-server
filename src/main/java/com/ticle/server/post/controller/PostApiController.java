@@ -5,7 +5,7 @@ import com.ticle.server.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,11 +14,12 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/post")  // 컨트롤러 레벨에서 /post 경로 설정
 public class PostApiController {
 
     private final PostService postService;
 
-    @GetMapping("/api/post")
+    @GetMapping
     public ResponseEntity<List<PostResponse>> findAllArticles(@RequestParam(required = false) String category) {
         List<PostResponse> posts;
 
