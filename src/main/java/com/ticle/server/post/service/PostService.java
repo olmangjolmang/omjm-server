@@ -29,4 +29,9 @@ public class PostService {
         }
         return postRepository.findByCategory(enumCategory);
     }
+
+    //postId로 조회한 특정 post 정보 리턴
+    public Post findById(long id) {
+        return postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+    }
 }
