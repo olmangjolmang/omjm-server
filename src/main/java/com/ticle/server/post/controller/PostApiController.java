@@ -22,21 +22,11 @@ public class PostApiController {
     //카테고리로 아티클 조회
     @GetMapping
     public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category) {
-        List<PostResponse> posts;
-
-        if (category != null && !category.isEmpty()) {
-            //카테고리가 있을 경우
-            posts = postService.findAllByCategory(category)
-                    .stream()
-                    .map(PostResponse::new)
-                    .collect(Collectors.toList());
-        } else {
-            //카테고리가 없어 모든 아티클을 조회함
-            posts = postService.findAll()
-                    .stream()
-                    .map(PostResponse::new)
-                    .collect(Collectors.toList());
-        }
+        
+        List<PostResponse> posts = postService.findAllByCategory(category)
+                .stream()
+                .map(PostResponse::from)
+                .collect(Collectors.toList());
 
         return ResponseEntity
                 .status(HttpStatus.OK)

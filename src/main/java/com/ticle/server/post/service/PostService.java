@@ -14,20 +14,16 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    // 모든 글 조회
-    public List<Post> findAll() {
-        return postRepository.findAll();
-    }
 
     // 카테고리에 맞는 글 찾기
     public List<Post> findAllByCategory(String category) {
-        Category enumCategory;
-        try {
-            enumCategory = Category.valueOf(category.toUpperCase());  // 문자열을 Enum으로 변환
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid category: " + category);
+        if (category == null || category.isEmpty()) {
+            // 모든 글 조회
+            return postRepository.findAll();
+        } else {
+            //카테고리에 맞는 글 조회
+            return postRepository.findByCategory(Category.valueOf(category));
         }
-        return postRepository.findByCategory(enumCategory);
     }
 
     //postId로 조회한 특정 post 정보 리턴

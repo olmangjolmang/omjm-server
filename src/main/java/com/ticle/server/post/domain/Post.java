@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Post {
+public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +33,6 @@ public class Post {
 
     @Column(name = "author", nullable = false)
     private String author;
-
-    @CreatedDate
-    @Column(name = "create_date", nullable = false)
-    private LocalDateTime created_date;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
