@@ -1,9 +1,11 @@
 package com.ticle.server.post.controller;
 
+import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,7 @@ public class PostApiController {
 
     //카테고리로 아티클 조회
     @GetMapping
-    public ResponseEntity<List<PostResponse>> findAllArticles(@RequestParam(required = false) String category) {
+    public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category) {
         List<PostResponse> posts;
 
         if (category != null && !category.isEmpty()) {
@@ -36,15 +38,19 @@ public class PostApiController {
                     .collect(Collectors.toList());
         }
 
-        return ResponseEntity.ok().body(posts);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.from(posts));
     }
 
     //특정 아티클 조회
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponse> findArticle(@PathVariable long id) {
+    public ResponseEntity<ResponseTemplate<Object>> findArticle(@PathVariable long id) {
         Post post = postService.findById(id);
 
-        return ResponseEntity.ok().body(new PostResponse(post));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.from(post));
     }
 
 }
