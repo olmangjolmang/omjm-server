@@ -13,5 +13,4 @@ public class SavedTicleDto {
     private LocalDateTime createDate;
     private String postCategory;
     private String image;
-
 }
