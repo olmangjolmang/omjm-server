@@ -23,6 +23,7 @@ import static com.ticle.server.global.dto.ResponseTemplate.EMPTY_RESPONSE;
 @RequestMapping("/talk")
 public class TalkController {
 
+    private static final int PAGE_SIZE = 5;
     private final TalkService talkService;
 
     @Operation(summary = "댓글 등록", description = "질문에 대한 댓글 등록하기")
