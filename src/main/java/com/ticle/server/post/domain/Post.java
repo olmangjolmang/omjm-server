@@ -22,31 +22,31 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="post_id")
+    @Column(name = "post_id")
     private Long post_id;
 
-    @Column(name="title",nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name="content",nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name="author",nullable = false)
+    @Column(name = "author", nullable = false)
     private String author;
 
     @CreatedDate
-    @Column(name="create_date",nullable = false)
+    @Column(name = "create_date", nullable = false)
     private LocalDateTime created_date;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "post_category")
-    private Category post_category;
+    @Column(name = "category")
+    private Category category;
 
     @Column
     private S3Info image;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
 }
