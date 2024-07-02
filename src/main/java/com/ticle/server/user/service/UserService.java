@@ -44,7 +44,7 @@ public class UserService{
 
     @Transactional
     public UserDto signUp(JoinRequest joinRequest){
-        if(userRepository.existsByemail(joinRequest.getEmail())){
+        if(userRepository.existsByEmail(joinRequest.getEmail())){
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다");
         }
         String encodedPassword = passwordEncoder.encode(joinRequest.getPassword());

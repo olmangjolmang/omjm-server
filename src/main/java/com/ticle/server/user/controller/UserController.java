@@ -1,5 +1,6 @@
 package com.ticle.server.user.controller;
 
+import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.user.dto.JoinRequest;
 import com.ticle.server.user.dto.JwtToken;
 import com.ticle.server.user.dto.LoginRequest;
@@ -8,6 +9,7 @@ import com.ticle.server.user.jwt.SecurityUtil;
 import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +31,11 @@ public class UserController {
         return jwtToken;
     }
     @PostMapping("sign-up")
-    public ResponseEntity<UserDto> signUp(@RequestBody JoinRequest joinRequest){
+    public ResponseEntity<ResponseTemplate> signUp(@RequestBody JoinRequest joinRequest){
         UserDto savedUserDto = userService.signUp(joinRequest);
-        return ResponseEntity.ok(savedUserDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.from(savedUserDto));
     }
     @PostMapping("/test")
     public String test() {
