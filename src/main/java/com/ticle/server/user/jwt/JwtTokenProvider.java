@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Component
 public class JwtTokenProvider {
@@ -70,7 +72,7 @@ public class JwtTokenProvider {
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get("auth").toString().split(","))
                         .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+                        .collect(toList());
 
         UserDetails principal = new User(claims.getSubject(),"",authorities);
         return new UsernamePasswordAuthenticationToken(principal,"",authorities);

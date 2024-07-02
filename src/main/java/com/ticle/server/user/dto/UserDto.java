@@ -25,12 +25,4 @@ public class UserDto {
                 .build();
     }
 
-    public User toEntity(){
-        return User.builder()
-                .id(id)
-                .nickName(nickName)
-                .email(email)
-                .category(category)
-                .build();
-    }
 }

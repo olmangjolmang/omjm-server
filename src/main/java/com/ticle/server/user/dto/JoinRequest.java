@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class JoinRequest {
     // DTO는 주로 데이터 전송을 위한 객체
