@@ -56,7 +56,7 @@ public class MyPageService {
             MyQuestionDto dto = new MyQuestionDto();
             dto.setQuestionId(question.getTalkId());
             dto.setQuestion(question.getQuestion());
-            dto.setView(question.getView());
+            dto.setView(question.getViewCount());
             dto.setCommentCount(question.getTalkId());
             return dto;
         }).collect(toList());

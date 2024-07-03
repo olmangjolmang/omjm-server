@@ -35,6 +35,8 @@ public class Comment extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Heart> hearts = new ArrayList<>();
+
+    @Column(name = "heart_count")
     private Long heartCount;
 
     @Builder
@@ -46,7 +48,11 @@ public class Comment extends BaseTimeEntity {
         this.heartCount = heartCount;
     }
 
-    public void heartChange(Long heartCount) {
-        this.heartCount = heartCount;
+    public void addHeartCount() {
+        heartCount++;
+    }
+
+    public void subHeartCount() {
+        heartCount--;
     }
 }

@@ -25,8 +25,8 @@ public class Talk extends BaseTimeEntity {
     @Column(name = "question", length = 200)
     private String question;
 
-    @Column(name = "view")
-    private Long view;
+    @Column(name = "view_count")
+    private Long viewCount;
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,14 +34,20 @@ public class Talk extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "talk", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @Column(name = "comment_count")
     private Long commentCount;
 
     @Builder
-    public Talk(String question, Long view, User user, List<Comment> comments, Long commentCount) {
+    public Talk(String question, Long viewCount, User user, List<Comment> comments, Long commentCount) {
         this.question = question;
-        this.view = view;
+        this.viewCount = viewCount;
         this.user = user;
         this.comments = comments;
         this.commentCount = commentCount;
+    }
+
+    public void addViewCount() {
+        this.viewCount++;
     }
 }
