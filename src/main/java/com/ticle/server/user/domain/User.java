@@ -17,20 +17,20 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor()
 @AllArgsConstructor
 public class User {
     // 애플리케이션의 핵심 비즈니스 로직을 담고 있는 개체
     // 주로 데이터베이스와 직접적으로 연관되어 있음
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_id")
+    @Column(name = "user_id")
     private Long id;
 
-    @Column(name="email",nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password",nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
 
@@ -44,14 +44,22 @@ public class User {
     @Column(name = "agree_terms")
     private boolean agreeTerms;
 
-    @ElementCollection(fetch=FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
-    public Collection<? extends GrantedAuthority> getAuthorities(){
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+    }
+
+    public void setUsername(String username) {
+        this.nickName = username;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
 
