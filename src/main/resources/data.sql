@@ -1,6 +1,6 @@
 -- User mockup data
 
-INSERT INTO users (email, nickname, password, category)
+INSERT INTO users (email, nick_name, password, category)
 VALUES ('user1@example.com', 'UserOne', 'password1', 'BACKEND'),
        ('user2@example.com', 'UserTwo', 'password2', 'WEB_FRONT'),
        ('user3@example.com', 'UserThree', 'password3', 'NETWORK'),
