@@ -1,11 +1,25 @@
 package com.ticle.server.mypage.dto;
 
-import lombok.Data;
+import com.ticle.server.talk.domain.Talk;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Getter
+@AllArgsConstructor
+@Builder
 public class MyQuestionDto {
     private Long questionId;
     private String question;
     private Long view;
     private Long commentCount;
+
+    public static MyQuestionDto toDto(Talk talk){
+        return MyQuestionDto.builder()
+                .questionId(talk.getTalkId())
+                .question(talk.getQuestion())
+                .view(talk.getView())
+                .commentCount(talk.getCommentCount())
+                .build();
+    }
 }

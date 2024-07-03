@@ -52,14 +52,9 @@ public class MyPageService {
 
     public List<MyQuestionDto> getMyQuestions(Long userId) {
         List<Talk> questions = questionRepository.findByUserId(userId);
-        return questions.stream().map(question -> {
-            MyQuestionDto dto = new MyQuestionDto();
-            dto.setQuestionId(question.getTalkId());
-            dto.setQuestion(question.getQuestion());
-            dto.setView(question.getView());
-            dto.setCommentCount(question.getTalkId());
-            return dto;
-        }).collect(toList());
+        return questions.stream()
+                .map(MyQuestionDto::toDto)
+                .collect(toList());
     }
 
     public List<MyNoteDto> getMyNotes(Long userId) {
