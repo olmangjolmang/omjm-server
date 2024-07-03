@@ -1,5 +1,7 @@
 package com.ticle.server.mypage.dto;
 
+import com.ticle.server.global.domain.S3Info;
+import com.ticle.server.user.domain.type.Category;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,6 @@ public class SavedTicleDto {
     private String content;
     private String author;
     private LocalDateTime createDate;
-    private String postCategory;
-    private String image;
+    private Category postCategory;
+    private S3Info image;
 }
