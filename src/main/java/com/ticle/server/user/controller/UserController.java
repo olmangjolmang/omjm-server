@@ -23,8 +23,8 @@ public class UserController {
 
     @PostMapping("/sign-in")
     public JwtToken signIn(@RequestBody LoginRequest loginRequest){
-        String email = loginRequest.getEmail();
-        String password = loginRequest.getPassword();
+        String email = loginRequest.email();
+        String password = loginRequest.password();
         JwtToken jwtToken = userService.signIn(email,password);
         log.info("request username = {}, password = {}", email, password);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());

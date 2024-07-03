@@ -1,5 +1,7 @@
 package com.ticle.server.mypage.service;
 
+import com.ticle.server.memo.domain.Memo;
+import com.ticle.server.mypage.dto.MyNoteDto;
 import com.ticle.server.mypage.dto.MyQuestionDto;
 import com.ticle.server.mypage.dto.SavedTicleDto;
 import com.ticle.server.mypage.repository.MemoRepository;
@@ -14,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class MyPageService {
@@ -32,7 +37,7 @@ public class MyPageService {
         List<Scrapped> scraps = scrapRepository.findByUserId(userId);
         List<SavedTicleDto> savedArticles = new ArrayList<>();
         for (Scrapped scrap : scraps) {
-            Post post = postRepository.findById(scrap.getPost().getPost_id()).orElse(null);
+            Post post = postRepository.findById(scrap.getPost().getPostId()).orElse(null);
             if (post != null) {
                 SavedTicleDto dto = new SavedTicleDto();
                 dto.setPostId(post.getPostId());
@@ -52,26 +57,26 @@ public class MyPageService {
         List<Talk> questions = questionRepository.findByUserId(userId);
         return questions.stream().map(question -> {
             MyQuestionDto dto = new MyQuestionDto();
-            dto.setKey(question.);
+            dto.setQuestionId(question.getTalkId());
             dto.setQuestion(question.getQuestion());
             dto.setView(question.getView());
-            dto.setCommentCount(question.getCommentCount());
+            dto.setCommentCount(question.getTalkId());
             return dto;
-        }).collect(Collectors.toList());
+        }).collect(toList());
     }
 
     public List<MyNoteDto> getMyNotes(Long userId) {
         List<Memo> memos = memoRepository.findByUserId(userId);
         List<MyNoteDto> myNotes = new ArrayList<>();
         for (Memo memo : memos) {
-            Article article = articleRepository.findById(memo.getPostId()).orElse(null);
-            if (article != null) {
+            Post post = postRepository.findById(memo.getMemoId()).orElse(null);
+            if (post != null) {
                 MyNoteDto dto = new MyNoteDto();
                 dto.setMemoId(memo.getMemoId());
                 dto.setContent(memo.getContent());
                 dto.setMemoDate(memo.getMemoDate());
-                dto.setPostId(article.getPostId());
-                dto.setPostTitle(article.getTitle());
+                dto.setPostId(post.getPostId());
+                dto.setPostTitle(post.getTitle());
                 myNotes.add(dto);
             }
         }
