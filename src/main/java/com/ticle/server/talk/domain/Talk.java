@@ -1,5 +1,6 @@
 package com.ticle.server.talk.domain;
 
+import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,6 +23,10 @@ public class Talk {
 
     @Column(name = "view")
     private Long view;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Builder
     public Talk(String question, Long view) {

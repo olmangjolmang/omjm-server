@@ -33,8 +33,8 @@ public class UserController {
     public ResponseEntity<ResponseTemplate<Object>> signIn(@RequestBody LoginRequest loginRequest){
         String email = loginRequest.email();
         String password = loginRequest.password();
-        JwtToken jwtToken = userService.signIn(email,password);
         log.info("request username = {}, password = {}", email, password);
+        JwtToken jwtToken = userService.signIn(email,password);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
         return ResponseEntity
                 .status(HttpStatus.OK)

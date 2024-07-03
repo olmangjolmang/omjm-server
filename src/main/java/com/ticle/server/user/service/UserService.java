@@ -10,6 +10,7 @@ import com.ticle.server.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -26,7 +27,9 @@ import java.util.Optional;
 @Transactional
 @Slf4j
 public class UserService{
+
     private final UserRepository userRepository;
+
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -50,35 +53,10 @@ public class UserService{
         String encodedPassword = passwordEncoder.encode(joinRequest.getPassword());
         List<String> roles = new ArrayList<>();
         roles.add("USER");
+        System.out.println("test" + joinRequest);
         return UserDto.toDto(userRepository.save(joinRequest.toEntity(encodedPassword,roles)));
     }
 
-
-//    public boolean checkEmailDuplicate(String email){
-//        return userRepository.existsByEmail(email);
-//    }
-//
-//    public boolean checkNicknameDuplicate(String nickname){
-//        return userRepository.existsByNickname(nickname);
-//    }
-//
-//    public void signup(JoinRequest req){
-//        userRepository.save(req.toEntity(encoder.encode(req.getPassword())));
-//    }
-
-//    public User login(LoginRequest req){
-//        Optional<User> optionalUser = userRepository.findByEmail(req.getEmail());
-//
-//        if(optionalUser.isEmpty()){
-//            return null;
-//        }
-//        User user = optionalUser.get();
-//
-//        if(!user.getPassword().equals(req.getPassword())){
-//            return null;
-//        }
-//        return user;
-//    }
 
     public User getLoginUserByEmail(String email){
         if(email == null)
