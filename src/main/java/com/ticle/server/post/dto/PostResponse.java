@@ -23,7 +23,7 @@ public class PostResponse {
 
     public static PostResponse from(Post post) {
         return new PostResponse(
-                post.getPost_id(),
+                post.getPostId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getAuthor(),
