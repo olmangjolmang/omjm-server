@@ -5,6 +5,8 @@ import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.post.service.PostService;
 import com.ticle.server.scrapped.domain.Scrapped;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Tag(name = "Post", description = "아티클 관련 API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/post")  // 컨트롤러 레벨에서 /post 경로 설정
@@ -21,9 +24,11 @@ public class PostApiController {
     private final PostService postService;
 
     //카테고리로 아티클 조회
+    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 \n 공백 입력시 모든 아티클")
     @GetMapping
     public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category) {
 
+        System.out.println("come");
         List<PostResponse> posts = postService.findAllByCategory(category)
                 .stream()
                 .map(PostResponse::from)
@@ -35,6 +40,7 @@ public class PostApiController {
     }
 
     //특정 아티클 조회
+    @Operation(summary = "아티클 조회", description = "특정 아티클 조회")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseTemplate<Object>> findArticle(@PathVariable long id) {
         Post post = postService.findById(id);
@@ -44,6 +50,7 @@ public class PostApiController {
                 .body(ResponseTemplate.from(post));
     }
 
+    
     @PostMapping("/{id}/scrap")
     public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id) {
         Scrapped scrapped = postService.scrappedById(id);

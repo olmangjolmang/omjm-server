@@ -2,7 +2,6 @@ package com.ticle.server.post.dto;
 
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.global.domain.S3Info;
-
 import com.ticle.server.user.domain.type.Category;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
