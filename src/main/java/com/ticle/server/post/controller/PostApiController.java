@@ -4,6 +4,7 @@ import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.post.service.PostService;
+import com.ticle.server.scrapped.domain.Scrapped;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,4 +44,12 @@ public class PostApiController {
                 .body(ResponseTemplate.from(post));
     }
 
+    @PostMapping("/{id}/scrap")
+    public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id) {
+        Scrapped scrapped = postService.scrappedById(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.from(scrapped));
+    }
 }

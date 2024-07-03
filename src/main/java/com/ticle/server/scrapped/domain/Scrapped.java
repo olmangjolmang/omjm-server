@@ -9,7 +9,7 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor()
 @AllArgsConstructor
 @Builder
 public class Scrapped {
@@ -22,8 +22,8 @@ public class Scrapped {
     @JoinColumn(name = "user_id")
     private User user;
 
-     @ManyToOne
-     @JoinColumn(name = "post_id")
-     private Post post;
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
 
 }
