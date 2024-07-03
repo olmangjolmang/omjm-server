@@ -1,6 +1,5 @@
 package com.ticle.server.talk.domain;
 
-import com.ticle.server.global.domain.BaseTimeEntity;
 import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -15,7 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Talk extends BaseTimeEntity {
+public class Talk {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
