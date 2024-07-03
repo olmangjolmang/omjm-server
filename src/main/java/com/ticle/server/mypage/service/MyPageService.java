@@ -11,6 +11,8 @@ import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.talk.domain.Talk;
+import com.ticle.server.user.domain.type.Category;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,36 +23,31 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@RequiredArgsConstructor
 public class MyPageService {
-    private ScrapRepository scrapRepository;
-    private QuestionRepository questionRepository;
-    private MemoRepository memoRepository;
-    private PostRepository postRepository;
-    @Autowired
-    public MyPageService(ScrapRepository scrapRepository, QuestionRepository questionRepository, MemoRepository memoRepository, PostRepository postRepository) {
-        this.scrapRepository = scrapRepository;
-        this.questionRepository = questionRepository;
-        this.memoRepository = memoRepository;
-        this.postRepository = postRepository;
-    }
+    private final ScrapRepository scrapRepository;
+    private final QuestionRepository questionRepository;
+    private final MemoRepository memoRepository;
+    private final PostRepository postRepository;
+
     public List<SavedTicleDto> getSavedArticles(Long userId) {
         List<Scrapped> scraps = scrapRepository.findByUserId(userId);
-        List<SavedTicleDto> savedArticles = new ArrayList<>();
-        for (Scrapped scrap : scraps) {
-            Post post = postRepository.findById(scrap.getPost().getPostId()).orElse(null);
-            if (post != null) {
-                SavedTicleDto dto = new SavedTicleDto();
-                dto.setPostId(post.getPostId());
-                dto.setTitle(post.getTitle());
-                dto.setContent(post.getContent());
-                dto.setAuthor(post.getAuthor());
-                dto.setCreateDate(post.getCreatedDate());
-                dto.setPostCategory(post.getCategory());
-                dto.setImage(post.getImage());
-                savedArticles.add(dto);
-            }
-        }
-        return savedArticles;
+
+        return scraps.stream()
+                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
+                .filter(post -> post != null)
+                .map(SavedTicleDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<SavedTicleDto> getSavedArticlesByCategory(Long userId, Category category) {
+        List<Scrapped> scraps = scrapRepository.findByUserIdAndPostCategory(userId, category);
+
+        return scraps.stream()
+                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
+                .filter(post -> post != null)
+                .map(SavedTicleDto::toDto)
+                .collect(Collectors.toList());
     }
 
     public List<MyQuestionDto> getMyQuestions(Long userId) {

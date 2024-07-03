@@ -16,7 +16,7 @@ public class UserDto {
     private String email;
     private Category category;
 
-    static public UserDto toDto(User user){
+    public static UserDto toDto(User user){
         return UserDto.builder()
                 .id(user.getId())
                 .nickName(user.getNickName())
