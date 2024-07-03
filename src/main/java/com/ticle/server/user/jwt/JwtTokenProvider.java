@@ -28,8 +28,6 @@ import static java.util.stream.Collectors.toList;
 @Component
 public class JwtTokenProvider {
     private final Key key;
-
-
     // secret값을 가져와서 key에 저장
     public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey){
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);

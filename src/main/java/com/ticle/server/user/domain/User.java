@@ -1,5 +1,8 @@
 package com.ticle.server.user.domain;
 
+import com.ticle.server.memo.domain.Memo;
+import com.ticle.server.scrapped.domain.Scrapped;
+import com.ticle.server.talk.domain.Talk;
 import com.ticle.server.user.domain.type.Category;
 import jakarta.persistence.*;
 
@@ -11,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Table(name = "users")
@@ -44,6 +48,15 @@ public class User {
     @Column(name = "agree_terms")
     private boolean agreeTerms;
 
+//    @OneToMany(mappedBy = "user")
+//    private Set<Talk> talks;
+//
+//    @OneToMany(mappedBy = "user")
+//    private Set<Memo> memos;
+//
+//    @OneToMany(mappedBy = "user")
+//    private Set<Scrapped> scrappeds;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
@@ -54,21 +67,4 @@ public class User {
                 .collect(Collectors.toList());
     }
 
-    public void setUsername(String username) {
-        this.nickName = username;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-
-//    @Builder
-//    public User(String email, String nickname, String password, Category category, Boolean agreeTerms) {
-//        this.email = email;
-//        this.nickName = nickname;
-//        this.password = password;
-//        this.category = category;
-//        this.agreeTerms = agreeTerms;
-//    }
 }

@@ -1,5 +1,6 @@
 package com.ticle.server.post.service;
 
+import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
