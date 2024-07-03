@@ -10,7 +10,7 @@ public record CommentShortResponse(
 ) {
     public static CommentShortResponse from(Comment comment) {
         return CommentShortResponse.builder()
-                .nickname(comment.getUser().getNickname())
+                .nickname(comment.getUser().getNickName())
                 .content(comment.getContent())
                 .build();
     }

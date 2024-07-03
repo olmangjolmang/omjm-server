@@ -12,7 +12,7 @@ public record CommentResponse(
 ) {
     public static CommentResponse of(Comment comment, Boolean isHeart) {
         return CommentResponse.builder()
-                .nickname(comment.getUser().getNickname())
+                .nickname(comment.getUser().getNickName())
                 .content(comment.getContent())
                 .heartCount(comment.getHeartCount())
                 .isHeart(isHeart)
