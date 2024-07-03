@@ -1,6 +1,7 @@
 package com.ticle.server.talk.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
+import com.ticle.server.talk.domain.type.Order;
 import com.ticle.server.talk.dto.request.CommentUploadRequest;
 import com.ticle.server.talk.dto.response.CommentResponse;
 import com.ticle.server.talk.dto.response.TalkResponse;
@@ -61,7 +62,7 @@ public class TalkController {
     public ResponseEntity<ResponseTemplate<Object>> getComments(
             @PathVariable Long talkId,
             @PathVariable Long userId,
-            @RequestParam(required = false, defaultValue = "time") String orderBy) {
+            @RequestParam(required = false, defaultValue = "TIME") Order orderBy) {
 
         List<CommentResponse> responses = talkService.getComments(talkId, userId, orderBy);
 
