@@ -22,7 +22,7 @@ public class PostApiController {
     //카테고리로 아티클 조회
     @GetMapping
     public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category) {
-        
+
         List<PostResponse> posts = postService.findAllByCategory(category)
                 .stream()
                 .map(PostResponse::from)

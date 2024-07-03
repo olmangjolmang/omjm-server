@@ -1,5 +1,6 @@
 package com.ticle.server.post.domain;
 
+import com.ticle.server.global.domain.BaseTimeEntity;
 import com.ticle.server.global.domain.S3Info;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;

@@ -31,4 +31,6 @@ public class PostService {
     public Post findById(long id) {
         return postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("not found: " + id));
     }
+
+
 }
