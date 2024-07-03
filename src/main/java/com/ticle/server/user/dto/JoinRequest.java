@@ -27,12 +27,12 @@ public class JoinRequest {
 
     public User toEntity(String encodedPassword,List<String> roles){
         return User.builder()
-                .email(this.email)
+                .email(email)
                 .password(encodedPassword)
-                .nickName(this.nickName)
-                .category(Category.valueOf(this.category))
-                .agreeTerms(this.agreeTerms)
-                .roles(this.roles)
+                .nickName(nickName)
+                .category(Category.valueOf(category))
+                .agreeTerms(agreeTerms)
+                .roles(roles)
                 .build();
     }
 

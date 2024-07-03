@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -25,25 +27,18 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     @Override
     public UserDetails loadUserByUsername(String email)throws UsernameNotFoundException{
+//        log.info("email------> "+ email);
         return userRepository.findByEmail(email)
                 .map(this::createUserDetails)
                 .orElseThrow(()->new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다"));
     }
 
-//    private UserDetails createUserDetails(com.ticle.server.user.domain.User user){
-//        return User.builder()
-//                .email(user.getEmail())
-//                .password(passwordEncoder.encode(user.getPassword()))
-//                .roles(List.of(user.getRoles().toArray(new String[0])))
-//                .build();
-//    }
-
     private UserDetails createUserDetails(com.ticle.server.user.domain.User user) {
         Collection<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .collect(toList());
 
-        return new User(user.getEmail(), passwordEncoder.encode(user.getPassword()), authorities);
+        return new User(user.getEmail(), user.getPassword(), authorities);
     }
 }
 

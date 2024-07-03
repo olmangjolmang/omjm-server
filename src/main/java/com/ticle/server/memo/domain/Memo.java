@@ -20,14 +20,14 @@ public class Memo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="memo_id")
-    private Long memo_id;
+    private Long memoId;
 
     @Column(name="content")
     private String content;
 
     @CreatedDate
     @Column(name="memo_date",nullable = false)
-    private LocalDateTime memo_date;
+    private LocalDateTime memoDate;
 
 
     @ManyToOne
