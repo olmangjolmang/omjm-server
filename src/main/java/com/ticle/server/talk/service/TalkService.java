@@ -1,10 +1,11 @@
 package com.ticle.server.talk.service;
 
 import com.ticle.server.talk.domain.Comment;
-import com.ticle.server.talk.domain.Heart;
 import com.ticle.server.talk.domain.Talk;
+import com.ticle.server.talk.domain.type.Order;
 import com.ticle.server.talk.dto.request.CommentUploadRequest;
 import com.ticle.server.talk.dto.response.CommentResponse;
+import com.ticle.server.talk.dto.response.HeartResponse;
 import com.ticle.server.talk.dto.response.TalkResponse;
 import com.ticle.server.talk.exception.CommentNotFoundException;
 import com.ticle.server.talk.exception.TalkNotFoundException;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.ticle.server.talk.exception.errorcode.TalkErrorCode.COMMENT_NOT_FOUND;
 import static com.ticle.server.talk.exception.errorcode.TalkErrorCode.TALK_NOT_FOUND;
@@ -40,8 +40,7 @@ public class TalkService {
     public void uploadComment(CommentUploadRequest request, Long talkId, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
-
-        Talk talk = talkRepository.findByTalkId(talkId)
+        Talk talk = talkRepository.findById(talkId)
                 .orElseThrow(() -> new TalkNotFoundException(TALK_NOT_FOUND));
 
         Comment comment = request.toComment(talk, user);
@@ -53,48 +52,49 @@ public class TalkService {
     public void heartComment(Long commentId, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
-
-        Comment comment = commentRepository.findByCommentId(commentId)
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND));
 
-        Optional<Heart> existHeart = heartRepository.findHeartByUserAndComment(user, comment);
-
-        // 내가 좋아요를 누른 경우
-        if (existHeart.isPresent()) {
-            heartRepository.delete(existHeart.get());
-            comment.heartChange(comment.getHeartCount() - 1);
-        } else {
-            Heart heart = Heart.builder()
-                    .user(user)
-                    .comment(comment)
-                    .build();
-
-            heartRepository.save(heart);
-            comment.heartChange(comment.getHeartCount() + 1);
-        }
+        heartRepository.findHeartByUserAndComment(user, comment)
+                .ifPresentOrElse(
+                        existHeart -> {
+                            heartRepository.delete(existHeart);
+                            comment.subHeartCount();
+                        },
+                        () -> {
+                            heartRepository.save(HeartResponse.of(user, comment));
+                            comment.addHeartCount();
+                        }
+                );
     }
 
-    public List<CommentResponse> getComments(Long talkId, Long userId, String orderBy) {
+    @Transactional
+    public List<CommentResponse> getComments(Long talkId, Long userId, Order orderBy) {
         User user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
-
         Talk talk = talkRepository.findByTalkId(talkId)
                 .orElseThrow(() -> new TalkNotFoundException(TALK_NOT_FOUND));
 
-        Sort sort;
-        if ("heart".equalsIgnoreCase(orderBy)) {
-            sort = Sort.by(Sort.Order.desc("heartCount"), Sort.Order.desc("createdDate"));
-        } else {
-            sort = Sort.by(Sort.Order.desc("createdDate"));
-        }
+        // 질문에 대한 댓글들 보기 위해 클릭했을 시 질문 조회수 +1
+        talk.addViewCount();
+
+        Sort sort = getOrder(orderBy);
 
         List<Comment> comments = commentRepository.findAllByTalk(talk, sort);
 
         return comments.stream()
                 .map(comment -> {
                     boolean isHeart = heartRepository.existsByUserAndComment(user, comment);
-                    return CommentResponse.of(comment, isHeart);})
+                    return CommentResponse.of(comment, isHeart);
+                })
                 .toList();
+    }
+
+    private static Sort getOrder(Order orderBy) {
+        return switch (orderBy) {
+            case TIME -> Sort.by(Sort.Order.desc("createdDate"));
+            case HEART -> Sort.by(Sort.Order.desc("heartCount"));
+        };
     }
 
     public List<TalkResponse> getTalks() {
