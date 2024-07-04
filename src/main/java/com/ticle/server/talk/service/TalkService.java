@@ -7,6 +7,7 @@ import com.ticle.server.talk.dto.request.CommentUploadRequest;
 import com.ticle.server.talk.dto.response.CommentResponse;
 import com.ticle.server.talk.dto.response.HeartResponse;
 import com.ticle.server.talk.dto.response.TalkResponse;
+import com.ticle.server.talk.dto.response.TalkResponseList;
 import com.ticle.server.talk.exception.CommentNotFoundException;
 import com.ticle.server.talk.exception.TalkNotFoundException;
 import com.ticle.server.talk.repository.CommentRepository;
@@ -16,6 +17,8 @@ import com.ticle.server.user.domain.User;
 import com.ticle.server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,13 +100,13 @@ public class TalkService {
         };
     }
 
-    public List<TalkResponse> getTalks() {
-        Sort sort = Sort.by(Sort.Order.desc("createdDate"));
+    public TalkResponseList getTalks(Pageable pageable) {
+        Page<Talk> talkPage = talkRepository.findAll(pageable);
 
-        List<Talk> talks = talkRepository.findAll(sort);
-
-        return talks.stream()
+        List<TalkResponse> talkResponseList = talkPage.stream()
                 .map(TalkResponse::from)
                 .toList();
+
+        return TalkResponseList.from(talkResponseList);
     }
 }

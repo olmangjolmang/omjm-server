@@ -4,12 +4,16 @@ import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.talk.domain.type.Order;
 import com.ticle.server.talk.dto.request.CommentUploadRequest;
 import com.ticle.server.talk.dto.response.CommentResponse;
-import com.ticle.server.talk.dto.response.TalkResponse;
+import com.ticle.server.talk.dto.response.TalkResponseList;
 import com.ticle.server.talk.service.TalkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +22,7 @@ import java.util.List;
 
 import static com.ticle.server.global.dto.ResponseTemplate.EMPTY_RESPONSE;
 
+@Slf4j
 @Tag(name = "Talk", description = "물어봥 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -73,12 +78,14 @@ public class TalkController {
 
     @Operation(summary = "물어봥 질문 리스트 조회", description = "물어봥 모든 질문과 함께 인기댓글 2개 조회 가능")
     @GetMapping()
-    public ResponseEntity<ResponseTemplate<Object>> getTalks() {
+    public ResponseEntity<ResponseTemplate<Object>> getTalks(
+            @RequestParam(defaultValue = "0") int page) {
 
-        List<TalkResponse> responses = talkService.getTalks();
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdDate").descending());
+        TalkResponseList response = talkService.getTalks(pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(responses));
+                .body(ResponseTemplate.from(response));
     }
 }
