@@ -48,14 +48,14 @@ public class User {
     @Column(name = "agree_terms")
     private boolean agreeTerms;
 
-//    @OneToMany(mappedBy = "user")
-//    private Set<Talk> talks;
-//
-//    @OneToMany(mappedBy = "user")
-//    private Set<Memo> memos;
-//
-//    @OneToMany(mappedBy = "user")
-//    private Set<Scrapped> scrappeds;
+    @OneToMany(mappedBy = "user")
+    private List<Talk> talks;
+
+    @OneToMany(mappedBy = "user")
+    private List<Memo> memos;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Scrapped> scrappeds;
 
     @ElementCollection(fetch=FetchType.EAGER)
     @Builder.Default

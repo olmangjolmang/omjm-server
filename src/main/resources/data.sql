@@ -1,36 +1,36 @@
 -- User mockup data
 
-INSERT INTO users (email, nick_name, password, category)
-VALUES ('user1@example.com', 'UserOne', 'password1', 'BACKEND'),
-       ('user2@example.com', 'UserTwo', 'password2', 'WEB_FRONT'),
-       ('user3@example.com', 'UserThree', 'password3', 'NETWORK'),
-       ('user4@example.com', 'UserFour', 'password4', 'APP'),
-       ('user5@example.com', 'UserFive', 'password5', 'SECURITY'),
-       ('user6@example.com', 'UserSix', 'password6', 'AI'),
-       ('user7@example.com', 'UserSeven', 'password7', 'VISION'),
-       ('user8@example.com', 'UserEight', 'password8', 'INFRA'),
-       ('user9@example.com', 'UserNine', 'password9', 'ETC'),
-       ('user10@example.com', 'UserTen', 'password10', 'BACKEND'),
-       ('user11@example.com', 'UserEleven', 'password11', 'WEB_FRONT'),
-       ('user12@example.com', 'UserTwelve', 'password12', 'NETWORK'),
-       ('user13@example.com', 'UserThirteen', 'password13', 'APP'),
-       ('user14@example.com', 'UserFourteen', 'password14', 'SECURITY'),
-       ('user15@example.com', 'UserFifteen', 'password15', 'AI'),
-       ('user16@example.com', 'UserSixteen', 'password16', 'VISION'),
-       ('user17@example.com', 'UserSeventeen', 'password17', 'INFRA'),
-       ('user18@example.com', 'UserEighteen', 'password18', 'ETC'),
-       ('user19@example.com', 'UserNineteen', 'password19', 'BACKEND'),
-       ('user20@example.com', 'UserTwenty', 'password20', 'WEB_FRONT'),
-       ('user21@example.com', 'UserTwentyOne', 'password21', 'NETWORK'),
-       ('user22@example.com', 'UserTwentyTwo', 'password22', 'APP'),
-       ('user23@example.com', 'UserTwentyThree', 'password23', 'SECURITY'),
-       ('user24@example.com', 'UserTwentyFour', 'password24', 'AI'),
-       ('user25@example.com', 'UserTwentyFive', 'password25', 'VISION'),
-       ('user26@example.com', 'UserTwentySix', 'password26', 'INFRA'),
-       ('user27@example.com', 'UserTwentySeven', 'password27', 'ETC'),
-       ('user28@example.com', 'UserTwentyEight', 'password28', 'BACKEND'),
-       ('user29@example.com', 'UserTwentyNine', 'password29', 'WEB_FRONT'),
-       ('user30@example.com', 'UserThirty', 'password30', 'NETWORK');
+INSERT INTO users (email, nick_name, password, category, agree_terms)
+VALUES ('user1@example.com', 'UserOne', 'password1', 'BACKEND',1),
+       ('user2@example.com', 'UserTwo', 'password2', 'WEB_FRONT',1),
+       ('user3@example.com', 'UserThree', 'password3', 'NETWORK',1),
+       ('user4@example.com', 'UserFour', 'password4', 'APP',1),
+       ('user5@example.com', 'UserFive', 'password5', 'SECURITY',1),
+       ('user6@example.com', 'UserSix', 'password6', 'AI',1),
+       ('user7@example.com', 'UserSeven', 'password7', 'VISION',1),
+       ('user8@example.com', 'UserEight', 'password8', 'INFRA',1),
+       ('user9@example.com', 'UserNine', 'password9', 'ETC',1),
+       ('user10@example.com', 'UserTen', 'password10', 'BACKEND',1),
+       ('user11@example.com', 'UserEleven', 'password11', 'WEB_FRONT',1),
+       ('user12@example.com', 'UserTwelve', 'password12', 'NETWORK',1),
+       ('user13@example.com', 'UserThirteen', 'password13', 'APP',1),
+       ('user14@example.com', 'UserFourteen', 'password14', 'SECURITY',1),
+       ('user15@example.com', 'UserFifteen', 'password15', 'AI',1),
+       ('user16@example.com', 'UserSixteen', 'password16', 'VISION',1),
+       ('user17@example.com', 'UserSeventeen', 'password17', 'INFRA',1),
+       ('user18@example.com', 'UserEighteen', 'password18', 'ETC',1),
+       ('user19@example.com', 'UserNineteen', 'password19', 'BACKEND',1),
+       ('user20@example.com', 'UserTwenty', 'password20', 'WEB_FRONT',1),
+       ('user21@example.com', 'UserTwentyOne', 'password21', 'NETWORK',1),
+       ('user22@example.com', 'UserTwentyTwo', 'password22', 'APP',1),
+       ('user23@example.com', 'UserTwentyThree', 'password23', 'SECURITY',1),
+       ('user24@example.com', 'UserTwentyFour', 'password24', 'AI',1),
+       ('user25@example.com', 'UserTwentyFive', 'password25', 'VISION',1),
+       ('user26@example.com', 'UserTwentySix', 'password26', 'INFRA',1),
+       ('user27@example.com', 'UserTwentySeven', 'password27', 'ETC',1),
+       ('user28@example.com', 'UserTwentyEight', 'password28', 'BACKEND',1),
+       ('user29@example.com', 'UserTwentyNine', 'password29', 'WEB_FRONT',1),
+       ('user30@example.com', 'UserThirty', 'password30', 'NETWORK',1);
 
 -- You can add more mock data as needed
 
@@ -102,3 +102,10 @@ VALUES ('Sample Title 1', 'Sample content for post 1', 'Author 1', '2024-06-27 1
        ('Sample Title 30', 'Sample content for post 30', 'Author 5', '2024-05-29 12:00:00', 'NETWORK', 'image30.png',
         'folder30', 'https://example.com/image30.png', 2);
 
+insert into scrapped (post_id,user_id)
+values (1,1),
+       (2,1),
+       (3,1),
+       (4,1),
+       (1,2),
+       (6,2);

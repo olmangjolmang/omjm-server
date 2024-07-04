@@ -10,6 +10,7 @@ import java.util.List;
 
 
 public interface PostRepository extends JpaRepository<Post, Long> {
+    Post findByPostId(Long postId);
     List<Post> findByCategory(Category category);
 //    List<Post> findByUserId(Long userId);
 
