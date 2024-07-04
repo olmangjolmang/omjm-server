@@ -1,11 +1,15 @@
 package com.ticle.server.talk.domain;
 
+import com.ticle.server.scrapped.domain.Scrapped;
+import com.ticle.server.talk.exception.CommentNotFoundException;
 import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Table(name = "talk")
 @Getter
@@ -30,6 +34,9 @@ public class Talk {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "talk",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
     @Builder
     public Talk(String question, Long view) {
