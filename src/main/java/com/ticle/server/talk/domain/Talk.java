@@ -24,16 +24,18 @@ public class Talk {
     @Column(name = "view")
     private Long view;
 
+
     @Column(name = "comment_count")
     private Long commentCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Builder
-    public Talk(String question, Long view) {
+    public Talk(String question, Long view, User user) {
         this.question = question;
         this.view = view;
+        this.user = user;
     }
 }
