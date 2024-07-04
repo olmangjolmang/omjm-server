@@ -34,7 +34,7 @@ public class MyPageService {
         List<Scrapped> scraps = scrapRepository.findByUserId(userId);
 
         return scraps.stream()
-                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
+                .map(scrap -> postRepository.findByPostId(scrap.getPost().getPostId()))
                 .filter(post -> post != null)
                 .map(SavedTicleDto::toDto)
                 .collect(Collectors.toList());
