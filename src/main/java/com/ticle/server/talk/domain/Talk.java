@@ -50,4 +50,8 @@ public class Talk extends BaseTimeEntity {
     public void addViewCount() {
         this.viewCount++;
     }
+
+    public void addCommentCount() {
+        this.commentCount++;
+    }
 }

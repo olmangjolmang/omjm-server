@@ -69,7 +69,7 @@ public class TalkController {
             @PathVariable Long userId,
             @RequestParam(required = false, defaultValue = "TIME") Order orderBy) {
 
-        List<CommentResponse> responses = talkService.getComments(talkId, userId, orderBy);
+        List<CommentResponse> responses = talkService.getCommentsByTalk(talkId, userId, orderBy);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -82,7 +82,7 @@ public class TalkController {
             @RequestParam(defaultValue = "0") int page) {
 
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdDate").descending());
-        TalkResponseList response = talkService.getTalks(pageable);
+        TalkResponseList response = talkService.getTalksByPage(pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

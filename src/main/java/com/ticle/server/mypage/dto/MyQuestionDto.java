@@ -18,7 +18,7 @@ public class MyQuestionDto {
         return MyQuestionDto.builder()
                 .questionId(talk.getTalkId())
                 .question(talk.getQuestion())
-                .view(talk.getView())
+                .view(talk.getViewCount())
                 .commentCount(talk.getCommentCount())
                 .build();
     }
