@@ -51,7 +51,7 @@ public class PostApiController {
                 .body(ResponseTemplate.from(post));
     }
 
-
+    @Operation(summary = "스크랩 기능", description = "새로운 아티클 스크랩 및 스크랩 취소")
     @PostMapping("/{id}/scrap")
     public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id) {
 
@@ -61,7 +61,7 @@ public class PostApiController {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(ResponseTemplate.from(scrapped));
-            
+
         } else { //새로 스크랩 하는 경우(스크랩 추가)
             return ResponseEntity
                     .status(HttpStatus.OK)
