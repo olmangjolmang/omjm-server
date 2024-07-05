@@ -11,6 +11,8 @@ import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.talk.domain.Talk;
+import com.ticle.server.talk.dto.response.TalkResponse;
+import com.ticle.server.talk.repository.CommentRepository;
 import com.ticle.server.user.domain.type.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ public class MyPageService {
     private final QuestionRepository questionRepository;
     private final MemoRepository memoRepository;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     public List<SavedTicleDto> getSavedArticles(Long userId) {
         List<Scrapped> scraps = scrapRepository.findByUserId(userId);
@@ -50,10 +53,10 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
-    public List<MyQuestionDto> getMyQuestions(Long userId) {
+    public List<TalkResponse> getMyQuestions(Long userId) {
         List<Talk> questions = questionRepository.findByUserId(userId);
         return questions.stream()
-                .map(MyQuestionDto::toDto)
+                .map(question -> TalkResponse.toDto(question,commentRepository.countByTalkId(question.getTalkId())))
                 .collect(toList());
     }
 

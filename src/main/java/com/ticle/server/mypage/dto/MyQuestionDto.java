@@ -19,7 +19,7 @@ public class MyQuestionDto {
                 .questionId(talk.getTalkId())
                 .question(talk.getQuestion())
                 .view(talk.getView())
-                .commentCount(talk.getCommentCount())
+//                .commentCount(talk.getCommnetCount())
                 .build();
     }
 }
