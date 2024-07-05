@@ -9,6 +9,7 @@ import com.ticle.server.global.exception.errorcode.ErrorCode;
 @RequiredArgsConstructor
 public enum TalkErrorCode implements ErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Comment not found"),
+    TALK_NOT_FOUND(HttpStatus.NOT_FOUND, "Talk not found"),
     ;
 
     private final HttpStatus httpStatus;

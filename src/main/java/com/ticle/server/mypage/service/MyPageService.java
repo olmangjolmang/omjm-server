@@ -13,7 +13,6 @@ import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.talk.domain.Talk;
 import com.ticle.server.user.domain.type.Category;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,14 +51,9 @@ public class MyPageService {
 
     public List<MyQuestionDto> getMyQuestions(Long userId) {
         List<Talk> questions = questionRepository.findByUserId(userId);
-        return questions.stream().map(question -> {
-            MyQuestionDto dto = new MyQuestionDto();
-            dto.setQuestionId(question.getTalkId());
-            dto.setQuestion(question.getQuestion());
-            dto.setView(question.getView());
-            dto.setCommentCount(question.getTalkId());
-            return dto;
-        }).collect(toList());
+        return questions.stream()
+                .map(MyQuestionDto::toDto)
+                .collect(toList());
     }
 
     public List<MyNoteDto> getMyNotes(Long userId) {

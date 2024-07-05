@@ -102,3 +102,10 @@ VALUES ('Sample Title 1', 'Sample content for post 1', 'Author 1', '2024-06-27 1
        ('Sample Title 30', 'Sample content for post 30', 'Author 5', '2024-05-29 12:00:00', 'NETWORK', 'image30.png',
         'folder30', 'https://example.com/image30.png', 2);
 
+insert into scrapped (post_id,user_id)
+values (1,1),
+       (2,1),
+       (3,1),
+       (4,1),
+       (1,2),
+       (6,2);
