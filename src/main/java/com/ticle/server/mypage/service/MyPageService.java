@@ -15,7 +15,6 @@ import com.ticle.server.talk.dto.response.TalkResponse;
 import com.ticle.server.talk.repository.CommentRepository;
 import com.ticle.server.user.domain.type.Category;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class MyPageService {
         List<Scrapped> scraps = scrapRepository.findByUserId(userId);
 
         return scraps.stream()
-                .map(scrap -> postRepository.findByPostId(scrap.getPost().getPostId()))
+                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
                 .filter(post -> post != null)
                 .map(SavedTicleDto::toDto)
                 .collect(Collectors.toList());

@@ -1,7 +1,6 @@
 package com.ticle.server.talk.domain;
 
-import com.ticle.server.scrapped.domain.Scrapped;
-import com.ticle.server.talk.exception.CommentNotFoundException;
+import com.ticle.server.global.domain.BaseTimeEntity;
 import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -9,13 +8,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "talk")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Talk {
+public class Talk extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,32 +25,33 @@ public class Talk {
     @Column(name = "question", length = 200)
     private String question;
 
-    @Column(name = "view")
-    private Long view;
+    @Column(name = "view_count")
+    private Long viewCount;
 
-    @Column(name = "comment_count")
-    private Long commentCount = 0L;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @OneToMany(mappedBy = "talk",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "talk", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @Column(name = "comment_count")
+    private Long commentCount;
 
     @Builder
-    public Talk(String question, Long view, User user) {
+    public Talk(String question, Long viewCount, User user, List<Comment> comments, Long commentCount) {
         this.question = question;
-        this.view = view;
+        this.viewCount = viewCount;
         this.user = user;
-        this.commentCount = 0L;
+        this.comments = comments;
+        this.commentCount = commentCount;
     }
 
-    public void incrementCommentCount(){
+    public void addViewCount() {
+        this.viewCount++;
+    }
+
+    public void addCommentCount() {
         this.commentCount++;
-    }
-
-    public void decrementCommentCount(){
-        this.commentCount--;
     }
 }

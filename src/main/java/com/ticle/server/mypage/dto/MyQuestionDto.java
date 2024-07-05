@@ -18,8 +18,8 @@ public class MyQuestionDto {
         return MyQuestionDto.builder()
                 .questionId(talk.getTalkId())
                 .question(talk.getQuestion())
-                .view(talk.getView())
-//                .commentCount(talk.getCommnetCount())
+                .view(talk.getViewCount())
+                .commentCount(talk.getCommentCount())
                 .build();
     }
 }

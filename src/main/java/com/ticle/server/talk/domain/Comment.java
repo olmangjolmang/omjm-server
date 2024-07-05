@@ -1,5 +1,6 @@
 package com.ticle.server.talk.domain;
 
+import com.ticle.server.global.domain.BaseTimeEntity;
 import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,11 +8,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Table(name = "comment")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,22 +25,34 @@ public class Comment {
     @Column(name = "content", length = 500)
     private String content;
 
-    @Column(name = "heart")
-    private Long heart;
+    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
-    @ManyToOne
     @JoinColumn(name = "talk_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Talk talk;
 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Heart> hearts = new ArrayList<>();
+
+    @Column(name = "heart_count")
+    private Long heartCount;
+
     @Builder
-    public Comment(String content, Long heart,Talk talk) {
+    public Comment(String content, User user, Talk talk, List<Heart> hearts, Long heartCount) {
         this.content = content;
-        this.heart = heart;
+        this.user = user;
         this.talk = talk;
-        this.talk.incrementCommentCount();
+        this.hearts = hearts;
+        this.heartCount = heartCount;
     }
-    @PreRemove
-    public void preRemove(){
-        this.talk.decrementCommentCount();
+
+    public void addHeartCount() {
+        heartCount++;
+    }
+
+    public void subHeartCount() {
+        heartCount--;
     }
 }
