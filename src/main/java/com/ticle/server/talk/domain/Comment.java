@@ -29,8 +29,14 @@ public class Comment {
     private Talk talk;
 
     @Builder
-    public Comment(String content, Long heart) {
+    public Comment(String content, Long heart,Talk talk) {
         this.content = content;
         this.heart = heart;
+        this.talk = talk;
+        this.talk.incrementCommentCount();
+    }
+    @PreRemove
+    public void preRemove(){
+        this.talk.decrementCommentCount();
     }
 }

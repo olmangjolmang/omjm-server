@@ -56,7 +56,7 @@ public class MyPageService {
     public List<TalkResponse> getMyQuestions(Long userId) {
         List<Talk> questions = questionRepository.findByUserId(userId);
         return questions.stream()
-                .map(question -> TalkResponse.toDto(question,commentRepository.countByTalkId(question.getTalkId())))
+                .map(TalkResponse::toDto)
                 .collect(toList());
     }
 

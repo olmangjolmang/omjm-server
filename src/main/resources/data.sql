@@ -1,4 +1,5 @@
 -- User mockup data
+ALTER TABLE talk MODIFY comment_count BIGINT NOT NULL DEFAULT 0;
 
 INSERT INTO users (email, nick_name, password, category, agree_terms)
 VALUES ('user1@example.com', 'UserOne', 'password1', 'BACKEND', true),
@@ -108,6 +109,7 @@ values (1,1),
        (4,1),
        (1,2),
        (6,2);
+
 INSERT INTO talk (question, view, user_id) VALUES
    ('What is the best programming language?', 100, 1),
    ('How to learn Python quickly?', 50, 2),
@@ -129,3 +131,36 @@ INSERT INTO talk (question, view, user_id) VALUES
    ('How to build scalable web applications?', 190, 18),
    ('What is the best way to learn programming?', 160, 19),
    ('How to get started with programming?', 10, 20);
+
+INSERT INTO comment (content, heart, talk_id) VALUES
+  ('Great question! I think the best programming language is Python.', 10, 1),
+  ('I recommend starting with online tutorials.', 5, 1),
+  ('REST API design should follow best practices for scalability.', 15, 2),
+  ('Optimizing SQL queries involves indexing and query planning.', 8, 3),
+  ('AI will continue to grow and integrate into various industries.', 20, 4),
+  ('Practice coding every day to improve your skills.', 12, 5),
+  ('Top programming languages in 2024 will likely include Python and JavaScript.', 7, 6),
+  ('Big data management requires effective data storage solutions.', 9, 7),
+  ('Start with the basics and build your way up in data science.', 13, 8),
+  ('Building a chatbot requires knowledge of NLP.', 4, 9),
+  ('Cloud computing is about delivering computing services over the internet.', 6, 10),
+  ('Web application security involves regular updates and monitoring.', 18, 11),
+  ('AI refers to artificial intelligence, whereas ML is a subset of AI.', 11, 12),
+  ('Start with a simple machine learning project to get hands-on experience.', 14, 13),
+  ('JavaScript can be learned effectively through practice.', 3, 14),
+  ('Docker is a powerful tool for containerizing applications.', 17, 15),
+  ('Microservices are small, independent services that work together.', 2, 16),
+  ('Scalable web applications can handle increasing loads efficiently.', 19, 17),
+  ('Programming is best learned through consistent practice.', 16, 18),
+  ('Begin programming with easy-to-understand languages like Python.', 1, 19),
+  ('Effective big data management requires good infrastructure.', 10, 7),
+  ('REST APIs should be stateless for better performance.', 7, 2),
+  ('NLP is essential for building conversational chatbots.', 9, 9),
+  ('Security is a critical aspect of web development.', 4, 11),
+  ('Machine learning involves training models with data.', 6, 13),
+  ('JavaScript frameworks make web development easier.', 12, 14),
+  ('Containers help in isolating applications.', 15, 15),
+  ('Microservices architecture is great for large applications.', 8, 16),
+  ('Scaling applications involves optimizing resources.', 20, 17),
+  ('AI will continue to evolve and influence many fields.', 5, 4);
+

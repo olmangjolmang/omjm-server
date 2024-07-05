@@ -9,11 +9,11 @@ public record TalkResponse(
         Long view,
         String question
 ) {
-    public static TalkResponse toDto(Talk talk, Long commentCount) {
+    public static TalkResponse toDto(Talk talk) {
         return new TalkResponse(
                 talk.getTalkId(),
                 talk.getUser().getId(),
-                commentCount,
+                talk.getCommentCount(),
                 talk.getView(),
                 talk.getQuestion()
         );

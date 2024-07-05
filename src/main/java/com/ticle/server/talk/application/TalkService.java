@@ -8,6 +8,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+
 @Service
 @AllArgsConstructor
 public class TalkService {
@@ -15,10 +20,11 @@ public class TalkService {
     private final TalkRepository talkRepository;
     private final CommentRepository commentRepository;
 
-    public TalkResponse getTalkWithCommentCount(Long talkId){
-        Talk talk = talkRepository.findById(talkId).orElseThrow(()-> new RuntimeException("Talk not found"));
-        Long commentCount = commentRepository.countByTalkId(talkId);
+    public List<TalkResponse> getTalks(Long talkId){
+        List<Talk> talks = talkRepository.findByTalkId(talkId);
 
-        return TalkResponse.toDto(talk,commentCount);
+        return talks.stream()
+                .map(TalkResponse::toDto)
+                .collect(toList());
     }
 }

@@ -28,8 +28,8 @@ public class Talk {
     @Column(name = "view")
     private Long view;
 
-//    @Column(name = "comment_count")
-//    private Long commentCount;
+    @Column(name = "comment_count")
+    private Long commentCount = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -43,5 +43,14 @@ public class Talk {
         this.question = question;
         this.view = view;
         this.user = user;
+        this.commentCount = 0L;
+    }
+
+    public void incrementCommentCount(){
+        this.commentCount++;
+    }
+
+    public void decrementCommentCount(){
+        this.commentCount--;
     }
 }
