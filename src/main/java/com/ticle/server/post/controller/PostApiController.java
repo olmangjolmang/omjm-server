@@ -5,6 +5,7 @@ import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.post.service.PostService;
 import com.ticle.server.scrapped.domain.Scrapped;
+import com.ticle.server.scrapped.dto.ScrappedDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -50,13 +51,14 @@ public class PostApiController {
                 .body(ResponseTemplate.from(post));
     }
 
-    
+
     @PostMapping("/{id}/scrap")
     public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id) {
         Scrapped scrapped = postService.scrappedById(id);
+        ScrappedDto scrappedDto = ScrappedDto.from(scrapped);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(scrapped));
+                .body(ResponseTemplate.from(scrappedDto));
     }
 }

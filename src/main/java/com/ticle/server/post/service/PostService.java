@@ -7,6 +7,7 @@ import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
+import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,6 +24,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final ScrappedRepository scrappedRepository;
+    private final UserService userService;
 
     // 카테고리에 맞는 글 찾기
     public List<Post> findAllByCategory(String category) {
@@ -44,24 +46,27 @@ public class PostService {
     public Scrapped scrappedById(long id) {
         // 게시물 조회
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
 
         Scrapped scrapped = new Scrapped();
         scrapped.setPost(post);
 
-//        // 아래 주석은 로그인 정상 작동 시 주석 해제할 것 (현재는 user_id 제외하고 들어감)
-//
-//        // 현재 로그인한 유저 정보
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Object principal = authentication.getPrincipal();
-//
-//        if (principal instanceof User) { //스트링이면
-//            scrapped.setUser((User) principal); //유저 객체화
-//        } else {
-//            // 인증된 사용자 정보가 User 객체가 아니면 에러발생
-//            throw new IllegalStateException("Authenticated principal is not of type User: " + principal);
-//        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//            System.out.println("here");
+//            System.out.println(userDetails);
+            // getUsername에는 email이 들어있음.
+            // email로 유저 찾고 id 찾도록 함.
+            User user = userService.getLoginUserByEmail(userDetails.getUsername());
+            Long userId = user.getId();
 
+//            System.out.println("User ID: " + userId);
+            scrapped.setUser(user);
+
+        } else {
+            throw new IllegalStateException("principal 없음");
+        }
         return scrappedRepository.save(scrapped);
     }
 }
