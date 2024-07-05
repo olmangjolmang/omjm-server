@@ -31,15 +31,13 @@ import static com.ticle.server.global.dto.ResponseTemplate.EMPTY_RESPONSE;
 @RequestMapping("/talk")
 public class TalkController {
 
-    private static final int PAGE_SIZE = 5;
     private final TalkService talkService;
 
     @Operation(summary = "댓글 등록", description = "질문에 대한 댓글 등록하기")
-    @PostMapping("/{talkId}/comment/{userId}")
+    @PostMapping("/{talkId}/comment")
     public ResponseEntity<ResponseTemplate<Object>> uploadComment(
             @PathVariable Long talkId,
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable Long userId,
             @Valid @RequestBody CommentUploadRequest request) {
 
         talkService.uploadComment(request, talkId, userDetails);
@@ -84,8 +82,7 @@ public class TalkController {
     public ResponseEntity<ResponseTemplate<Object>> getTalks(
             @RequestParam(defaultValue = "0") int page) {
 
-        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by("createdDate").descending());
-        TalkResponseList response = talkService.getTalksByPage(pageable);
+        TalkResponseList response = talkService.getTalksByPage(page);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

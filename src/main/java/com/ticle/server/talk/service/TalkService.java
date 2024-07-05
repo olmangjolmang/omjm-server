@@ -18,6 +18,7 @@ import com.ticle.server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.ticle.server.talk.domain.type.Order.TIME;
+import static com.ticle.server.talk.domain.type.Order.getOrder;
 import static com.ticle.server.talk.exception.errorcode.TalkErrorCode.COMMENT_NOT_FOUND;
 import static com.ticle.server.talk.exception.errorcode.TalkErrorCode.TALK_NOT_FOUND;
 
@@ -39,6 +42,8 @@ public class TalkService {
     private final CommentRepository commentRepository;
     private final TalkRepository talkRepository;
     private final HeartRepository heartRepository;
+
+    private static final int PAGE_SIZE = 5;
 
     @Transactional
     public void uploadComment(CommentUploadRequest request, Long talkId, UserDetails userId) {
@@ -95,14 +100,9 @@ public class TalkService {
                 .toList();
     }
 
-    private static Sort getOrder(Order orderBy) {
-        return switch (orderBy) {
-            case TIME -> Sort.by(Sort.Order.desc("createdDate"));
-            case HEART -> Sort.by(Sort.Order.desc("heartCount"));
-        };
-    }
+    public TalkResponseList getTalksByPage(int page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, getOrder(TIME));
 
-    public TalkResponseList getTalksByPage(Pageable pageable) {
         Page<Talk> talkPage = talkRepository.findAll(pageable);
 
         List<TalkResponse> talkResponseList = talkPage.stream()
