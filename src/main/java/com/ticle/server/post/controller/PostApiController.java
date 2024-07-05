@@ -54,11 +54,19 @@ public class PostApiController {
 
     @PostMapping("/{id}/scrap")
     public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id) {
-        Scrapped scrapped = postService.scrappedById(id);
-        ScrappedDto scrappedDto = ScrappedDto.from(scrapped);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(scrappedDto));
+        Object scrapped = postService.scrappedById(id);
+
+        if (scrapped instanceof ScrappedDto) { // 이미 스크랩 했던 경우(취소기능)
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(ResponseTemplate.from(scrapped));
+            
+        } else { //새로 스크랩 하는 경우(스크랩 추가)
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(ResponseTemplate.from(ScrappedDto.from((Scrapped) scrapped)));
+        }
+
     }
 }
