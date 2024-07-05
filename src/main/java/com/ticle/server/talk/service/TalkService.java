@@ -82,7 +82,7 @@ public class TalkService {
     public List<CommentResponse> getCommentsByTalk(Long talkId, Long userId, Order orderBy) {
         User user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
-        Talk talk = talkRepository.findByTalkId(talkId)
+        Talk talk = talkRepository.findByTalkIdWithFetch(talkId)
                 .orElseThrow(() -> new TalkNotFoundException(TALK_NOT_FOUND));
 
         // 질문에 대한 댓글들 보기 위해 클릭했을 시 질문 조회수 +1
@@ -90,7 +90,7 @@ public class TalkService {
 
         Sort sort = getOrder(orderBy);
 
-        List<Comment> comments = commentRepository.findAllByTalk(talk, sort);
+        List<Comment> comments = commentRepository.findAllByTalkWithFetch(talk, sort);
 
         return comments.stream()
                 .map(comment -> {

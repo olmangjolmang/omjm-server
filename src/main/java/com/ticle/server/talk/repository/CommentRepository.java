@@ -8,15 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    Optional<Comment> findByCommentId(Long commentId);
-
-    @Query("SELECT comment " +
-            "FROM Comment comment JOIN FETCH Heart heart ON comment.commentId = heart.comment.commentId " +
-            "WHERE comment.talk = :talk")
-    List<Comment> findAllByTalk(Talk talk, Sort sort);
+    @Query("SELECT c " +
+            "FROM Comment c JOIN FETCH Heart h ON c.commentId = h.comment.commentId " +
+            "WHERE c.talk = :talk")
+    List<Comment> findAllByTalkWithFetch(Talk talk, Sort sort);
 }

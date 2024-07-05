@@ -13,10 +13,10 @@ import java.util.Optional;
 @Repository
 public interface TalkRepository extends JpaRepository<Talk, Long> {
 
-    @Query("SELECT talk " +
-            "FROM Talk talk JOIN FETCH Comment c on talk.talkId = c.talk.talkId " +
-            "WHERE talk.talkId = :talkId")
-    Optional<Talk> findByTalkId(Long talkId);
+    @Query("SELECT t " +
+            "FROM Talk t JOIN FETCH Comment c on t.talkId = c.talk.talkId " +
+            "WHERE t.talkId = :talkId")
+    Optional<Talk> findByTalkIdWithFetch(Long talkId);
 
     @EntityGraph(attributePaths = {"comments", "comments.user"})
     Page<Talk> findAll(Pageable pageable);
