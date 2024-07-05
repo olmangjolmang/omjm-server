@@ -2,6 +2,7 @@ package com.ticle.server.post.domain;
 
 import com.ticle.server.global.domain.BaseTimeEntity;
 import com.ticle.server.global.domain.S3Info;
+import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Table(name = "Post")
@@ -43,4 +45,8 @@ public class Post extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Scrapped> scrappeds;
+
 }

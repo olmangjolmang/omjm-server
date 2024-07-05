@@ -34,7 +34,7 @@ public class MyPageService {
         List<Scrapped> scraps = scrapRepository.findByUserId(userId);
 
         return scraps.stream()
-                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
+                .map(scrap -> postRepository.findByPostId(scrap.getPost().getPostId()))
                 .filter(post -> post != null)
                 .map(SavedTicleDto::toDto)
                 .collect(Collectors.toList());
@@ -52,14 +52,9 @@ public class MyPageService {
 
     public List<MyQuestionDto> getMyQuestions(Long userId) {
         List<Talk> questions = questionRepository.findByUserId(userId);
-        return questions.stream().map(question -> {
-            MyQuestionDto dto = new MyQuestionDto();
-            dto.setQuestionId(question.getTalkId());
-            dto.setQuestion(question.getQuestion());
-            dto.setView(question.getView());
-            dto.setCommentCount(question.getTalkId());
-            return dto;
-        }).collect(toList());
+        return questions.stream()
+                .map(MyQuestionDto::toDto)
+                .collect(toList());
     }
 
     public List<MyNoteDto> getMyNotes(Long userId) {
