@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,10 +38,11 @@ public class TalkController {
     @PostMapping("/{talkId}/comment/{userId}")
     public ResponseEntity<ResponseTemplate<Object>> uploadComment(
             @PathVariable Long talkId,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long userId,
             @Valid @RequestBody CommentUploadRequest request) {
 
-        talkService.uploadComment(request, talkId, userId);
+        talkService.uploadComment(request, talkId, userDetails);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

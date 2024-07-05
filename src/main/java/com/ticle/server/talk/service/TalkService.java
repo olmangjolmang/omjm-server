@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +41,8 @@ public class TalkService {
     private final HeartRepository heartRepository;
 
     @Transactional
-    public void uploadComment(CommentUploadRequest request, Long talkId, Long userId) {
-        User user = userRepository.findById(userId)
+    public void uploadComment(CommentUploadRequest request, Long talkId, UserDetails userId) {
+        User user = userRepository.findByEmail(userId.getUsername())
                 .orElseThrow(RuntimeException::new);
         Talk talk = talkRepository.findById(talkId)
                 .orElseThrow(() -> new TalkNotFoundException(TALK_NOT_FOUND));
