@@ -28,9 +28,8 @@ public class Talk {
     @Column(name = "view")
     private Long view;
 
-
-    @Column(name = "comment_count")
-    private Long commentCount;
+//    @Column(name = "comment_count")
+//    private Long commentCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
