@@ -47,6 +47,7 @@ public class TalkService {
                 .orElseThrow(() -> new TalkNotFoundException(TALK_NOT_FOUND));
 
         Comment comment = request.toComment(talk, user);
+        talk.addCommentCount();
 
         commentRepository.save(comment);
     }
@@ -72,7 +73,7 @@ public class TalkService {
     }
 
     @Transactional
-    public List<CommentResponse> getComments(Long talkId, Long userId, Order orderBy) {
+    public List<CommentResponse> getCommentsByTalk(Long talkId, Long userId, Order orderBy) {
         User user = userRepository.findById(userId)
                 .orElseThrow(RuntimeException::new);
         Talk talk = talkRepository.findByTalkId(talkId)
@@ -100,7 +101,7 @@ public class TalkService {
         };
     }
 
-    public TalkResponseList getTalks(Pageable pageable) {
+    public TalkResponseList getTalksByPage(Pageable pageable) {
         Page<Talk> talkPage = talkRepository.findAll(pageable);
 
         List<TalkResponse> talkResponseList = talkPage.stream()
