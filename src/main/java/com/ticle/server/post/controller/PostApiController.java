@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 @Tag(name = "Post", description = "아티클 관련 API")
 @RequiredArgsConstructor
 @RestController
@@ -33,17 +37,22 @@ public class PostApiController {
     //카테고리로 아티클 조회
     @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | 공백 입력시 모든 카테고리의 아티클 나타남 ")
     @GetMapping
-    public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category) {
+    public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category, @RequestParam(defaultValue = "1") int page) {
 
-        System.out.println("come");
-        List<PostResponse> posts = postService.findAllByCategory(category)
-                .stream()
+        int size = 9; // 한 페이지에 보여질 객체 수
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<Post> postPage = postService.findAllByCategory(category, pageable);
+
+        List<PostResponse> postResponses = postPage.getContent().stream()
                 .map(PostResponse::from)
                 .collect(Collectors.toList());
 
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(posts));
+                .body(ResponseTemplate.from(postResponses));
     }
 
     //특정 아티클 조회
