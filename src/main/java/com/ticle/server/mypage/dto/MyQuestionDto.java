@@ -11,14 +11,14 @@ import lombok.Getter;
 public class MyQuestionDto {
     private Long questionId;
     private String question;
-    private Long view;
+    private Long viewCount;
     private Long commentCount;
 
     public static MyQuestionDto toDto(Opinion opinion){
         return MyQuestionDto.builder()
                 .questionId(opinion.getOpinionId())
                 .question(opinion.getQuestion())
-                .view(opinion.getViewCount())
+                .viewCount(opinion.getViewCount())
                 .commentCount(opinion.getCommentCount())
                 .build();
     }
