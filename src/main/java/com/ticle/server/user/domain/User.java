@@ -27,15 +27,14 @@ public class User {
     // 주로 데이터베이스와 직접적으로 연관되어 있음
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_id")
+    @Column(name = "user_id")
     private Long id;
 
-    @Column(name="email",nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password",nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
-
 
     @Column(name = "nick_name")
     private String nickName;
@@ -48,22 +47,21 @@ public class User {
     private boolean agreeTerms;
 
     @OneToMany(mappedBy = "user")
-    private List<Opinion> talks;
+    private List<Opinion> opinions;
 
     @OneToMany(mappedBy = "user")
     private List<Memo> memos;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Scrapped> scrappeds;
 
-    @ElementCollection(fetch=FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
 
-    public Collection<? extends GrantedAuthority> getAuthorities(){
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
-
 }

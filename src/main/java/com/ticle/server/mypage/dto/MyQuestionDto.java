@@ -14,12 +14,12 @@ public class MyQuestionDto {
     private Long view;
     private Long commentCount;
 
-    public static MyQuestionDto toDto(Opinion talk){
+    public static MyQuestionDto toDto(Opinion opinion){
         return MyQuestionDto.builder()
-                .questionId(talk.getOpinionId())
-                .question(talk.getQuestion())
-                .view(talk.getViewCount())
-                .commentCount(talk.getCommentCount())
+                .questionId(opinion.getOpinionId())
+                .question(opinion.getQuestion())
+                .view(opinion.getViewCount())
+                .commentCount(opinion.getCommentCount())
                 .build();
     }
 }
