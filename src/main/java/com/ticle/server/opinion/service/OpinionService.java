@@ -90,11 +90,12 @@ public class OpinionService {
 
         Sort sort = getOrder(orderBy);
 
-        List<Comment> comments = commentRepository.findAllByOpinionWithFetch(opinion, sort);
+        List<Comment> comments = commentRepository.findAllByOpinion(opinion, sort);
 
         return comments.stream()
                 .map(comment -> {
-                    boolean isHeart = heartRepository.existsByUserAndComment(user, comment);
+                    boolean isHeart = comment.getHearts().stream()
+                            .anyMatch(heart -> heart.getUser().equals(user));
                     return CommentResponse.of(comment, isHeart);
                 })
                 .toList();
