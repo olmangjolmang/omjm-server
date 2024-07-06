@@ -31,7 +31,7 @@ public class PostApiController {
     private final PostService postService;
 
     //카테고리로 아티클 조회
-    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 \n 공백 입력시 모든 아티클")
+    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | 공백 입력시 모든 카테고리의 아티클 나타남 ")
     @GetMapping
     public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category) {
 
@@ -47,7 +47,7 @@ public class PostApiController {
     }
 
     //특정 아티클 조회
-    @Operation(summary = "아티클 조회", description = "특정 아티클 조회")
+    @Operation(summary = "특정 아티클 조회", description = "특정 아티클 조회")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseTemplate<Object>> findArticle(@PathVariable long id) {
         Post post = postService.findById(id);
@@ -57,7 +57,7 @@ public class PostApiController {
                 .body(ResponseTemplate.from(post));
     }
 
-    @Operation(summary = "스크랩 기능", description = "새로운 아티클 스크랩 및 스크랩 취소")
+    @Operation(summary = "아티클 스크랩", description = "새로운 아티클 스크랩, 스크랩 취소")
     @PostMapping("/{id}/scrap")
     public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id, @AuthenticationPrincipal UserDetails userDetails) {
 
@@ -78,6 +78,7 @@ public class PostApiController {
 
 
     // post memo
+    @Operation(summary = "메모", description = "메모 작성하기")
     @PostMapping("/memo/{id}")
     public ResponseEntity<ResponseTemplate<Object>> memoArticle(@PathVariable long id, @RequestBody MemoRequest memoRequest, @AuthenticationPrincipal UserDetails userDetails) {
         {
@@ -86,7 +87,6 @@ public class PostApiController {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(ResponseTemplate.from(MemoDto.from((Memo) memo)));
-
         }
     }
 }
