@@ -65,7 +65,7 @@ public class MyPageService {
                 MyNoteDto dto = new MyNoteDto();
                 dto.setMemoId(memo.getMemoId());
                 dto.setContent(memo.getContent());
-                dto.setMemoDate(memo.getMemoDate());
+                dto.setMemoDate(memo.getCreatedDate());
                 dto.setPostId(post.getPostId());
                 dto.setPostTitle(post.getTitle());
                 myNotes.add(dto);
@@ -73,9 +73,6 @@ public class MyPageService {
         }
         return myNotes;
     }
-
-
-
 
 
 }

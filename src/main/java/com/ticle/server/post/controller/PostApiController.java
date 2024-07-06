@@ -1,16 +1,22 @@
 package com.ticle.server.post.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
+import com.ticle.server.memo.domain.Memo;
+import com.ticle.server.memo.dto.MemoDto;
+import com.ticle.server.memo.dto.MemoRequest;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.post.service.PostService;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.dto.ScrappedDto;
+import com.ticle.server.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -68,5 +74,19 @@ public class PostApiController {
                     .body(ResponseTemplate.from(ScrappedDto.from((Scrapped) scrapped)));
         }
 
+    }
+
+
+    // post memo
+    @PostMapping("/memo/{id}")
+    public ResponseEntity<ResponseTemplate<Object>> memoArticle(@PathVariable long id, @RequestBody MemoRequest memoRequest, @AuthenticationPrincipal UserDetails userDetails) {
+        {
+            Object memo = postService.writeMemo(id, userDetails, memoRequest.getTargetText(), memoRequest.getContent());
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(ResponseTemplate.from(MemoDto.from((Memo) memo)));
+
+        }
     }
 }

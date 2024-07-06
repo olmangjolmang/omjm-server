@@ -1,5 +1,7 @@
 package com.ticle.server.post.service;
 
+import com.ticle.server.memo.domain.Memo;
+import com.ticle.server.mypage.repository.MemoRepository;
 import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.post.domain.Post;
@@ -24,6 +26,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final ScrappedRepository scrappedRepository;
     private final UserService userService;
+    private final MemoRepository memoRepository;
 
     // 카테고리에 맞는 글 찾기
     public List<Post> findAllByCategory(String category) {
@@ -78,5 +81,29 @@ public class PostService {
         scrapped.setUser(user);
 
         return scrappedRepository.save(scrapped);
+    }
+
+    public Object writeMemo(long id, UserDetails userDetails, String targetText, String content) {
+//
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+//        } else {
+//            throw new IllegalStateException("principal 없음");
+//        }
+//
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
+        User user = userService.getLoginUserByEmail(userDetails.getUsername());
+        Long userId = user.getId();
+
+        Memo memo = new Memo();
+        memo.setPost(postRepository.findByPostId(id));
+        memo.setUser(user);
+        memo.setTargetText(targetText);
+        memo.setContent(content);
+
+
+        return memoRepository.save(memo);
     }
 }
