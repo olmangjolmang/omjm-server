@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record CommentResponse(
+    Long commentId,
     String nickname,
     String content,
     Long heartCount,
@@ -12,6 +13,7 @@ public record CommentResponse(
 ) {
     public static CommentResponse of(Comment comment, Boolean isHeart) {
         return CommentResponse.builder()
+                .commentId(comment.getCommentId())
                 .nickname(comment.getUser().getNickName())
                 .content(comment.getContent())
                 .heartCount(comment.getHeartCount())
