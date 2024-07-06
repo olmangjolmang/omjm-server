@@ -45,18 +45,10 @@ public class PostService {
     }
 
 
-    public Object scrappedById(long id) {
+    public Object scrappedById(long id, UserDetails userDetails) {
         // 게시물 조회
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-        } else {
-            throw new IllegalStateException("principal 없음");
-        }
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
         User user = userService.getLoginUserByEmail(userDetails.getUsername());
@@ -84,18 +76,9 @@ public class PostService {
     }
 
     public Object writeMemo(long id, UserDetails userDetails, String targetText, String content) {
-//
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-//        } else {
-//            throw new IllegalStateException("principal 없음");
-//        }
-//
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
         User user = userService.getLoginUserByEmail(userDetails.getUsername());
-        Long userId = user.getId();
 
         Memo memo = new Memo();
         memo.setPost(postRepository.findByPostId(id));

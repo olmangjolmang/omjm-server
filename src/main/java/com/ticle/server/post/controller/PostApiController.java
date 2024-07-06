@@ -59,9 +59,9 @@ public class PostApiController {
 
     @Operation(summary = "스크랩 기능", description = "새로운 아티클 스크랩 및 스크랩 취소")
     @PostMapping("/{id}/scrap")
-    public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id) {
+    public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id, @AuthenticationPrincipal UserDetails userDetails) {
 
-        Object scrapped = postService.scrappedById(id);
+        Object scrapped = postService.scrappedById(id, userDetails);
 
         if (scrapped instanceof ScrappedDto) { // 이미 스크랩 했던 경우(취소기능)
             return ResponseEntity
