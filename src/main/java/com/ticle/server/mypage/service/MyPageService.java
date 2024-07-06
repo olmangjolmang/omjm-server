@@ -10,7 +10,7 @@ import com.ticle.server.mypage.repository.ScrapRepository;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
-import com.ticle.server.talk.domain.Talk;
+import com.ticle.server.opinion.domain.Opinion;
 import com.ticle.server.user.domain.type.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,7 +50,7 @@ public class MyPageService {
     }
 
     public List<MyQuestionDto> getMyQuestions(Long userId) {
-        List<Talk> questions = questionRepository.findByUserId(userId);
+        List<Opinion> questions = questionRepository.findByUserId(userId);
         return questions.stream()
                 .map(MyQuestionDto::toDto)
                 .collect(toList());

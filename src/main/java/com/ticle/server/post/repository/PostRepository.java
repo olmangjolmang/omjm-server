@@ -2,7 +2,6 @@ package com.ticle.server.post.repository;
 
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.post.domain.Post;
-import com.ticle.server.talk.domain.Talk;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
