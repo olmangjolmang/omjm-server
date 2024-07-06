@@ -59,18 +59,15 @@ public class PostService {
         Optional<Scrapped> existingScrap = scrappedRepository.findByUserIdAndPost_PostId(userId, post.getPostId());
         if (existingScrap.isPresent()) {
             // 이미 스크랩한 상태라면 스크랩 취소
-            ScrappedDto scrappedDto = new ScrappedDto();
-            scrappedDto.setUserId(userId);
-            scrappedDto.setPostId(post.getPostId());
-            scrappedDto.setPostName(post.getTitle());
-            scrappedDto.setStatus("Unscrapped");
+            existingScrap.get().changeToUnscrapped(); //status를 unscrapped로 변경
             scrappedRepository.delete(existingScrap.get());
-            return scrappedDto;
+            return ScrappedDto.from(existingScrap.get());
         }
 
         Scrapped scrapped = new Scrapped();
         scrapped.setPost(post);
         scrapped.setUser(user);
+        scrapped.changeToScrapped(); //status를 scrapped로 변경
 
         return scrappedRepository.save(scrapped);
     }

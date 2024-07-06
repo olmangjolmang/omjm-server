@@ -3,24 +3,23 @@ package com.ticle.server.scrapped.dto;
 import com.ticle.server.scrapped.domain.Scrapped;
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ScrappedDto {
-
-    private Long postId;
+    
     private Long userId;
+    private Long postId;
     private String postName;
-    private String status; // 스크랩 상태
+    private String status;
 
     public static ScrappedDto from(Scrapped scrapped) {
         return ScrappedDto.builder()
                 .userId(scrapped.getUser().getId())
                 .postId(scrapped.getPost().getPostId())
                 .postName(scrapped.getPost().getTitle())
-                .status("Scrapped")
+                .status(scrapped.getStatus())
                 .build();
     }
 

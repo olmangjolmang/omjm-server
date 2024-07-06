@@ -25,5 +25,15 @@ public class Scrapped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+    
+    @Column(name = "status")
+    private String status;
 
+    public void changeToScrapped() {
+        this.status = "SCRAPPED";
+    }
+
+    public void changeToUnscrapped() {
+        this.status = "UNSCRAPPED";
+    }
 }
