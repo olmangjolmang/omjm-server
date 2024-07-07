@@ -39,20 +39,16 @@ public class PostApiController {
     @GetMapping
     public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category, @RequestParam(defaultValue = "1") int page) {
 
-        int size = 9; // 한 페이지에 보여질 객체 수
+        Page<PostResponse> postPage = postService.findAllByCategory(category, page);
 
-        Pageable pageable = PageRequest.of(page - 1, size);
-
-        Page<Post> postPage = postService.findAllByCategory(category, pageable);
-
-        List<PostResponse> postResponses = postPage.getContent().stream()
-                .map(PostResponse::from)
-                .collect(Collectors.toList());
+//        List<PostResponse> postResponses = postPage.getContent().stream()
+//                .map(PostResponse::from)
+//                .collect(Collectors.toList());
 
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(postResponses));
+                .body(ResponseTemplate.from(postPage));
     }
 
     //특정 아티클 조회
