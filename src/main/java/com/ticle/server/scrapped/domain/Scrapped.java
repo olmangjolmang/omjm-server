@@ -9,7 +9,7 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor()
 @AllArgsConstructor
 @Builder
 public class Scrapped {
@@ -19,11 +19,21 @@ public class Scrapped {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-     @ManyToOne(fetch = FetchType.LAZY)
-     @JoinColumn(name = "post_id",nullable = false)
-     private Post post;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+    
+    @Column(name = "status")
+    private String status;
 
+    public void changeToScrapped() {
+        this.status = "SCRAPPED";
+    }
+
+    public void changeToUnscrapped() {
+        this.status = "UNSCRAPPED";
+    }
 }

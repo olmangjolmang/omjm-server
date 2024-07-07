@@ -1,6 +1,6 @@
 package com.ticle.server.mypage.dto;
 
-import com.ticle.server.talk.domain.Talk;
+import com.ticle.server.opinion.domain.Opinion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,15 +11,15 @@ import lombok.Getter;
 public class MyQuestionDto {
     private Long questionId;
     private String question;
-    private Long view;
+    private Long viewCount;
     private Long commentCount;
 
-    public static MyQuestionDto toDto(Talk talk){
+    public static MyQuestionDto toDto(Opinion opinion){
         return MyQuestionDto.builder()
-                .questionId(talk.getTalkId())
-                .question(talk.getQuestion())
-                .view(talk.getViewCount())
-                .commentCount(talk.getCommentCount())
+                .questionId(opinion.getOpinionId())
+                .question(opinion.getQuestion())
+                .viewCount(opinion.getViewCount())
+                .commentCount(opinion.getCommentCount())
                 .build();
     }
 }
