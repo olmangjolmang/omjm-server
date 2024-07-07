@@ -13,10 +13,13 @@ import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 import java.util.List;
@@ -79,13 +82,19 @@ public class PostService {
         // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
         User user = userService.getLoginUserByEmail(userDetails.getUsername());
 
+        // 같은 내용의 targetText-content 세트가 있는지 확인
+        Memo existingMemo = memoRepository.findByUserAndTargetTextAndContent(user, targetText, content);
+
+        if (existingMemo != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 동일한 메모가 존재합니다.");
+        }
+
         Memo memo = new Memo();
         memo.setPost(postRepository.findByPostId(id));
         memo.setUser(user);
         memo.setTargetText(targetText);
         memo.setContent(content);
-
-
+        
         return memoRepository.save(memo);
     }
 }
