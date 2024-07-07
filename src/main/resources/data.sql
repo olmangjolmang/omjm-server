@@ -1,5 +1,6 @@
 -- User mockup data
 
+<<<<<<< HEAD
 INSERT INTO users (email, nick_name, password, category, agree_terms)
 VALUES ('user1@example.com', 'UserOne', 'password1', 'BACKEND', true),
        ('user2@example.com', 'UserTwo', 'password2', 'WEB_FRONT', true),
@@ -31,6 +32,40 @@ VALUES ('user1@example.com', 'UserOne', 'password1', 'BACKEND', true),
        ('user28@example.com', 'UserTwentyEight', 'password28', 'BACKEND', true),
        ('user29@example.com', 'UserTwentyNine', 'password29', 'WEB_FRONT', true),
        ('user30@example.com', 'UserThirty', 'password30', 'NETWORK', true);
+=======
+INSERT INTO users (agree_terms, email, nick_name, password, category)
+VALUES (TRUE, 'user1@example.com', 'UserOne', 'password1', 'BACKEND'),
+       (TRUE, 'user2@example.com', 'UserTwo', 'password2', 'WEB_FRONT'),
+       (TRUE, 'user3@example.com', 'UserThree', 'password3', 'NETWORK'),
+       (TRUE, 'user4@example.com', 'UserFour', 'password4', 'APP'),
+       (TRUE, 'user5@example.com', 'UserFive', 'password5', 'SECURITY'),
+       (TRUE, 'user6@example.com', 'UserSix', 'password6', 'AI'),
+       (TRUE, 'user7@example.com', 'UserSeven', 'password7', 'VISION'),
+       (TRUE, 'user8@example.com', 'UserEight', 'password8', 'INFRA'),
+       (TRUE, 'user9@example.com', 'UserNine', 'password9', 'ETC'),
+       (TRUE, 'user10@example.com', 'UserTen', 'password10', 'BACKEND'),
+       (TRUE, 'user11@example.com', 'UserEleven', 'password11', 'WEB_FRONT'),
+       (TRUE, 'user12@example.com', 'UserTwelve', 'password12', 'NETWORK'),
+       (TRUE, 'user13@example.com', 'UserThirteen', 'password13', 'APP'),
+       (TRUE, 'user14@example.com', 'UserFourteen', 'password14', 'SECURITY'),
+       (TRUE, 'user15@example.com', 'UserFifteen', 'password15', 'AI'),
+       (TRUE, 'user16@example.com', 'UserSixteen', 'password16', 'VISION'),
+       (TRUE, 'user17@example.com', 'UserSeventeen', 'password17', 'INFRA'),
+       (TRUE, 'user18@example.com', 'UserEighteen', 'password18', 'ETC'),
+       (TRUE, 'user19@example.com', 'UserNineteen', 'password19', 'BACKEND'),
+       (TRUE, 'user20@example.com', 'UserTwenty', 'password20', 'WEB_FRONT'),
+       (TRUE, 'user21@example.com', 'UserTwentyOne', 'password21', 'NETWORK'),
+       (TRUE, 'user22@example.com', 'UserTwentyTwo', 'password22', 'APP'),
+       (TRUE, 'user23@example.com', 'UserTwentyThree', 'password23', 'SECURITY'),
+       (TRUE, 'user24@example.com', 'UserTwentyFour', 'password24', 'AI'),
+       (TRUE, 'user25@example.com', 'UserTwentyFive', 'password25', 'VISION'),
+       (TRUE, 'user26@example.com', 'UserTwentySix', 'password26', 'INFRA'),
+       (TRUE, 'user27@example.com', 'UserTwentySeven', 'password27', 'ETC'),
+       (TRUE, 'user28@example.com', 'UserTwentyEight', 'password28', 'BACKEND'),
+       (TRUE, 'user29@example.com', 'UserTwentyNine', 'password29', 'WEB_FRONT'),
+       (TRUE, 'user30@example.com', 'UserThirty', 'password30', 'NETWORK');
+
+>>>>>>> a6ec0e64c5f2b3645cabf7461c6f49d16db708a2
 -- You can add more mock data as needed
 
 -- ----------------------------------------------------

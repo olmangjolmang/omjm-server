@@ -1,4 +1,4 @@
-package com.ticle.server.talk.exception;
+package com.ticle.server.opinion.exception;
 
 import com.ticle.server.global.exception.errorcode.ErrorCode;
 import lombok.Getter;

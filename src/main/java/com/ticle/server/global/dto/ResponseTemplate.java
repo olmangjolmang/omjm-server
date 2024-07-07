@@ -15,14 +15,14 @@ public record ResponseTemplate<T>(
             .isSuccess(true)
             .code("REQUEST_OK")
             .message("요청이 승인되었습니다.")
-            .results(Collections.EMPTY_MAP)
+            .results(Collections.emptyMap())
             .build();
 
     public static <T> ResponseTemplate<Object> from(T dto) {
         return ResponseTemplate.builder()
                 .isSuccess(true)
                 .code("REQUEST_OK")
-                .message("request succeeded")
+                .message("요청이 승인되었습니다.")
                 .results(dto)
                 .build();
     }

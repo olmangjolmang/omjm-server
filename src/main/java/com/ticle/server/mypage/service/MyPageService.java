@@ -10,12 +10,15 @@ import com.ticle.server.mypage.repository.ScrapRepository;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
+<<<<<<< HEAD
 import com.ticle.server.talk.domain.Talk;
 import com.ticle.server.talk.dto.response.TalkResponse;
 import com.ticle.server.talk.repository.CommentRepository;
+=======
+import com.ticle.server.opinion.domain.Opinion;
+>>>>>>> a6ec0e64c5f2b3645cabf7461c6f49d16db708a2
 import com.ticle.server.user.domain.type.Category;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,7 +40,7 @@ public class MyPageService {
         List<Scrapped> scraps = scrapRepository.findByUserId(userId);
 
         return scraps.stream()
-                .map(scrap -> postRepository.findByPostId(scrap.getPost().getPostId()))
+                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
                 .filter(post -> post != null)
                 .map(SavedTicleDto::toDto)
                 .collect(Collectors.toList());
@@ -53,8 +56,13 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
+<<<<<<< HEAD
     public List<TalkResponse> getMyQuestions(Long userId) {
         List<Talk> questions = questionRepository.findByUserId(userId);
+=======
+    public List<MyQuestionDto> getMyQuestions(Long userId) {
+        List<Opinion> questions = questionRepository.findByUserId(userId);
+>>>>>>> a6ec0e64c5f2b3645cabf7461c6f49d16db708a2
         return questions.stream()
                 .map(question -> TalkResponse.toDto(question,commentRepository.countByTalkId(question.getTalkId())))
                 .collect(toList());
@@ -69,7 +77,7 @@ public class MyPageService {
                 MyNoteDto dto = new MyNoteDto();
                 dto.setMemoId(memo.getMemoId());
                 dto.setContent(memo.getContent());
-                dto.setMemoDate(memo.getMemoDate());
+                dto.setMemoDate(memo.getCreatedDate());
                 dto.setPostId(post.getPostId());
                 dto.setPostTitle(post.getTitle());
                 myNotes.add(dto);
@@ -77,9 +85,6 @@ public class MyPageService {
         }
         return myNotes;
     }
-
-
-
 
 
 }

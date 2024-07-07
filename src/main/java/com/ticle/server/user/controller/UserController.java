@@ -30,11 +30,11 @@ public class UserController {
 
     @Operation(summary = "로그인", description = "로그인하기")
     @PostMapping("/sign-in")
-    public ResponseEntity<ResponseTemplate<Object>> signIn(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<ResponseTemplate<Object>> signIn(@RequestBody LoginRequest loginRequest) {
         String email = loginRequest.email();
         String password = loginRequest.password();
         log.info("request username = {}, password = {}", email, password);
-        JwtToken jwtToken = userService.signIn(email,password);
+        JwtToken jwtToken = userService.signIn(email, password);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -43,7 +43,7 @@ public class UserController {
 
     @Operation(summary = "회원가입", description = "회원가입하기")
     @PostMapping("sign-up")
-    public ResponseEntity<ResponseTemplate<Object>> signUp(@RequestBody JoinRequest joinRequest){
+    public ResponseEntity<ResponseTemplate<Object>> signUp(@RequestBody JoinRequest joinRequest) {
         UserDto savedUserDto = userService.signUp(joinRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
