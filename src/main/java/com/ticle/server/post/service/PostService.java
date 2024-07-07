@@ -2,6 +2,7 @@ package com.ticle.server.post.service;
 
 import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.mypage.repository.MemoRepository;
+import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.post.domain.Post;
@@ -12,17 +13,14 @@ import com.ticle.server.user.domain.User;
 import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -34,14 +32,22 @@ public class PostService {
     private final MemoRepository memoRepository;
 
     // 카테고리에 맞는 글 찾기
-    public Page<Post> findAllByCategory(String category, Pageable pageable) {
+    public Page<PostResponse> findAllByCategory(String category, int page) {
+
+        final int SIZE = 9; // 한 페이지에 보여질 객체 수
+
+        Pageable pageable = PageRequest.of(page - 1, SIZE);
+        Page<Post> postPage;
+
         if (category == null || category.isEmpty()) {
             // 모든 글 조회
-            return postRepository.findAll(pageable);
+            postPage = postRepository.findAll(pageable);
         } else {
             //카테고리에 맞는 글 조회
-            return postRepository.findByCategory(Category.valueOf(category), pageable);
+            postPage = postRepository.findByCategory(Category.valueOf(category), pageable);
         }
+        return postPage.map(PostResponse::from);
+
     }
 
     //postId로 조회한 특정 post 정보 리턴
@@ -94,7 +100,7 @@ public class PostService {
         memo.setUser(user);
         memo.setTargetText(targetText);
         memo.setContent(content);
-        
+
         return memoRepository.save(memo);
     }
 }
