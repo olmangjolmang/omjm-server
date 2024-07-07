@@ -2,7 +2,7 @@ package com.ticle.server.user.domain;
 
 import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.scrapped.domain.Scrapped;
-import com.ticle.server.talk.domain.Talk;
+import com.ticle.server.opinion.domain.Opinion;
 import com.ticle.server.user.domain.type.Category;
 import jakarta.persistence.*;
 
@@ -14,7 +14,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Table(name = "users")
@@ -37,7 +36,6 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-
     @Column(name = "nick_name")
     private String nickName;
 
@@ -49,12 +47,12 @@ public class User {
     private boolean agreeTerms;
 
     @OneToMany(mappedBy = "user")
-    private List<Talk> talks;
+    private List<Opinion> opinions;
 
     @OneToMany(mappedBy = "user")
     private List<Memo> memos;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Scrapped> scrappeds;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -66,5 +64,4 @@ public class User {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
-
 }
