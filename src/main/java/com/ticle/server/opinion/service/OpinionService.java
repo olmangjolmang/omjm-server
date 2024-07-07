@@ -102,7 +102,7 @@ public class OpinionService {
     }
 
     public OpinionResponseList getOpinionsByPage(int page) {
-        Pageable pageable = PageRequest.of(page, PAGE_SIZE, getOrder(TIME));
+        Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, getOrder(TIME));
 
         Page<Opinion> opinionPage = opinionRepository.findAll(pageable);
 

@@ -77,7 +77,7 @@ public class OpinionController {
     @Operation(summary = "물어봥 질문 리스트 조회", description = "물어봥 모든 질문과 함께 인기댓글 2개 조회 가능")
     @GetMapping()
     public ResponseEntity<ResponseTemplate<Object>> getOpinions(
-            @RequestParam(defaultValue = "0") int page) {
+            @RequestParam(defaultValue = "1") int page) {
 
         OpinionResponseList response = opinionService.getOpinionsByPage(page);
 
