@@ -32,6 +32,7 @@ VALUES (TRUE, 'user1@example.com', 'UserOne', 'password1', 'BACKEND'),
        (TRUE, 'user28@example.com', 'UserTwentyEight', 'password28', 'BACKEND'),
        (TRUE, 'user29@example.com', 'UserTwentyNine', 'password29', 'WEB_FRONT'),
        (TRUE, 'user30@example.com', 'UserThirty', 'password30', 'NETWORK');
+
 -- You can add more mock data as needed
 
 -- ----------------------------------------------------
