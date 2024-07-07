@@ -61,19 +61,8 @@ public class MyPageService {
 
     public List<MyNoteDto> getMyNotes(Long userId) {
         List<Memo> memos = memoRepository.findByUserId(userId);
-        List<MyNoteDto> myNotes = new ArrayList<>();
-        for (Memo memo : memos) {
-            Post post = postRepository.findById(memo.getMemoId()).orElse(null);
-            if (post != null) {
-                MyNoteDto dto = new MyNoteDto();
-                dto.setMemoId(memo.getMemoId());
-                dto.setContent(memo.getContent());
-                dto.setMemoDate(memo.getCreatedDate());
-                dto.setPostId(post.getPostId());
-                dto.setPostTitle(post.getTitle());
-                myNotes.add(dto);
-            }
-        }
-        return myNotes;
+        return memos.stream()
+                .map(MyNoteDto::toDto)
+                .collect(toList());
     }
 }

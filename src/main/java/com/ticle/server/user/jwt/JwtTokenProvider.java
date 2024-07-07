@@ -2,6 +2,7 @@ package com.ticle.server.user.jwt;
 
 
 import com.ticle.server.user.dto.JwtToken;
+import com.ticle.server.user.service.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
