@@ -17,4 +17,8 @@ public class HomeService {
     public Boolean validateEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public Boolean validateNickName(String nickName) {
+        return userRepository.existsBynickName(nickName);
+    }
 }
