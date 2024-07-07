@@ -22,7 +22,7 @@ import java.util.List;
 import static com.ticle.server.global.dto.ResponseTemplate.EMPTY_RESPONSE;
 
 @Slf4j
-@Tag(name = "Opinion", description = "티클문답 관련 API")
+@Tag(name = "Opinion", description = "티클 문답 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/opinion")
@@ -74,7 +74,7 @@ public class OpinionController {
                 .body(ResponseTemplate.from(responses));
     }
 
-    @Operation(summary = "물어봥 질문 리스트 조회", description = "물어봥 모든 질문과 함께 인기댓글 2개 조회 가능")
+    @Operation(summary = "티클 문답 질문 리스트 조회", description = "티클 문답 모든 질문과 함께 인기댓글 2개 조회 가능")
     @GetMapping()
     public ResponseEntity<ResponseTemplate<Object>> getOpinions(
             @RequestParam(defaultValue = "1") int page) {
