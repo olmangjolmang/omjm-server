@@ -3,7 +3,6 @@ package com.ticle.server.mypage.controller;
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.mypage.dto.MyQuestionDto;
 import com.ticle.server.mypage.service.MyPageService;
-import com.ticle.server.talk.dto.response.TalkResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +23,12 @@ public class MyQuestionController {
     @Operation(summary = "마이물어봥",description = "userId를 RequestParam에 넣어서 물어봥 질문들을 가져옴")
     @GetMapping("/my-question")
     public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@RequestParam("userid") Long userId){
-        List<TalkResponse> talkResponseList;
-        talkResponseList = myPageService.getMyQuestions(userId);
+        List<MyQuestionDto> myQuestionDtos;
+        myQuestionDtos = myPageService.getMyQuestions(userId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(talkResponseList));
+                .body(ResponseTemplate.from(myQuestionDtos));
 
     }
 
