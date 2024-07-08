@@ -1,6 +1,8 @@
 package com.ticle.server.user.service;
 
+import com.ticle.server.post.domain.Post;
 import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +10,12 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
 @Service
 public class EmailService {
+
     @Autowired
     JavaMailSender emailSender;
 
@@ -70,5 +74,37 @@ public class EmailService {
             throw new IllegalArgumentException();
         }
         return authNum;
+    }
+
+    public void sendEmail(String email, Post latestPost) throws MessagingException, UnsupportedEncodingException {
+        MimeMessage message = emailSender.createMimeMessage();
+
+        message.addRecipients(Message.RecipientType.TO, email);
+        message.setSubject("[ticle] 구독 서비스 아티클 알림");
+
+        String content = getContent(latestPost);
+
+        message.setText(content, "UTF-8", "html");
+        message.setFrom(new InternetAddress("eunjae8924@gmail.com", "ticle"));
+
+        emailSender.send(message);
+    }
+
+    private static String getContent(Post latestPost) {
+        String content = "<div style='margin:100px;'>"
+                + "<h1>새로운 아티클을 만나보세요!</h1>"
+                + "<br>"
+                + "<p>Title: " + latestPost.getTitle() + "</p>"
+                + "<p>Content: " + latestPost.getContent() + "</p>"
+                + "<p>Author: " + latestPost.getAuthor() + "</p>";
+
+        if (latestPost.getImage() != null) {
+            content += "<p>Image: <img src='" + latestPost.getImage().getImageUrl() + "' width='300'></p>";
+        }
+
+        content += "<br>"
+                + "<p>다양하고 재미있는 글과 인사이트를 얻고 싶다면 티클을 다시 방문해주세요!</p>"
+                + "</div>";
+        return content;
     }
 }
