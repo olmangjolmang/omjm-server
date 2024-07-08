@@ -2,6 +2,9 @@ package com.ticle.server.post.service;
 
 import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.mypage.repository.MemoRepository;
+import com.ticle.server.post.dto.GeminiRequest;
+import com.ticle.server.post.dto.GeminiResponse;
+import com.ticle.server.post.dto.GeminiRestTemplateConfig;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
@@ -12,18 +15,24 @@ import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+
 public class PostService {
 
     private final PostRepository postRepository;
@@ -50,8 +59,31 @@ public class PostService {
 
     }
 
+
+    @Qualifier("geminiRestTemplate")
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${gemini.api.url}")
+    private String apiUrl;
+
+    @Value("${gemini.api.key}")
+    private String geminiApiKey;
+
     //postId로 조회한 특정 post 정보 리턴
     public Post findById(long id) {
+
+
+        // Gemini에 요청 전송
+        String requestUrl = apiUrl + "?key=" + geminiApiKey;
+        String prompt = "안녕 너는 누구야?";
+
+        GeminiRequest request = new GeminiRequest(prompt);
+        GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
+
+        String message = response.getCandidates().get(0).getContent().getParts().get(0).getText().toString();
+        System.out.println("here message");
+        System.out.println(message);
         return postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("not found: " + id));
     }
 
