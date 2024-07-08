@@ -5,11 +5,14 @@ import com.ticle.server.global.domain.S3Info;
 import com.ticle.server.user.domain.type.Category;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class PostResponse {
 
     private Long postId;
@@ -19,7 +22,7 @@ public class PostResponse {
     private LocalDateTime createdDate;
     private Category postCategory;
     private S3Info image;
-    private Long userId;
+    private List recommendPost;
 
     public static PostResponse from(Post post) {
         return new PostResponse(
@@ -30,7 +33,7 @@ public class PostResponse {
                 post.getCreatedDate(),
                 post.getCategory(),
                 post.getImage(),
-                post.getUser() != null ? post.getUser().getId() : null
+                post.getRecommendPost()
         );
     }
 }
