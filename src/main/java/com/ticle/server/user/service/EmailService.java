@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 @Service
@@ -76,35 +77,48 @@ public class EmailService {
         return authNum;
     }
 
-    public void sendEmail(String email, Post latestPost) throws MessagingException, UnsupportedEncodingException {
-        MimeMessage message = emailSender.createMimeMessage();
+    public void sendEmail(String email, Post latestPost) {
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
 
-        message.addRecipients(Message.RecipientType.TO, email);
-        message.setSubject("[ticle] 구독 서비스 아티클 알림");
+            message.addRecipients(Message.RecipientType.TO, email);
+            message.setSubject("[ticle] 구독 서비스 아티클 알림");
 
-        String content = getContent(latestPost);
+            String content = getContent(latestPost);
 
-        message.setText(content, "UTF-8", "html");
-        message.setFrom(new InternetAddress("eunjae8924@gmail.com", "ticle"));
+            message.setText(content, "UTF-8", "html");
+            message.setFrom(new InternetAddress("eunjae8924@gmail.com", "ticle"));
 
-        emailSender.send(message);
+            emailSender.send(message);
+        } catch (MessagingException | UnsupportedEncodingException s) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private static String getContent(Post latestPost) {
-        String content = "<div style='margin:100px;'>"
-                + "<h1>새로운 아티클을 만나보세요!</h1>"
+        String content = "<div style='margin:20px; background-color: lightblue;'>"
                 + "<br>"
-                + "<p>Title: " + latestPost.getTitle() + "</p>"
-                + "<p>Content: " + latestPost.getContent() + "</p>"
-                + "<p>Author: " + latestPost.getAuthor() + "</p>";
+                + "<h1 style='color: white; text-align: center;'>새로운 아티클을 만나보세요!</h1>"
+                + "<br>"
+                + "<div align='center' style='font-family:verdana; color:black'>"
+                + "<h2 style='text-align: center;'>" + latestPost.getTitle() + "</h2>"
+                + "<p style='font-size: 15px; text-align: center;'>" + latestPost.getAuthor() + " | "
+                + latestPost.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "</p>"
+                + "<br>"
+                + "<p style='font-size: 15px; text-align: center;'>" + latestPost.getContent() + "</p>";
 
         if (latestPost.getImage() != null) {
-            content += "<p>Image: <img src='" + latestPost.getImage().getImageUrl() + "' width='300'></p>";
+            content += "<br>"
+                    + "<p style='font-size: 15px; text-align: center;'> <img src='" + latestPost.getImage().getImageUrl() + "' width='300'></p>";
         }
 
-        content += "<br>"
-                + "<p>다양하고 재미있는 글과 인사이트를 얻고 싶다면 티클을 다시 방문해주세요!</p>"
+        content += "<br>" + "<br>"
+                + "<p style='font-size: 17px; text-align: center;'>"
+                + "다양하고 재미있는 글과 인사이트를 얻고 싶다면 " +  "<span style='font-weight: bold;'>" + "티클" + "</span>"
+                + "을 다시 방문해주세요!" + "</p>"
+                + "<br>"
                 + "</div>";
+
         return content;
     }
 }
