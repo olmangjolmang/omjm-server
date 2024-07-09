@@ -29,7 +29,7 @@ public class SchedulingService {
     private final EmailService emailService;
 
     @Scheduled(cron = "0 0 0 * * *")
-    public void sendWeeklyPosts() throws Exception {
+    public void sendWeeklyPosts() {
         LocalDate today = LocalDate.now();
         List<Subscription> subscriptions = subscriptionRepository.findBySubsDay(Day.valueOf(today.getDayOfWeek().toString()));
 
