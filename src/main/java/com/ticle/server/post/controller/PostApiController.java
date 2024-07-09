@@ -41,11 +41,6 @@ public class PostApiController {
 
         Page<PostResponse> postPage = postService.findAllByCategory(category, page);
 
-//        List<PostResponse> postResponses = postPage.getContent().stream()
-//                .map(PostResponse::from)
-//                .collect(Collectors.toList());
-
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResponseTemplate.from(postPage));
@@ -59,7 +54,8 @@ public class PostApiController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(post));
+                .body(ResponseTemplate.from(PostResponse.from((Post) post)));
+
     }
 
     @Operation(summary = "아티클 스크랩", description = "새로운 아티클 스크랩, 스크랩 취소")
@@ -94,4 +90,6 @@ public class PostApiController {
                     .body(ResponseTemplate.from(MemoDto.from((Memo) memo)));
         }
     }
+
+
 }
