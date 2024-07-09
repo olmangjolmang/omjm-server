@@ -34,7 +34,7 @@ public class SchedulingService {
         List<Subscription> subscriptions = subscriptionRepository.findBySubsDay(Day.valueOf(today.getDayOfWeek().toString()));
 
         for (Subscription subscription : subscriptions) {
-            Post latestPost = postRepository.findLatestPostByUserCategory(subscription.getUser().getCategory())
+            Post latestPost = postRepository.findLatestPostByCategory(subscription.getUser().getCategory())
                     .orElseThrow(() -> new PostNotFoundException(POST_NOT_FOUND));
 
             emailService.sendEmail(subscription.getEmail(), latestPost);
