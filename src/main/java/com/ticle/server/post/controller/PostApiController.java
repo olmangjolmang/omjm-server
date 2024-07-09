@@ -6,10 +6,10 @@ import com.ticle.server.memo.dto.MemoDto;
 import com.ticle.server.memo.dto.MemoRequest;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.dto.PostResponse;
+import com.ticle.server.post.dto.QuizResponse;
 import com.ticle.server.post.service.PostService;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.dto.ScrappedDto;
-import com.ticle.server.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +20,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @Tag(name = "Post", description = "아티클 관련 API")
 @RequiredArgsConstructor
@@ -92,4 +89,13 @@ public class PostApiController {
     }
 
 
+    @GetMapping("/quiz/{id}")
+    public ResponseEntity<ResponseTemplate<Object>> quiz(@PathVariable long id) {
+        List<QuizResponse> quizResponses = postService.createQuiz(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.from(quizResponses));
+    }
 }
+

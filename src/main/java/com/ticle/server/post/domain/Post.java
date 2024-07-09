@@ -53,4 +53,5 @@ public class Post extends BaseTimeEntity {
     @Column(name = "recommend_post")
     private List recommendPost;
 
+
 }
