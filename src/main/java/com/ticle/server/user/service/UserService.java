@@ -57,7 +57,6 @@ public class UserService{
         String encodedPassword = passwordEncoder.encode(joinRequest.getPassword());
         List<String> roles = new ArrayList<>();
         roles.add("USER");
-        System.out.println("test" + joinRequest);
         return UserDto.toDto(userRepository.save(joinRequest.toEntity(encodedPassword,roles)));
     }
 
