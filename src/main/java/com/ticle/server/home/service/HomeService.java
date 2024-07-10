@@ -2,6 +2,8 @@ package com.ticle.server.home.service;
 
 import com.ticle.server.home.domain.Subscription;
 import com.ticle.server.home.dto.request.SubscriptionRequest;
+import com.ticle.server.home.dto.request.ValidEmailRequest;
+import com.ticle.server.home.dto.request.ValidateNickNameRequest;
 import com.ticle.server.home.repository.SubscriptionRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.repository.UserRepository;
@@ -20,12 +22,12 @@ public class HomeService {
     private final UserRepository userRepository;
     private final SubscriptionRepository subscriptionRepository;
 
-    public Boolean validateEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public Boolean validateEmail(ValidEmailRequest request) {
+        return userRepository.existsByEmail(request.email());
     }
 
-    public Boolean validateNickName(String nickName) {
-        return userRepository.existsBynickName(nickName);
+    public Boolean validateNickName(ValidateNickNameRequest request) {
+        return userRepository.existsByNickName(request.nickName());
     }
 
     @Transactional

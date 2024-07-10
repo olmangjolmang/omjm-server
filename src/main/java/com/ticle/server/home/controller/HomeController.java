@@ -2,6 +2,8 @@ package com.ticle.server.home.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.home.dto.request.SubscriptionRequest;
+import com.ticle.server.home.dto.request.ValidEmailRequest;
+import com.ticle.server.home.dto.request.ValidateNickNameRequest;
 import com.ticle.server.home.service.HomeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,11 +27,11 @@ public class HomeController {
 
     @Operation(summary = "이메일 검증", description = "이메일 유효성 검증 <br>" +
             "가입되어 있는 이메일이라면 true, 가입되지 않은 이메일이라면 false를 반환합니다.")
-    @GetMapping("/email/{email}")
+    @PostMapping("/validate/email")
     public ResponseEntity<ResponseTemplate<Object>> validateEmail(
-            @PathVariable String email) {
+            @RequestBody ValidEmailRequest request) {
 
-        Boolean response = homeService.validateEmail(email);
+        Boolean response = homeService.validateEmail(request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -38,11 +40,11 @@ public class HomeController {
 
     @Operation(summary = "닉네임 검증", description = "닉네임 유효성 검증 <br> " +
             "가입되어 있는 닉네임이라면 true, 가입되지 않은 닉네임이라면 false를 반환합니다.")
-    @GetMapping("/nickname/{nickname}")
+    @PostMapping("/validate/nickname")
     public ResponseEntity<ResponseTemplate<Object>> validateNickname(
-            @PathVariable String nickname) {
+            @RequestBody ValidateNickNameRequest request) {
 
-        Boolean response = homeService.validateNickName(nickname);
+        Boolean response = homeService.validateNickName(request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
