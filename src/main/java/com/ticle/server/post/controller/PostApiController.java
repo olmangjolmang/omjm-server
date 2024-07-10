@@ -88,7 +88,7 @@ public class PostApiController {
         }
     }
 
-
+    @Operation(summary = "퀴즈", description = "퀴즈 생성")
     @GetMapping("/quiz/{id}")
     public ResponseEntity<ResponseTemplate<Object>> quiz(@PathVariable long id) {
         List<QuizResponse> quizResponses = postService.createQuiz(id);
