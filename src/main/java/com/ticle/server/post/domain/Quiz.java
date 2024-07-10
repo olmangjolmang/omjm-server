@@ -15,7 +15,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Data
 public class Quiz {
-    private Long postId;
+    private String postTitle;
 
     private String quizTitle;
     private Long quizNo;

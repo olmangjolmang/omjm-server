@@ -17,7 +17,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class QuizResponse {
 
-    private Long postId;
+    private String postTitle;
     private Long quizNo;
     private String quizTitle;
     private Map<String, String> multipleChoice;
@@ -25,7 +25,7 @@ public class QuizResponse {
 
     public static QuizResponse from(Quiz quiz) {
         return new QuizResponse(
-                quiz.getPostId(),
+                quiz.getPostTitle(),
                 quiz.getQuizNo(),
                 quiz.getQuizTitle(),
                 quiz.getMultipleChoice(),

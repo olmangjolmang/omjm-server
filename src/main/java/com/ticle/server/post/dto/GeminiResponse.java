@@ -1,5 +1,6 @@
 package com.ticle.server.post.dto;
 
+import com.ticle.server.post.repository.PostRepository;
 import lombok.*;
 
 import java.util.*;
@@ -12,6 +13,7 @@ public class GeminiResponse {
 
     private List<Candidate> candidates;
     private PromptFeedback promptFeedback;
+    private PostRepository postRepository;
 
     @Data
     public static class Candidate {
@@ -80,9 +82,8 @@ public class GeminiResponse {
 
 
     // quiz 생성 데이터 format
-    public List<QuizResponse> formatQuiz(Long postId) {
+    public List<QuizResponse> formatQuiz(String postTitle) {
         List<QuizResponse> quizzes = new ArrayList<>();
-
         if (candidates != null) {
             System.out.println("Candidates found: " + candidates.size());
             int quizNo = 1;
@@ -99,36 +100,28 @@ public class GeminiResponse {
                     String[] questions = sb.toString().split("\n\n");
 
                     for (String question : questions) {
-                        // Extract question number
                         String[] lines = question.split("\n");
                         if (lines.length < 5) {
-                            continue; // Skip if the format is incorrect
+                            continue;
                         }
 
-                        String questionNumber = lines[0].split(": ")[1].trim();
-                        String questionContent = lines[1].split(": ")[1].trim();
+                        String questionNumber = lines[0].split(": ")[1].trim(); //문제 번호
+                        String questionContent = lines[1].split(": ")[1].trim(); // 문제
 
-                        // Extract choices
                         Map<String, String> multipleChoice = new LinkedHashMap<>();
                         for (int i = 2; i < lines.length - 1; i++) {
-                            String[] choiceParts = lines[i].split(" ");
+                            String[] choiceParts = lines[i].split(": "); //보기의 알파벳과 문자 나눔
                             multipleChoice.put(choiceParts[0], String.join(" ", Arrays.copyOfRange(choiceParts, 1, choiceParts.length)));
                         }
 
-                        // Extract answer
                         String answer = lines[lines.length - 1].split(": ")[1].trim();
 
-                        // Create QuizResponse object and add to list
-                        QuizResponse quizResponse = new QuizResponse(postId, (long) quizNo++, questionContent, multipleChoice, answer);
-                        System.out.println("Quiz response: " + quizResponse);
+                        QuizResponse quizResponse = new QuizResponse(postTitle, (long) quizNo++, questionContent, multipleChoice, answer);
                         quizzes.add(quizResponse);
                     }
                 }
             }
-        } else {
-            System.out.println("No candidates found.");
         }
-
         System.out.println("Formatted quizzes: " + quizzes);
         return quizzes;
     }
