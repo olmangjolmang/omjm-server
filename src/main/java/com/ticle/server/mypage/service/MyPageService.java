@@ -4,22 +4,19 @@ import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.mypage.dto.MyNoteDto;
 import com.ticle.server.mypage.dto.MyQuestionDto;
 import com.ticle.server.mypage.dto.SavedTicleDto;
-import com.ticle.server.mypage.repository.MemoRepository;
+import com.ticle.server.mypage.repository.NoteRepository;
 import com.ticle.server.mypage.repository.QuestionRepository;
 import com.ticle.server.mypage.repository.ScrapRepository;
 import com.ticle.server.opinion.repository.CommentRepository;
-import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.opinion.domain.Opinion;
 import com.ticle.server.user.domain.type.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 public class MyPageService {
     private final ScrapRepository scrapRepository;
     private final QuestionRepository questionRepository;
-    private final MemoRepository memoRepository;
+    private final NoteRepository noteRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final int SIZE = 9;
@@ -66,7 +63,7 @@ public class MyPageService {
     }
 
     public List<MyNoteDto> getMyNotes(Long userId) {
-        List<Memo> memos = memoRepository.findByUserId(userId);
+        List<Memo> memos = noteRepository.findByUserId(userId);
         return memos.stream()
                 .map(MyNoteDto::toDto)
                 .collect(toList());
