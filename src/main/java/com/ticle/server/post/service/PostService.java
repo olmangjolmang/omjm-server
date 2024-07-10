@@ -152,7 +152,7 @@ public class PostService {
         Optional<Post> optionalPost = postRepository.findById(id);
         Post post = optionalPost.orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + id));
         String postTitle = post.getTitle();
-//        String content = post.getContent();
+//        String content = post.getContent(); // 크롤링 완료시에 해당 코드로 진행.
         // 임시 content
         String content = "1. 클라이언트와 서버\n" +
                 "A. 개념\n" +
@@ -265,20 +265,17 @@ public class PostService {
                 "D: 보기내용\n" +
                 "정답: \n" +
                 "위의 형식을 꼭 지켜서 순서대로 출력해줘, (문제번호:, 문제:, A:,B:,C:,D:,정답: 텍스트가 무조건 포함되어야해." +
-                "'다음 코드에서' 이런 예제도 필요없어." +
+                "코드를 참고하는 예제 절대 주지마." +
                 "다음은 기사의 내용이야." + content;
 
 
-        System.out.println(prompt);
-
+//        System.out.println(prompt);
         GeminiRequest request = new GeminiRequest(prompt);
-
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
         System.out.println("response = " + response);
         List<QuizResponse> quizSet = response.formatQuiz(postTitle); // 리턴 형식 지정하는 함수
-        System.out.println("quizSet = " + quizSet);
+//        System.out.println("quizSet = " + quizSet);
         return quizSet;
-
 
 //        return (List<QuizResponse>) quizSet;
     }

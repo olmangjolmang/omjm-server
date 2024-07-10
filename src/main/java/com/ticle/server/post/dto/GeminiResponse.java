@@ -116,7 +116,7 @@ public class GeminiResponse {
 
                         String answer = lines[lines.length - 1].split(": ")[1].trim();
 
-                        QuizResponse quizResponse = new QuizResponse(postTitle, (long) quizNo++, questionContent, multipleChoice, answer);
+                        QuizResponse quizResponse = new QuizResponse((long) quizNo++, postTitle, questionContent, multipleChoice, answer);
                         quizzes.add(quizResponse);
                     }
                 }

@@ -17,16 +17,16 @@ import java.util.Map;
 @NoArgsConstructor
 public class QuizResponse {
 
-    private String postTitle;
     private Long quizNo;
+    private String postTitle;
     private String quizTitle;
     private Map<String, String> multipleChoice;
     private String answer; //A,B,C,D 중 하나
 
     public static QuizResponse from(Quiz quiz) {
         return new QuizResponse(
-                quiz.getPostTitle(),
                 quiz.getQuizNo(),
+                quiz.getPostTitle(),
                 quiz.getQuizTitle(),
                 quiz.getMultipleChoice(),
                 quiz.getAnswer());
