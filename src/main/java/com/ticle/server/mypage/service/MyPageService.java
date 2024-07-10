@@ -14,6 +14,9 @@ import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.opinion.domain.Opinion;
 import com.ticle.server.user.domain.type.Category;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,9 +33,11 @@ public class MyPageService {
     private final MemoRepository memoRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final int SIZE = 9;
 
-    public List<SavedTicleDto> getSavedArticles(Long userId) {
-        List<Scrapped> scraps = scrapRepository.findByUserId(userId);
+    public List<SavedTicleDto> getSavedArticles(Long userId,int page) {
+        Pageable pageable = PageRequest.of(page,SIZE);
+        Page<Scrapped> scraps = scrapRepository.findByUserId(userId,pageable);
 
         return scraps.stream()
                 .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
@@ -41,8 +46,9 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
-    public List<SavedTicleDto> getSavedArticlesByCategory(Long userId, Category category) {
-        List<Scrapped> scraps = scrapRepository.findByUserIdAndPostCategory(userId, category);
+    public List<SavedTicleDto> getSavedArticlesByCategory(Long userId, Category category,int page) {
+        Pageable pageable = PageRequest.of(page,SIZE);
+        Page<Scrapped> scraps = scrapRepository.findByUserIdAndPostCategory(userId, category,pageable);
 
         return scraps.stream()
                 .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))

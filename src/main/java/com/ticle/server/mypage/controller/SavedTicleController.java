@@ -28,12 +28,12 @@ public class SavedTicleController {
 
     @Operation(summary = "저장한 아티클",description = "userId와 category를 RequestParam에 넣어서 아티클을 가져옴")
     @GetMapping("/saved-ticles")
-    public ResponseEntity<ResponseTemplate<Object>> getSavedTicles(@RequestParam("userid") Long userId, @RequestParam(value = "category",required = false) Category category){
+    public ResponseEntity<ResponseTemplate<Object>> getSavedTicles(@RequestParam("userid") Long userId, @RequestParam(value = "category",required = false) Category category,@RequestParam(value="page", defaultValue="0") int page){
         List<SavedTicleDto> savedTicleDtos;
         if(category != null){
-            savedTicleDtos = myPageService.getSavedArticlesByCategory(userId,category);
+            savedTicleDtos = myPageService.getSavedArticlesByCategory(userId,category,page);
         }else{
-            savedTicleDtos = myPageService.getSavedArticles(userId);
+            savedTicleDtos = myPageService.getSavedArticles(userId,page);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
