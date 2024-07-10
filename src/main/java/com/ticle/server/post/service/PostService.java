@@ -2,7 +2,7 @@ package com.ticle.server.post.service;
 
 import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.mypage.repository.MemoRepository;
-import com.ticle.server.post.dto.PostResponse;
+import com.ticle.server.post.dto.*;
 import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.post.domain.Post;
@@ -12,18 +12,25 @@ import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+
 public class PostService {
 
     private final PostRepository postRepository;
@@ -50,9 +57,44 @@ public class PostService {
 
     }
 
+
+    @Qualifier("geminiRestTemplate")
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${gemini.api.url}")
+    private String apiUrl;
+
+    @Value("${gemini.api.key}")
+    private String geminiApiKey;
+
     //postId로 조회한 특정 post 정보 리턴
     public Post findById(long id) {
-        return postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+
+        Optional<Post> optionalPost = postRepository.findById(id);
+        Post post = optionalPost.orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + id));
+
+        String now_post_title = post.getTitle();
+        List<PostIdTitleDto> alltitle = postRepository.findAllPostSummaries();
+
+        // Gemini에 요청 전송
+        String requestUrl = apiUrl + "?key=" + geminiApiKey;
+        String prompt = "현재 기사의 제목은 " + now_post_title + " 이야. " +
+                "다음은 기사의 리스트야. 리스트 안의 title과 비교해서 " +
+                "현재의 기사 제목과 가장 연관 된 기사 3개의 id, title을 각각의 리스트로 추출해줘." +
+                "단, 현재 기사는 제외한다." +
+                "예: postId=[1,2,3], postTitle=[title1, title2, title3] "
+                + alltitle;
+
+        System.out.println(prompt);
+
+        GeminiRequest request = new GeminiRequest(prompt);
+        GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
+
+        List recommendPost = response.formatRecommendPost(); // 리턴 형식 지정하는 함수
+        post.setRecommendPost(recommendPost);
+
+        return post;
     }
 
 
