@@ -35,8 +35,8 @@ public class MyPageService {
     private final CommentRepository commentRepository;
     private final int SIZE = 9;
 
-    public List<SavedTicleDto> getSavedArticles(Long userId,int page) {
-        Pageable pageable = PageRequest.of(page,SIZE);
+    public List<SavedTicleDto> getSavedArticles(Long userId,Pageable pageable) {
+//        Pageable pageable = PageRequest.of(page-1,SIZE);
         Page<Scrapped> scraps = scrapRepository.findByUserId(userId,pageable);
 
         return scraps.stream()
@@ -46,8 +46,8 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
-    public List<SavedTicleDto> getSavedArticlesByCategory(Long userId, Category category,int page) {
-        Pageable pageable = PageRequest.of(page,SIZE);
+    public List<SavedTicleDto> getSavedArticlesByCategory(Long userId, Category category,Pageable pageable) {
+//        Pageable pageable = PageRequest.of(page-1,SIZE);
         Page<Scrapped> scraps = scrapRepository.findByUserIdAndPostCategory(userId, category,pageable);
 
         return scraps.stream()

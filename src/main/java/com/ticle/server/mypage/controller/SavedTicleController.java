@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.Response;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,12 +31,12 @@ public class SavedTicleController {
 
     @Operation(summary = "저장한 아티클",description = "userId와 category를 RequestParam에 넣어서 아티클을 가져옴")
     @GetMapping("/saved-ticles")
-    public ResponseEntity<ResponseTemplate<Object>> getSavedTicles(@RequestParam("userid") Long userId, @RequestParam(value = "category",required = false) Category category,@RequestParam(value="page", defaultValue="0") int page){
+    public ResponseEntity<ResponseTemplate<Object>> getSavedTicles(@RequestParam("userid") Long userId, @RequestParam(value = "category",required = false) Category category, @PageableDefault(page=0,size=9,sort="id",direction = Sort.Direction.DESC)Pageable pageable){
         List<SavedTicleDto> savedTicleDtos;
         if(category != null){
-            savedTicleDtos = myPageService.getSavedArticlesByCategory(userId,category,page);
+            savedTicleDtos = myPageService.getSavedArticlesByCategory(userId,category,pageable);
         }else{
-            savedTicleDtos = myPageService.getSavedArticles(userId,page);
+            savedTicleDtos = myPageService.getSavedArticles(userId,pageable);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
