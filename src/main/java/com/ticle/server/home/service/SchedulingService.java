@@ -31,7 +31,7 @@ public class SchedulingService {
     @Scheduled(cron = "0 0 0 * * *")
     public void sendWeeklyPosts() {
         LocalDate today = LocalDate.now();
-        List<Subscription> subscriptions = subscriptionRepository.findBySubsDay(Day.valueOf(today.getDayOfWeek().toString()));
+        List<Subscription> subscriptions = subscriptionRepository.findAllBySubsDay(Day.valueOf(today.getDayOfWeek().toString()));
 
         for (Subscription subscription : subscriptions) {
             Post latestPost = postRepository.findLatestPostByCategory(subscription.getUser().getCategory())

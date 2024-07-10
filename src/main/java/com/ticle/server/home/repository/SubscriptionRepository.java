@@ -12,5 +12,5 @@ import java.util.List;
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
     @EntityGraph(attributePaths = {"user"})
-    List<Subscription> findBySubsDay(Day dayOfWeek);
+    List<Subscription> findAllBySubsDay(Day dayOfWeek);
 }
