@@ -24,21 +24,22 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+
     @Override
     public UserDetails loadUserByUsername(String email)throws UsernameNotFoundException{
 //        log.info("email------> "+ email);
+
         return userRepository.findByEmail(email)
                 .map(this::createUserDetails)
                 .orElseThrow(()->new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다"));
     }
 
-    private UserDetails createUserDetails(com.ticle.server.user.domain.User user) {
+    private CustomUserDetails createUserDetails(com.ticle.server.user.domain.User user) {
         Collection<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(toList());
 
-        return new User(user.getEmail(), user.getPassword(), authorities);
+        return new CustomUserDetails(user.getId(), user.getPassword(), authorities);
     }
 }
 

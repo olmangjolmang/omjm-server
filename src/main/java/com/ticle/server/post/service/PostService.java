@@ -99,6 +99,7 @@ public class PostService {
 
 
     public Object scrappedById(long id, UserDetails userDetails) {
+
         // 게시물 조회
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
