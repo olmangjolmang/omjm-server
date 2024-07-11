@@ -7,6 +7,7 @@ import com.ticle.server.mypage.dto.SavedTicleDto;
 import com.ticle.server.mypage.repository.MemoRepository;
 import com.ticle.server.mypage.repository.QuestionRepository;
 import com.ticle.server.mypage.repository.ScrapRepository;
+import com.ticle.server.opinion.repository.CommentRepository;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
@@ -28,6 +29,7 @@ public class MyPageService {
     private final QuestionRepository questionRepository;
     private final MemoRepository memoRepository;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     public List<SavedTicleDto> getSavedArticles(Long userId) {
         List<Scrapped> scraps = scrapRepository.findByUserId(userId);
@@ -49,6 +51,7 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
+
     public List<MyQuestionDto> getMyQuestions(Long userId) {
         List<Opinion> questions = questionRepository.findByUserId(userId);
         return questions.stream()
@@ -58,21 +61,9 @@ public class MyPageService {
 
     public List<MyNoteDto> getMyNotes(Long userId) {
         List<Memo> memos = memoRepository.findByUserId(userId);
-        List<MyNoteDto> myNotes = new ArrayList<>();
-        for (Memo memo : memos) {
-            Post post = postRepository.findById(memo.getMemoId()).orElse(null);
-            if (post != null) {
-                MyNoteDto dto = new MyNoteDto();
-                dto.setMemoId(memo.getMemoId());
-                dto.setContent(memo.getContent());
-                dto.setMemoDate(memo.getCreatedDate());
-                dto.setPostId(post.getPostId());
-                dto.setPostTitle(post.getTitle());
-                myNotes.add(dto);
-            }
-        }
-        return myNotes;
+        return memos.stream()
+                .map(MyNoteDto::toDto)
+                .collect(toList());
     }
-
 
 }

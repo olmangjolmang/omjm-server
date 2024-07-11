@@ -1,4 +1,5 @@
 -- User mockup data
+ALTER TABLE opinion MODIFY comment_count BIGINT NOT NULL DEFAULT 0;
 
 INSERT INTO users (agree_terms, email, nick_name, password, category)
 VALUES (TRUE, 'user1@example.com', 'UserOne', 'password1', 'BACKEND'),
@@ -101,10 +102,10 @@ VALUES ('새로운 기법을 활용한 백엔드 성능 최적화 가이드', '�
        ('네트워크 보안의 최신 기술과 접근 방법', '네트워크 보안에 대한 최신 기술과 접근 방법을 알아보세요.', '김동욱', '2024-05-29 12:00:00', 'NETWORK',
         'image30.png', 'folder30', 'https://example.com/image30.png', 2);
 
-insert into scrapped (post_id, user_id)
-values (1, 1),
-       (2, 1),
-       (3, 1),
-       (4, 1),
-       (1, 2),
-       (6, 2);
+insert into scrapped (post_id,user_id)
+values (1,1),
+       (2,1),
+       (3,1),
+       (4,1),
+       (1,2),
+       (6,2);

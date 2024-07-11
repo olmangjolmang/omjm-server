@@ -42,6 +42,10 @@ public class UserService{
 
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
+        log.info("hello"+authentication.getDetails());
+        log.info("hello22"+authentication.getName());
+
+
         return jwtToken;
     }
 
