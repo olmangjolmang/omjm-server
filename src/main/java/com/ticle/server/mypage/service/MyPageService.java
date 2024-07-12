@@ -62,12 +62,30 @@ public class MyPageService {
     }
 
     @Transactional
-    public void updateComment(Long userId, Long opinionId, String newContent) {
-        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, opinionId);
+    public Comment updateComment(Long userId, Long questionId, String newContent) {
+        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, questionId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
 
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new RuntimeException("You do not have permission to edit this comment");
+        }
 
-
+        comment.updateContent(newContent);
+        return commentRepository.save(comment);
     }
+
+    @Transactional
+    public void deleteComment(Long userId, Long questionId) {
+        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, questionId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new RuntimeException("You do not have permission to delete this comment");
+        }
+
+        commentRepository.delete(comment);
+    }
+
 
     public List<MyNoteDto> getMyNotes(Long userId) {
         List<Memo> memos = memoRepository.findByUserId(userId);
