@@ -7,6 +7,7 @@ import com.ticle.server.mypage.dto.SavedTicleDto;
 import com.ticle.server.mypage.repository.NoteRepository;
 import com.ticle.server.mypage.repository.QuestionRepository;
 import com.ticle.server.mypage.repository.ScrapRepository;
+import com.ticle.server.opinion.domain.Comment;
 import com.ticle.server.opinion.repository.CommentRepository;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,6 +62,14 @@ public class MyPageService {
         return questions.stream()
                 .map(MyQuestionDto::toDto)
                 .collect(toList());
+    }
+
+    @Transactional
+    public void updateComment(Long userId, Long opinionId, String newContent) {
+        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, opinionId);
+
+
+
     }
 
     public List<MyNoteDto> getMyNotes(Long userId) {

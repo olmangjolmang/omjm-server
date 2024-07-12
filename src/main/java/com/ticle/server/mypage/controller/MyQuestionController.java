@@ -25,11 +25,23 @@ public class MyQuestionController {
     public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@RequestParam("userid") Long userId){
         List<MyQuestionDto> myQuestionDtos;
         myQuestionDtos = myPageService.getMyQuestions(userId);
+        List
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResponseTemplate.from(myQuestionDtos));
 
     }
+    @Operation(summary = "마이물어봥 수정",description = "question_id에서 수정하기")
+    @PutMapping("/my-question/{id}")
+    public ResponseEntity<ResponseTemplate<Object>> updateQuestion(@PathVariable("id") Long questionId,
+                                                                   @RequestBody UpdateQuestionDto updateQuestionDto) {
+        myPageService.updateQuestion(questionId, updateQuestionDto.getQuestionContent());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.success("질문이 성공적으로 수정되었습니다."));
+    }
+
 
 }

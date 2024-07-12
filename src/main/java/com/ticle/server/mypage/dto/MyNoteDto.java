@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class MyNoteDto {
-    private Long memoId;
+    private Long noteId;
     private String content;
     private LocalDateTime memoDate;
     private Long postId;
@@ -21,7 +21,7 @@ public class MyNoteDto {
 
     public static MyNoteDto toDto(Memo memo){
         return MyNoteDto.builder()
-                .memoId(memo.getMemoId())
+                .noteId(memo.getMemoId())
                 .content(memo.getContent())
                 .memoDate(memo.getCreatedDate())
                 .postId(memo.getPost().getPostId())
