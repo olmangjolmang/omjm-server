@@ -87,7 +87,7 @@ public class EmailService {
             String content = getContent(latestPost);
 
             message.setText(content, "UTF-8", "html");
-            message.setFrom(new InternetAddress("eunjae8924@gmail.com", "ticle"));
+            message.setFrom(new InternetAddress("omjmticle@gmail.com", "ticle"));
 
             emailSender.send(message);
         } catch (MessagingException | UnsupportedEncodingException s) {
