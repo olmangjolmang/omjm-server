@@ -34,10 +34,11 @@ public class SchedulingService {
         List<Subscription> subscriptions = subscriptionRepository.findAllBySubsDay(Day.valueOf(today.getDayOfWeek().toString()));
 
         for (Subscription subscription : subscriptions) {
-            Post latestPost = postRepository.findLatestPostByCategory(subscription.getUser().getCategory())
+            // 이번주 가장 인기 있는 글
+            Post topPost = postRepository.findTopPostByCategory(subscription.getUser().getCategory())
                     .orElseThrow(() -> new PostNotFoundException(POST_NOT_FOUND));
 
-            emailService.sendEmail(subscription.getEmail(), latestPost);
+            emailService.sendEmail(subscription.getEmail(), topPost);
         }
     }
 }

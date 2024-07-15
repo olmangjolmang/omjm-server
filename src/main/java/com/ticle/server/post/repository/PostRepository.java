@@ -25,5 +25,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "FROM Post p " +
             "WHERE p.category = :category " +
             "ORDER BY p.createdDate DESC LIMIT 1")
-    Optional<Post> findLatestPostByCategory(@Param("category") Category category);
+    Optional<Post> findTopPostByCategory(@Param("category") Category category);
 }

@@ -77,14 +77,14 @@ public class EmailService {
         return authNum;
     }
 
-    public void sendEmail(String email, Post latestPost) {
+    public void sendEmail(String email, Post topPost) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
 
             message.addRecipients(Message.RecipientType.TO, email);
             message.setSubject("[ticle] 구독 서비스 아티클 알림");
 
-            String content = getContent(latestPost);
+            String content = getContent(topPost);
 
             message.setText(content, "UTF-8", "html");
             message.setFrom(new InternetAddress("omjmticle@gmail.com", "ticle"));
