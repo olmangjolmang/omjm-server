@@ -16,6 +16,7 @@ import java.util.List;
 @Table(name = "Post")
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
