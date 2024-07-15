@@ -24,7 +24,7 @@ public class MyQuestionController {
 
     private final MyPageService myPageService;
 
-    @Operation(summary = "마이물어봥",description = "userId를 RequestParam에 넣어서 물어봥 질문들을 가져옴")
+    @Operation(summary = "티클문답",description = "userId를 RequestParam에 넣어서 질문들을 가져옴")
     @GetMapping("/my-question")
     public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@RequestParam("userid") Long userId){
         List<TalkResponse> talkResponseList;
