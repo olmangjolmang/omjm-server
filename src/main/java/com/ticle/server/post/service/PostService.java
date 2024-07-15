@@ -83,18 +83,29 @@ public class PostService {
         String prompt = "현재 기사의 제목은 " + now_post_title + " 이야. " +
                 "다음은 기사의 리스트야. 리스트 안의 title과 비교해서 " +
                 "현재의 기사 제목과 가장 연관 된 기사 3개의 id, title을 각각의 리스트로 추출해줘." +
-                "단, 현재 기사는 제외한다." +
-                "예: postId=[1,2,3], postTitle=[title1, title2, title3] "
-                + alltitle;
+                "단, 현재 기사는 제외하고 무조건 3개를 추출해." +
+                "postId=[게시글번호,게시글번호,게시글번호]\n" +
+                "postTitle=[게시글제목,게시글제목,게시글제목]\n" +
+                "위의 형식을 꼭 지켜서 순서대로 출력해줘, (postId=, postTitle= 텍스트가 무조건 포함되어야해." +
+                "다음은 기사의 리스트야. " + alltitle;
 
-        System.out.println(prompt);
+//        System.out.println(prompt);
 
         GeminiRequest request = new GeminiRequest(prompt);
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
-
         List recommendPost = response.formatRecommendPost(); // 리턴 형식 지정하는 함수
-        post.setRecommendPost(recommendPost);
 
+        System.out.println("response = " + response);
+        while (recommendPost.isEmpty() || recommendPost.size() == 0) {
+            // 추천 포스트가 비어있을 경우 다시 요청
+            System.out.println("recommendPost = " + recommendPost);
+            System.out.println("비어서 다시 요청");
+            request = new GeminiRequest(prompt);
+            response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
+            recommendPost = response.formatRecommendPost(); // 새로운 추천 포스트 리스트 업데이트
+        }
+        post.setRecommendPost(recommendPost);
+        
         return post;
     }
 
@@ -285,6 +296,7 @@ public class PostService {
         GeminiRequest request = new GeminiRequest(prompt);
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
         while (!isValidResponse(response)) { //만들어진 문제에 '보기 코드를 참고하여' 문제를 푸는 경우 예외처리
+            request = new GeminiRequest(prompt);
             response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class); //다시 문제 생성
         }
 
