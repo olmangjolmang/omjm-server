@@ -52,9 +52,9 @@ public class MyQuestionController {
     }
     @Operation(summary = "마이물어봥 수정",description = "question_id에서 수정하기")
     @PutMapping("/my-question/{id}")
-    public ResponseEntity<ResponseTemplate<Object>> updateQuestion(@PathVariable("id") Long questionId, @RequestBody UpdateQuestionDto updateQuestionDto) {
-
-        myPageService.updateQuestion(questionId, updateQuestionDto.getQuestionContent());
+    public ResponseEntity<ResponseTemplate<Object>> updateQuestion(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable("id") Long questionId, @RequestBody UpdateCommentDto updateCommentDto) {
+        Long userId = customUserDetails.getUserId();
+        myPageService.updateComment(userId, questionId, updateCommentDto.getContent());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
