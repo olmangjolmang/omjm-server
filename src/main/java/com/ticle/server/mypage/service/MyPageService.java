@@ -13,8 +13,12 @@ import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.opinion.domain.Opinion;
+import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
+import com.ticle.server.user.repository.UserRepository;
+import com.ticle.server.user.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +36,7 @@ public class MyPageService {
     private final MemoRepository memoRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
     public List<SavedTicleDto> getSavedArticles(Long userId) {
         List<Scrapped> scraps = scrapRepository.findByUserId(userId);
@@ -62,8 +67,10 @@ public class MyPageService {
     }
 
     @Transactional
-    public Comment updateComment(Long userId, Long questionId, String newContent) {
-        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, questionId)
+    public Comment updateComment(Long userId, Long opinionId, String newContent) {
+//        User user = userRepository.findById(customUserDetails.getUserId()).orElseThrow(() ->new UsernameNotFoundException("Not Found User"));
+
+        Comment comment = commentRepository.findByUserIdAndOpinionId(userId,opinionId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         if (!comment.getUser().getId().equals(userId)) {
@@ -75,8 +82,8 @@ public class MyPageService {
     }
 
     @Transactional
-    public void deleteComment(Long userId, Long questionId) {
-        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, questionId)
+    public void deleteComment( userId, Long questionId) {
+        Comment comment = commentRepository.deleteByUserAndOpinion(userId, questionId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         if (!comment.getUser().getId().equals(userId)) {

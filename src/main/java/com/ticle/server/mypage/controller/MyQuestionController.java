@@ -61,7 +61,7 @@ public class MyQuestionController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(userId + "님의 질문에 대한 답변이 성공적으로 수정되었습니다."));
+                .body(ResponseTemplate.from(customUserDetails.getUserId() + "님의 질문에 대한 답변이 성공적으로 수정되었습니다."));
     }
 
     @Operation(summary = "티클문답 삭제", description = "question_id에서 삭제하기")
