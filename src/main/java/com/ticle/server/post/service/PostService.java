@@ -10,6 +10,7 @@ import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.User;
+import com.ticle.server.user.service.CustomUserDetails;
 import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -102,15 +103,17 @@ public class PostService {
     }
 
 
-    public Object scrappedById(long id, UserDetails userDetails) {
+    public Object scrappedById(long id, CustomUserDetails customUserDetails) {
 
         // 게시물 조회
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
 
         // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
-        User user = userService.getLoginUserByEmail(userDetails.getUsername());
-        Long userId = user.getId();
+
+        Long userId = customUserDetails.getUserId();
+        User user = userService.findById(userId);
+
 //            System.out.println("User ID: " + userId);
 
         // 이미 스크랩했는지 확인
@@ -130,10 +133,10 @@ public class PostService {
         return scrappedRepository.save(scrapped);
     }
 
-    public Object writeMemo(long id, UserDetails userDetails, String targetText, String content) {
+    public Object writeMemo(long id, CustomUserDetails customUserDetails, String targetText, String content) {
 
-        // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
-        User user = userService.getLoginUserByEmail(userDetails.getUsername());
+        Long userId = customUserDetails.getUserId();
+        User user = userService.findById(userId);
 
         // 같은 내용의 targetText-content 세트가 있는지 확인
         Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user, targetText, content);
