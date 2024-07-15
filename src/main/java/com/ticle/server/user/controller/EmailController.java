@@ -20,7 +20,6 @@ public class EmailController {
     @PostMapping("/emailSend")
     public String mailConfirm(@RequestParam(value = "email", required = false) String email) throws Exception{
         String code = emailService.sendSimpleMessage(email);
-        System.out.println("인증코드 : " + code);
         return code;
     }
 }

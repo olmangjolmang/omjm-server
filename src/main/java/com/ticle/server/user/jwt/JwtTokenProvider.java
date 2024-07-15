@@ -68,12 +68,13 @@ public class JwtTokenProvider {
         if(claims.get("auth") == null){
             throw new RuntimeException("권한 정보가 없는 토큰입니다");
         }
+//        Long userId = Long.parseLong(claims.getSubject());
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get("auth").toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(toList());
 
-        CustomUserDetails principal = new CustomUserDetails(Long.parseLong(claims.getSubject()),"",authorities);
+        CustomUserDetails principal = new CustomUserDetails(Long.parseLong(claims.getSubject()), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal,"",authorities);
     }
     //토큰 정보를 검증하는 메소드
