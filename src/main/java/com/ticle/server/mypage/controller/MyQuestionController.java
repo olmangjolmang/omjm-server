@@ -43,7 +43,7 @@ public class MyQuestionController {
 
         List<MyQuestionDto> myQuestionDtos;
         myQuestionDtos = myPageService.getMyQuestions(userId);
-        List
+        
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -58,7 +58,7 @@ public class MyQuestionController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.success("질문이 성공적으로 수정되었습니다."));
+                .body(ResponseTemplate.from("질문이 성공적으로 수정되었습니다."));
     }
 
 
