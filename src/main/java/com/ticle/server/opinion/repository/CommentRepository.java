@@ -14,4 +14,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @EntityGraph(attributePaths = {"hearts", "user"})
     List<Comment> findAllByOpinion(Opinion opinion, Sort sort);
+
+    Comment findByUserIdAndOpinionId(Long userId, Long opinionId);
 }
