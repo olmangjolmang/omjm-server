@@ -6,6 +6,7 @@ import com.ticle.server.opinion.dto.request.CommentUploadRequest;
 import com.ticle.server.opinion.dto.response.CommentResponse;
 import com.ticle.server.opinion.dto.response.OpinionResponseList;
 import com.ticle.server.opinion.service.OpinionService;
+import com.ticle.server.user.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class OpinionController {
     @PostMapping("/{opinionId}/comment")
     public ResponseEntity<ResponseTemplate<Object>> uploadComment(
             @PathVariable Long opinionId,
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody CommentUploadRequest request) {
 
         opinionService.uploadComment(request, opinionId, userDetails);
@@ -49,7 +49,7 @@ public class OpinionController {
     @PostMapping("/comment/{commentId}/heart")
     public ResponseEntity<ResponseTemplate<Object>> heartComment(
             @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         opinionService.heartComment(commentId, userDetails);
 
@@ -64,7 +64,7 @@ public class OpinionController {
     @GetMapping("/{opinionId}")
     public ResponseEntity<ResponseTemplate<Object>> getComments(
             @PathVariable Long opinionId,
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(required = false, defaultValue = "TIME") Order orderBy) {
 
         List<CommentResponse> responses = opinionService.getCommentsByOpinion(opinionId, userDetails, orderBy);

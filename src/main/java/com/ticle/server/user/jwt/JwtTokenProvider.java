@@ -73,7 +73,7 @@ public class JwtTokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(toList());
 
-        UserDetails principal = new User(claims.getSubject(),"",authorities);
+        CustomUserDetails principal = new CustomUserDetails(Long.parseLong(claims.getSubject()),"",authorities);
         return new UsernamePasswordAuthenticationToken(principal,"",authorities);
     }
     //토큰 정보를 검증하는 메소드

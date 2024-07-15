@@ -5,6 +5,7 @@ import com.ticle.server.home.dto.request.SubscriptionRequest;
 import com.ticle.server.home.dto.request.ValidEmailRequest;
 import com.ticle.server.home.dto.request.ValidateNickNameRequest;
 import com.ticle.server.home.service.HomeService;
+import com.ticle.server.user.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.ticle.server.global.dto.ResponseTemplate.EMPTY_RESPONSE;
 
@@ -55,7 +58,7 @@ public class HomeController {
     @PostMapping("/subscription")
     public ResponseEntity<ResponseTemplate<Object>> uploadSubscription(
             @Valid @RequestBody SubscriptionRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         homeService.uploadSubscription(request, userDetails);
 

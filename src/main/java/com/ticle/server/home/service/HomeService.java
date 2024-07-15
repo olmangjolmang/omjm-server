@@ -8,9 +8,9 @@ import com.ticle.server.home.repository.SubscriptionRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.exception.UserNotFoundException;
 import com.ticle.server.user.repository.UserRepository;
+import com.ticle.server.user.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +34,8 @@ public class HomeService {
     }
 
     @Transactional
-    public void uploadSubscription(SubscriptionRequest request, UserDetails userDetails) {
-        User user = userRepository.findByEmail(userDetails.getUsername())
+    public void uploadSubscription(SubscriptionRequest request, CustomUserDetails userDetails) {
+        User user = userRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
         Subscription subscription = request.toSubscription(user);
