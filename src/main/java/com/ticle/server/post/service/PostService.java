@@ -1,7 +1,7 @@
 package com.ticle.server.post.service;
 
 import com.ticle.server.memo.domain.Memo;
-import com.ticle.server.mypage.repository.MemoRepository;
+import com.ticle.server.mypage.repository.NoteRepository;
 import com.ticle.server.post.dto.*;
 import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
@@ -37,7 +37,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final ScrappedRepository scrappedRepository;
     private final UserService userService;
-    private final MemoRepository memoRepository;
+    private final NoteRepository noteRepository;
 
     // 카테고리에 맞는 글 찾기
     public Page<PostResponse> findAllByCategory(String category, int page) {
@@ -100,6 +100,7 @@ public class PostService {
 
 
     public Object scrappedById(long id, UserDetails userDetails) {
+
         // 게시물 조회
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
@@ -132,7 +133,7 @@ public class PostService {
         User user = userService.getLoginUserByEmail(userDetails.getUsername());
 
         // 같은 내용의 targetText-content 세트가 있는지 확인
-        Memo existingMemo = memoRepository.findByUserAndTargetTextAndContent(user, targetText, content);
+        Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user, targetText, content);
 
         if (existingMemo != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 동일한 메모가 존재합니다.");
@@ -144,7 +145,7 @@ public class PostService {
         memo.setTargetText(targetText);
         memo.setContent(content);
 
-        return memoRepository.save(memo);
+        return noteRepository.save(memo);
     }
 
     boolean isValidResponse(GeminiResponse response) {
