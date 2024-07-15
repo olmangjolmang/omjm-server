@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "Memo")
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
