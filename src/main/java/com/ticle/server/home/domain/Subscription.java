@@ -37,7 +37,7 @@ public class Subscription extends BaseTimeEntity {
     private Day subsDay;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Builder
