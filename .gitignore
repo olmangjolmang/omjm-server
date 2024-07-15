@@ -40,3 +40,4 @@ out/
 .vscode/
 src/main/resources/*.yml
 src/main/resources/*.properties
+src/main/resources/data.sql
