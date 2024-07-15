@@ -47,7 +47,7 @@ public class PostService {
         final int SIZE = 9; // 한 페이지에 보여질 객체 수
 
         //최신순으로 post 정렬
-        Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "create_date"));
+        Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
         Page<Post> postPage;
 
 
