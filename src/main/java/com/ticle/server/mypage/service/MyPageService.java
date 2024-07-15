@@ -5,14 +5,16 @@ import com.ticle.server.mypage.dto.MyNoteDto;
 import com.ticle.server.mypage.dto.MyQuestionDto;
 import com.ticle.server.mypage.dto.SavedTicleDto;
 import com.ticle.server.mypage.repository.NoteRepository;
-import com.ticle.server.mypage.repository.QuestionRepository;
-import com.ticle.server.mypage.repository.ScrapRepository;
 import com.ticle.server.opinion.domain.Comment;
 import com.ticle.server.opinion.repository.CommentRepository;
+import com.ticle.server.opinion.repository.OpinionRepository;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.opinion.domain.Opinion;
+import com.ticle.server.scrapped.repository.ScrappedRepository;
+import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
+import com.ticle.server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -27,8 +30,9 @@ import static java.util.stream.Collectors.toList;
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
-    private final ScrapRepository scrapRepository;
-    private final QuestionRepository questionRepository;
+    private final UserRepository userRepository;
+    private final ScrappedRepository scrappedRepository;
+    private final OpinionRepository opinionRepository;
     private final NoteRepository noteRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
@@ -36,7 +40,7 @@ public class MyPageService {
 
     public List<SavedTicleDto> getSavedArticles(Long userId,Pageable pageable) {
 //        Pageable pageable = PageRequest.of(page-1,SIZE);
-        Page<Scrapped> scraps = scrapRepository.findByUserId(userId,pageable);
+        Page<Scrapped> scraps = scrappedRepository.findByUserId(userId,pageable);
 
         return scraps.stream()
                 .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
@@ -47,7 +51,7 @@ public class MyPageService {
 
     public List<SavedTicleDto> getSavedArticlesByCategory(Long userId, Category category,Pageable pageable) {
 //        Pageable pageable = PageRequest.of(page-1,SIZE);
-        Page<Scrapped> scraps = scrapRepository.findByUserIdAndPostCategory(userId, category,pageable);
+        Page<Scrapped> scraps = scrappedRepository.findByUserIdAndPostCategory(userId, category,pageable);
 
         return scraps.stream()
                 .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
@@ -58,7 +62,7 @@ public class MyPageService {
 
 
     public List<MyQuestionDto> getMyQuestions(Long userId) {
-        List<Opinion> questions = questionRepository.findByUserId(userId);
+        List<Opinion> questions = opinionRepository.findByUserId(userId);
         return questions.stream()
                 .map(MyQuestionDto::toDto)
                 .collect(toList());
@@ -66,7 +70,10 @@ public class MyPageService {
 
     @Transactional
     public void updateComment(Long userId, Long opinionId, String newContent) {
-        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, opinionId);
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Opinion> opinion = opinionRepository.findByOpinionIdWithFetch(opinionId);
+        Comment comment = commentRepository.findByUserAndOpinion(user.get(), opinion.get());
+
 
 
 

@@ -16,6 +16,7 @@ import java.util.List;
 @Table(name = "Post")
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -52,5 +53,6 @@ public class Post extends BaseTimeEntity {
     @Transient
     @Column(name = "recommend_post")
     private List recommendPost;
+
 
 }

@@ -42,7 +42,6 @@ public class QuestionController {
         List<MyQuestionDto> myQuestionDtos;
         myQuestionDtos = myPageService.getMyQuestions(userId);
 
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResponseTemplate.from(myQuestionDtos));
