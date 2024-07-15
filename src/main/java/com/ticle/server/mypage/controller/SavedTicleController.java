@@ -35,8 +35,8 @@ public class SavedTicleController {
     @GetMapping("/saved-ticles")
     public ResponseEntity<ResponseTemplate<Object>> getSavedTicles(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam(value = "category",required = false) Category category, @PageableDefault(page=0,size=9,sort="id",direction = Sort.Direction.DESC)Pageable pageable){
         Long userId = customUserDetails.getUserId();
-
         List<SavedTicleDto> savedTicleDtos;
+      
         if(category != null){
             savedTicleDtos = myPageService.getSavedArticlesByCategory(userId,category,pageable);
         }else{
