@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -44,8 +45,10 @@ public class PostService {
 
         final int SIZE = 9; // 한 페이지에 보여질 객체 수
 
-        Pageable pageable = PageRequest.of(page - 1, SIZE);
+        //최신순으로 post 정렬
+        Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "create_date"));
         Page<Post> postPage;
+
 
         if (category == null || category.isEmpty()) {
             // 모든 글 조회
