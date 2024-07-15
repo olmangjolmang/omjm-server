@@ -147,6 +147,17 @@ public class PostService {
         return memoRepository.save(memo);
     }
 
+    boolean isValidResponse(GeminiResponse response) {
+
+        //문제의 텍스트만 뽑음
+        String responseText = response.getCandidates().get(0).getContent().getParts().get(0).getText();
+        if (responseText.contains("'''") || responseText.contains("```")) {
+            // 코드를 보기로 내어주는 경우에는 예외처리
+            return false;
+        }
+        return true;
+    }
+
     public List<QuizResponse> createQuiz(Long id) {
 
         Optional<Post> optionalPost = postRepository.findById(id);
@@ -272,11 +283,13 @@ public class PostService {
 //        System.out.println(prompt);
         GeminiRequest request = new GeminiRequest(prompt);
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
-        System.out.println("response = " + response);
+        while (!isValidResponse(response)) { //만들어진 문제에 '보기 코드를 참고하여' 문제를 푸는 경우 예외처리
+            response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class); //다시 문제 생성
+        }
+
         List<QuizResponse> quizSet = response.formatQuiz(postTitle); // 리턴 형식 지정하는 함수
-//        System.out.println("quizSet = " + quizSet);
+        System.out.println("quizSet = " + quizSet);
         return quizSet;
 
-//        return (List<QuizResponse>) quizSet;
     }
 }
