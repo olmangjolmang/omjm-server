@@ -42,6 +42,10 @@ public class UserService{
 
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
+        log.info("hello"+authentication.getDetails());
+        log.info("hello22"+authentication.getName());
+
+
         return jwtToken;
     }
 
@@ -53,7 +57,6 @@ public class UserService{
         String encodedPassword = passwordEncoder.encode(joinRequest.getPassword());
         List<String> roles = new ArrayList<>();
         roles.add("USER");
-        System.out.println("test" + joinRequest);
         return UserDto.toDto(userRepository.save(joinRequest.toEntity(encodedPassword,roles)));
     }
 

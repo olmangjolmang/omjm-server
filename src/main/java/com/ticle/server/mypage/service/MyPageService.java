@@ -4,24 +4,21 @@ import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.mypage.dto.MyNoteDto;
 import com.ticle.server.mypage.dto.MyQuestionDto;
 import com.ticle.server.mypage.dto.SavedTicleDto;
-import com.ticle.server.mypage.repository.MemoRepository;
+import com.ticle.server.mypage.repository.NoteRepository;
 import com.ticle.server.mypage.repository.QuestionRepository;
 import com.ticle.server.mypage.repository.ScrapRepository;
-import com.ticle.server.post.domain.Post;
+import com.ticle.server.opinion.domain.Comment;
+import com.ticle.server.opinion.repository.CommentRepository;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
-<<<<<<< HEAD
-import com.ticle.server.talk.domain.Talk;
-import com.ticle.server.talk.dto.response.TalkResponse;
-import com.ticle.server.talk.repository.CommentRepository;
-=======
 import com.ticle.server.opinion.domain.Opinion;
->>>>>>> a6ec0e64c5f2b3645cabf7461c6f49d16db708a2
 import com.ticle.server.user.domain.type.Category;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,22 +29,14 @@ import static java.util.stream.Collectors.toList;
 public class MyPageService {
     private final ScrapRepository scrapRepository;
     private final QuestionRepository questionRepository;
-    private final MemoRepository memoRepository;
+    private final NoteRepository noteRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final int SIZE = 9;
 
-    public List<SavedTicleDto> getSavedArticles(Long userId) {
-        List<Scrapped> scraps = scrapRepository.findByUserId(userId);
-
-        return scraps.stream()
-                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
-                .filter(post -> post != null)
-                .map(SavedTicleDto::toDto)
-                .collect(Collectors.toList());
-    }
-
-    public List<SavedTicleDto> getSavedArticlesByCategory(Long userId, Category category) {
-        List<Scrapped> scraps = scrapRepository.findByUserIdAndPostCategory(userId, category);
+    public List<SavedTicleDto> getSavedArticles(Long userId,Pageable pageable) {
+//        Pageable pageable = PageRequest.of(page-1,SIZE);
+        Page<Scrapped> scraps = scrapRepository.findByUserId(userId,pageable);
 
         return scraps.stream()
                 .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
@@ -56,35 +45,38 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
-<<<<<<< HEAD
-    public List<TalkResponse> getMyQuestions(Long userId) {
-        List<Talk> questions = questionRepository.findByUserId(userId);
-=======
+    public List<SavedTicleDto> getSavedArticlesByCategory(Long userId, Category category,Pageable pageable) {
+//        Pageable pageable = PageRequest.of(page-1,SIZE);
+        Page<Scrapped> scraps = scrapRepository.findByUserIdAndPostCategory(userId, category,pageable);
+
+        return scraps.stream()
+                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
+                .filter(post -> post != null)
+                .map(SavedTicleDto::toDto)
+                .collect(Collectors.toList());
+    }
+
+
     public List<MyQuestionDto> getMyQuestions(Long userId) {
         List<Opinion> questions = questionRepository.findByUserId(userId);
->>>>>>> a6ec0e64c5f2b3645cabf7461c6f49d16db708a2
         return questions.stream()
-                .map(question -> TalkResponse.toDto(question,commentRepository.countByTalkId(question.getTalkId())))
+                .map(MyQuestionDto::toDto)
                 .collect(toList());
     }
 
-    public List<MyNoteDto> getMyNotes(Long userId) {
-        List<Memo> memos = memoRepository.findByUserId(userId);
-        List<MyNoteDto> myNotes = new ArrayList<>();
-        for (Memo memo : memos) {
-            Post post = postRepository.findById(memo.getMemoId()).orElse(null);
-            if (post != null) {
-                MyNoteDto dto = new MyNoteDto();
-                dto.setMemoId(memo.getMemoId());
-                dto.setContent(memo.getContent());
-                dto.setMemoDate(memo.getCreatedDate());
-                dto.setPostId(post.getPostId());
-                dto.setPostTitle(post.getTitle());
-                myNotes.add(dto);
-            }
-        }
-        return myNotes;
+    @Transactional
+    public void updateComment(Long userId, Long opinionId, String newContent) {
+        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, opinionId);
+
+
+
     }
 
+    public List<MyNoteDto> getMyNotes(Long userId) {
+        List<Memo> memos = noteRepository.findByUserId(userId);
+        return memos.stream()
+                .map(MyNoteDto::toDto)
+                .collect(toList());
+    }
 
 }
