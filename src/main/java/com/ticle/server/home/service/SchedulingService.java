@@ -38,7 +38,7 @@ public class SchedulingService {
             Post topPost = postRepository.findTopPostByCategory(subscription.getUser().getCategory())
                     .orElseThrow(() -> new PostNotFoundException(POST_NOT_FOUND));
 
-            emailService.sendEmail(subscription.getEmail(), topPost);
+            emailService.sendEmail(subscription.getUser().getEmail(), topPost);
         }
     }
 }
