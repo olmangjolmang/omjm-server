@@ -42,10 +42,6 @@ public class Post extends BaseTimeEntity {
     @Column
     private S3Info image;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Scrapped> scrappeds;
 
