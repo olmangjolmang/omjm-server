@@ -10,6 +10,8 @@ import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.User;
+import com.ticle.server.user.repository.UserRepository;
+import com.ticle.server.user.service.CustomUserDetails;
 import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +40,7 @@ public class PostService {
     private final ScrappedRepository scrappedRepository;
     private final UserService userService;
     private final NoteRepository noteRepository;
+    private final UserRepository userRepository;
 
     // 카테고리에 맞는 글 찾기
     public Page<PostResponse> findAllByCategory(String category, int page) {
@@ -127,13 +130,13 @@ public class PostService {
         return scrappedRepository.save(scrapped);
     }
 
-    public Object writeMemo(long id, UserDetails userDetails, String targetText, String content) {
+    public Object writeMemo(long id, CustomUserDetails customUserDetails, String targetText, String content) {
 
         // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
-        User user = userService.getLoginUserByEmail(userDetails.getUsername());
+        Optional<User> user = userRepository.findById(customUserDetails.getUserId());
 
         // 같은 내용의 targetText-content 세트가 있는지 확인
-        Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user, targetText, content);
+        Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user.get(), targetText, content);
 
         if (existingMemo != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 동일한 메모가 존재합니다.");
@@ -141,7 +144,7 @@ public class PostService {
 
         Memo memo = new Memo();
         memo.setPost(postRepository.findByPostId(id));
-        memo.setUser(user);
+        memo.setUser(user.get());
         memo.setTargetText(targetText);
         memo.setContent(content);
 

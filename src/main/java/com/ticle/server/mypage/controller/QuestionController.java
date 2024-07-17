@@ -1,8 +1,8 @@
 package com.ticle.server.mypage.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
-import com.ticle.server.mypage.dto.MyQuestionDto;
-import com.ticle.server.mypage.dto.UpdateCommentDto;
+import com.ticle.server.mypage.dto.response.QuestionResponse;
+import com.ticle.server.mypage.dto.request.CommentUpdateRequest;
 import com.ticle.server.mypage.service.MyPageService;
 import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.service.CustomUserDetails;
@@ -32,31 +32,28 @@ public class QuestionController {
     @GetMapping("/my-question")
     public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@AuthenticationPrincipal CustomUserDetails customUserDetails){
 
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseTemplate.EMPTY_RESPONSE);
-//        }
-
         Long userId = customUserDetails.getUserId();
 
-        List<MyQuestionDto> myQuestionDtos;
-        myQuestionDtos = myPageService.getMyQuestions(userId);
+        List<QuestionResponse> questionResponses;
+        questionResponses = myPageService.getMyQuestions(userId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(myQuestionDtos));
+                .body(ResponseTemplate.from(questionResponses));
 
     }
     @Operation(summary = "마이물어봥 수정",description = "question_id에서 수정하기")
     @PutMapping("/my-question/{id}")
-    public ResponseEntity<ResponseTemplate<Object>> updateQuestion(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable("id") Long questionId, @RequestBody UpdateCommentDto updateCommentDto) {
+    public ResponseEntity<ResponseTemplate<Object>> updateQuestion(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable("id") Long questionId, @RequestBody CommentUpdateRequest commentUpdateRequest) {
         Long userId = customUserDetails.getUserId();
-        myPageService.updateComment(userId, questionId, updateCommentDto.getContent());
+        myPageService.updateComment(userId, questionId, commentUpdateRequest.getContent());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResponseTemplate.from("질문이 성공적으로 수정되었습니다."));
     }
+
+
 
 
 }

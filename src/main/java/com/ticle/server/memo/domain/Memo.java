@@ -38,4 +38,7 @@ public class Memo extends BaseTimeEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    public void updateNote(String content){
+        this.content = content;
+    }
 }

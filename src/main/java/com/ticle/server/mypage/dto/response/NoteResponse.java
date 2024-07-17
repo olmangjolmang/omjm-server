@@ -1,10 +1,8 @@
-package com.ticle.server.mypage.dto;
+package com.ticle.server.mypage.dto.response;
 
 import com.ticle.server.memo.domain.Memo;
-import com.ticle.server.opinion.domain.Opinion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -12,15 +10,15 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @Builder
-public class MyNoteDto {
+public class NoteResponse {
     private Long noteId;
     private String content;
     private LocalDateTime memoDate;
     private Long postId;
     private String postTitle;
 
-    public static MyNoteDto toDto(Memo memo){
-        return MyNoteDto.builder()
+    public static NoteResponse toDto(Memo memo){
+        return NoteResponse.builder()
                 .noteId(memo.getMemoId())
                 .content(memo.getContent())
                 .memoDate(memo.getCreatedDate())
