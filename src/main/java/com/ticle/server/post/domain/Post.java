@@ -7,15 +7,14 @@ import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Table(name = "Post")
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -39,10 +38,11 @@ public class Post extends BaseTimeEntity {
     @Column(name = "category")
     private Category category;
 
+    @Embedded
     @Column
     private S3Info image;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -52,5 +52,6 @@ public class Post extends BaseTimeEntity {
     @Transient
     @Column(name = "recommend_post")
     private List recommendPost;
+
 
 }

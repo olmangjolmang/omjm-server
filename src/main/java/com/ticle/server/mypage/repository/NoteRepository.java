@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MemoRepository extends JpaRepository<Memo, Long> {
+public interface NoteRepository extends JpaRepository<Memo, Long> {
     List<Memo> findByUserId(Long userId);
 
     Memo findByUserAndTargetTextAndContent(User user, String targetText, String content);

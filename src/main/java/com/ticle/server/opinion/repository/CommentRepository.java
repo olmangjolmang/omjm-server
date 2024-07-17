@@ -21,9 +21,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Optional<Comment> findByUserAndOpinion(User user,Opinion opinion);
     void deleteByUserAndOpinion(User user, Opinion opinion);
-    @Query("SELECT c FROM Comment c WHERE c.user.id = :userId AND c.opinion.id = :opinionId")
+    @Query("SELECT c FROM Comment c WHERE c.user.id = :userId AND c.opinion.opinionId = :opinionId")
     Optional<Comment> findByUserIdAndOpinionId(@Param("userId") Long userId, @Param("opinionId") Long opinionId);
-
-
 
 }

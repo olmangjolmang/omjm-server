@@ -15,13 +15,13 @@ import com.ticle.server.opinion.repository.HeartRepository;
 import com.ticle.server.opinion.repository.OpinionRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.repository.UserRepository;
+import com.ticle.server.user.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,8 +46,8 @@ public class OpinionService {
     private static final int PAGE_SIZE = 5;
 
     @Transactional
-    public void uploadComment(CommentUploadRequest request, Long talkId, UserDetails userId) {
-        User user = userRepository.findByEmail(userId.getUsername())
+    public void uploadComment(CommentUploadRequest request, Long talkId, CustomUserDetails userId) {
+        User user = userRepository.findById(userId.getUserId())
                 .orElseThrow(RuntimeException::new);
         Opinion opinion = opinionRepository.findById(talkId)
                 .orElseThrow(() -> new OpinionNotFoundException(OPINION_NOT_FOUND));
@@ -59,8 +59,8 @@ public class OpinionService {
     }
 
     @Transactional
-    public void heartComment(Long commentId, UserDetails userDetails) {
-        User user = userRepository.findByEmail(userDetails.getUsername())
+    public void heartComment(Long commentId, CustomUserDetails userDetails) {
+        User user = userRepository.findById(userDetails.getUserId())
                 .orElseThrow(RuntimeException::new);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND));
@@ -79,8 +79,8 @@ public class OpinionService {
     }
 
     @Transactional
-    public List<CommentResponse> getCommentsByOpinion(Long opinionId, UserDetails userDetails, Order orderBy) {
-        User user = userRepository.findByEmail(userDetails.getUsername())
+    public List<CommentResponse> getCommentsByOpinion(Long opinionId, CustomUserDetails userDetails, Order orderBy) {
+        User user = userRepository.findById(userDetails.getUserId())
                 .orElseThrow(RuntimeException::new);
         Opinion opinion = opinionRepository.findByOpinionIdWithFetch(opinionId)
                 .orElseThrow(() -> new OpinionNotFoundException(OPINION_NOT_FOUND));
