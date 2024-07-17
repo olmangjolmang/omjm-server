@@ -1,8 +1,9 @@
 package com.ticle.server.mypage.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
-import com.ticle.server.mypage.dto.MyQuestionDto;
-import com.ticle.server.mypage.dto.UpdateCommentDto;
+import com.ticle.server.mypage.dto.response.QnAResponse;
+import com.ticle.server.mypage.dto.response.QuestionResponse;
+import com.ticle.server.mypage.dto.request.CommentUpdateRequest;
 import com.ticle.server.mypage.service.MyPageService;
 import com.ticle.server.opinion.domain.Comment;
 import com.ticle.server.user.jwt.JwtTokenProvider;
@@ -33,34 +34,31 @@ public class QuestionController {
     @GetMapping("/my-question")
     public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@AuthenticationPrincipal CustomUserDetails customUserDetails){
 
-//
         Long userId = customUserDetails.getUserId();
 
-        List<MyQuestionDto> myQuestionDtos;
-        myQuestionDtos = myPageService.getMyQnA(userId);
+        List<QnAResponse> qnAResponseList = myPageService.getMyQnA(userId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(myQuestionDtos));
+                .body(ResponseTemplate.from(qnAResponseList));
 
     }
-    @Operation(summary = "티클문답 수정", description = "question_id에서 수정하기")
-    @PutMapping("/my-question/{id}")
-    public ResponseEntity<ResponseTemplate<Object>> updateComment(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                                  @PathVariable("id") Long questionId,
-                                                                  @RequestBody UpdateCommentDto updateCommentDto) {
+    @Operation(summary = "티클문답 수정", description = "마이페이지(티클문답)에서 user가 쓴 답변 수정하기")
+    @PutMapping("/my-question/{questionId}")
+    public ResponseEntity<ResponseTemplate<Object>> updateQuestion(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("questionId") Long questionId, @RequestBody CommentUpdateRequest commentUpdateRequest) {
+
         Long userId = customUserDetails.getUserId();
-        myPageService.updateComment(userId, questionId, updateCommentDto.getContent());
+        myPageService.updateComment(userId, questionId, commentUpdateRequest.getContent());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResponseTemplate.from(customUserDetails.getUserId() + "님의 질문에 대한 답변이 성공적으로 수정되었습니다."));
     }
 
-    @Operation(summary = "티클문답 삭제", description = "question_id에서 삭제하기")
-    @DeleteMapping("/my-question/{id}")
+    @Operation(summary = "티클문답 삭제", description = "마이페이지(티클문답)에서 user가 쓴 답변 삭제하기")
+    @DeleteMapping("/my-question/{questionId}")
     public ResponseEntity<ResponseTemplate<Object>> deleteComment(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                                  @PathVariable("id") Long questionId) {
+                                                                  @PathVariable("questionId") Long questionId) {
         Long userId = customUserDetails.getUserId();
         myPageService.deleteComment(userId, questionId);
 
@@ -69,5 +67,4 @@ public class QuestionController {
                 .body(ResponseTemplate.from(userId + "님의 질문에 대한 댓글이 성공적으로 삭제되었습니다."));
 
     }
-
 }

@@ -1,7 +1,7 @@
 package com.ticle.server.mypage.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
-import com.ticle.server.mypage.dto.SavedTicleDto;
+import com.ticle.server.mypage.dto.response.SavedTicleResponse;
 import com.ticle.server.mypage.service.MyPageService;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.user.service.CustomUserDetails;
@@ -33,16 +33,16 @@ public class SavedTicleController {
     @GetMapping("/saved-ticles")
     public ResponseEntity<ResponseTemplate<Object>> getSavedTicles(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam(value = "category",required = false) Category category, @PageableDefault(page=0,size=9,sort="id",direction = Sort.Direction.DESC)Pageable pageable){
         Long userId = customUserDetails.getUserId();
-        List<SavedTicleDto> savedTicleDtos;
+        List<SavedTicleResponse> savedTicleResponses;
       
         if(category != null){
-            savedTicleDtos = myPageService.getSavedArticlesByCategory(userId,category,pageable);
+            savedTicleResponses = myPageService.getSavedArticlesByCategory(userId,category,pageable);
         }else{
-            savedTicleDtos = myPageService.getSavedArticles(userId,pageable);
+            savedTicleResponses = myPageService.getSavedArticles(userId,pageable);
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(savedTicleDtos));
+                .body(ResponseTemplate.from(savedTicleResponses));
     }
 
 

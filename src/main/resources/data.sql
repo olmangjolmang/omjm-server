@@ -1,7 +1,7 @@
 -- User mockup data
 ALTER TABLE opinion MODIFY comment_count BIGINT NOT NULL DEFAULT 0;
 
-INSERT INTO users (agree_terms, email, nick_name, password, category)
+INSERT INTO user (agree_terms, email, nick_name, password, category)
 VALUES (TRUE, 'user1@example.com', 'UserOne', 'password1', 'BACKEND'),
        (TRUE, 'user2@example.com', 'UserTwo', 'password2', 'WEB_FRONT'),
        (TRUE, 'user3@example.com', 'UserThree', 'password3', 'NETWORK'),
@@ -109,3 +109,7 @@ values (1,1),
        (4,1),
        (1,2),
        (6,2);
+
+# INSERT INTO memo (content,post_id,user_id) values('hello',1,1,''),('hello2',2,1);
+
+select * from memo;

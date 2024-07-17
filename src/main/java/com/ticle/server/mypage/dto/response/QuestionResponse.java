@@ -1,4 +1,4 @@
-package com.ticle.server.mypage.dto;
+package com.ticle.server.mypage.dto.response;
 
 import com.ticle.server.opinion.domain.Opinion;
 import lombok.AllArgsConstructor;
@@ -8,14 +8,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class MyQuestionDto {
+public class QuestionResponse {
     private Long questionId;
     private String question;
     private Long viewCount;
     private Long commentCount;
 
-    public static MyQuestionDto toDto(Opinion opinion){
-        return MyQuestionDto.builder()
+    public static QuestionResponse toDto(Opinion opinion){
+        return QuestionResponse.builder()
                 .questionId(opinion.getOpinionId())
                 .question(opinion.getQuestion())
                 .viewCount(opinion.getViewCount())
