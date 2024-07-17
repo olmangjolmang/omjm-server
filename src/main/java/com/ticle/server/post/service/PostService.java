@@ -21,14 +21,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -38,7 +37,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final ScrappedRepository scrappedRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final NoteRepository noteRepository;
     private final UserRepository userRepository;
 
@@ -47,7 +46,8 @@ public class PostService {
 
         final int SIZE = 9; // 한 페이지에 보여질 객체 수
 
-        Pageable pageable = PageRequest.of(page - 1, SIZE);
+        //최신순으로 post 정렬
+        Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
         Page<Post> postPage;
 
         if (category == null || category.isEmpty()) {
@@ -86,54 +86,75 @@ public class PostService {
         String prompt = "현재 기사의 제목은 " + now_post_title + " 이야. " +
                 "다음은 기사의 리스트야. 리스트 안의 title과 비교해서 " +
                 "현재의 기사 제목과 가장 연관 된 기사 3개의 id, title을 각각의 리스트로 추출해줘." +
-                "단, 현재 기사는 제외한다." +
-                "예: postId=[1,2,3], postTitle=[title1, title2, title3] "
-                + alltitle;
+                "단, 현재 기사는 제외하고 무조건 3개를 추출해." +
+                "postId=[게시글번호,게시글번호,게시글번호]\n" +
+                "postTitle=[게시글제목,게시글제목,게시글제목]\n" +
+                "위의 형식을 꼭 지켜서 순서대로 출력해줘, (postId=, postTitle= 텍스트가 무조건 포함되어야해." +
+                "다음은 기사의 리스트야. " + alltitle;
 
-        System.out.println(prompt);
+//        System.out.println(prompt);
 
         GeminiRequest request = new GeminiRequest(prompt);
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
-
         List recommendPost = response.formatRecommendPost(); // 리턴 형식 지정하는 함수
+
+        System.out.println("response = " + response);
+        while (recommendPost.isEmpty() || recommendPost.size() == 0) {
+            // 추천 포스트가 비어있을 경우 다시 요청
+            System.out.println("recommendPost = " + recommendPost);
+            System.out.println("비어서 다시 요청");
+            request = new GeminiRequest(prompt);
+            response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
+            recommendPost = response.formatRecommendPost(); // 새로운 추천 포스트 리스트 업데이트
+        }
         post.setRecommendPost(recommendPost);
 
         return post;
     }
 
-
-    public Object scrappedById(long id, UserDetails userDetails) {
+    public Object scrappedById(long id, CustomUserDetails customUserDetails) {
 
         // 게시물 조회
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
 
-        // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
-        User user = userService.getLoginUserByEmail(userDetails.getUsername());
-        Long userId = user.getId();
-//            System.out.println("User ID: " + userId);
+        Long userId = customUserDetails.getUserId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId));
 
         // 이미 스크랩했는지 확인
         Optional<Scrapped> existingScrap = scrappedRepository.findByUserIdAndPost_PostId(userId, post.getPostId());
+
+        Scrapped scrap;
+
         if (existingScrap.isPresent()) {
-            // 이미 스크랩한 상태라면 스크랩 취소
-            existingScrap.get().changeToUnscrapped(); //status를 unscrapped로 변경
-            scrappedRepository.delete(existingScrap.get());
-            return ScrappedDto.from(existingScrap.get());
+            scrap = existingScrap.get();
+
+            if ("SCRAPPED".equals(scrap.getStatus())) { // 이미 스크랩한 상태 -> 스크랩 취소
+                scrap.changeToUnscrapped();
+                post.decreaseScrapCount();
+            } else { // 스크랩
+                scrap.changeToScrapped();
+                post.increaseScrapCount();
+            }
+        } else {
+            // 새로운 스크랩 생성
+            scrap = Scrapped.builder()
+                    .post(post)
+                    .user(user)
+                    .status("SCRAPPED")
+                    .build();
+            post.increaseScrapCount(); // 새로운 스크랩 시에도 카운트 증가
         }
 
-        Scrapped scrapped = new Scrapped();
-        scrapped.setPost(post);
-        scrapped.setUser(user);
-        scrapped.changeToScrapped(); //status를 scrapped로 변경
-
-        return scrappedRepository.save(scrapped);
+        // post와 scrap 저장
+        postRepository.save(post);
+        return scrappedRepository.save(scrap);
     }
 
     public Object writeMemo(long id, CustomUserDetails customUserDetails, String targetText, String content) {
 
-        // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
-        Optional<User> user = userRepository.findById(customUserDetails.getUserId());
+        Long userId = customUserDetails.getUserId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId));
 
         // 같은 내용의 targetText-content 세트가 있는지 확인
         Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user.get(), targetText, content);
@@ -142,13 +163,18 @@ public class PostService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 동일한 메모가 존재합니다.");
         }
 
-        Memo memo = new Memo();
-        memo.setPost(postRepository.findByPostId(id));
-        memo.setUser(user.get());
-        memo.setTargetText(targetText);
-        memo.setContent(content);
+        // Post 객체를 찾을 때 예외 처리
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
 
-        return noteRepository.save(memo);
+        Memo memo = Memo.builder()
+                .post(post)
+                .user(user)
+                .targetText(targetText)
+                .content(content)
+                .build();
+
+      return noteRepository.save(memo);
     }
 
     boolean isValidResponse(GeminiResponse response) {
@@ -288,6 +314,7 @@ public class PostService {
         GeminiRequest request = new GeminiRequest(prompt);
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
         while (!isValidResponse(response)) { //만들어진 문제에 '보기 코드를 참고하여' 문제를 푸는 경우 예외처리
+            request = new GeminiRequest(prompt);
             response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class); //다시 문제 생성
         }
 
