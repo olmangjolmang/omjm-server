@@ -22,7 +22,7 @@ public interface OpinionRepository extends JpaRepository<Opinion, Long> {
     @EntityGraph(attributePaths = {"comments", "comments.user"})
     Page<Opinion> findAll(Pageable pageable);
 
-    List<Opinion> findByUserId(Long userId);
+    Page<Opinion> findByUserId(Long userId,Pageable pageable);
 
 //    Optional<Opinion> findByOpinionId(Long opinionId);
 }

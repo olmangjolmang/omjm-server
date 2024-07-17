@@ -12,6 +12,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,15 +31,14 @@ import java.util.List;
 public class QuestionController {
 
     private final MyPageService myPageService;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "티클문답",description = "Jwt token을 통해 userId를 가져온 후 티클문답의 질문들을 가져옴")
     @GetMapping("/my-question")
-    public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PageableDefault(page=0,size=9,sort="created_date",direction = Sort.Direction.DESC) Pageable pageable){
 
         Long userId = customUserDetails.getUserId();
 
-        List<QnAResponse> qnAResponseList = myPageService.getMyQnA(userId);
+        List<QnAResponse> qnAResponseList = myPageService.getMyQnA(userId, pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

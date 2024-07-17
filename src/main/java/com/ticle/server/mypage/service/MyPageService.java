@@ -4,7 +4,6 @@ import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.mypage.dto.request.NoteUpdateRequest;
 import com.ticle.server.mypage.dto.response.NoteResponse;
 import com.ticle.server.mypage.dto.response.QnAResponse;
-import com.ticle.server.mypage.dto.response.QuestionResponse;
 import com.ticle.server.mypage.dto.response.SavedTicleResponse;
 import com.ticle.server.mypage.repository.NoteRepository;
 import com.ticle.server.opinion.domain.Comment;
@@ -13,12 +12,10 @@ import com.ticle.server.opinion.repository.OpinionRepository;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.opinion.domain.Opinion;
-import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.ticle.server.scrapped.repository.ScrappedRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,13 +65,13 @@ public class MyPageService {
 
     //////////////////////////////////////////////티클문답///////////////////////////////////////////////////////////////
 
-    public List<QnAResponse> getMyQnA(Long userId) {
-        List<Opinion> opinions = opinionRepository.findByUserId(userId);
+    public List<QnAResponse> getMyQnA(Long userId, Pageable pageable) {
+        Page<Opinion> opinions = opinionRepository.findByUserId(userId,pageable);
         return opinions.stream()
                 .map(opinion -> {
                     Optional<Comment> commentOpt = commentRepository.findByUserIdAndOpinionId(userId, opinion.getOpinionId());
-                    String comment = commentOpt.map(Comment::getContent).orElse("");
-                    return new QnAResponse(opinion.getQuestion(), comment);
+                    String comment = commentOpt.get().getContent();
+                    return new QnAResponse(opinion.getQuestion(), comment, opinion.getCreatedDate());
                 })
                 .collect(toList());
     }
@@ -138,7 +135,6 @@ public class MyPageService {
         if (!memo.getUser().getId().equals(customUserDetails.getUserId())) {
             throw new RuntimeException("You do not have permission to delete this memo");
         }
-
         noteRepository.delete(memo);
     }
 
