@@ -73,15 +73,4 @@ public class UserService {
         return optionalUser.get();
     }
 
-    public User findById(Long id) {
-        if (id == null)
-            return null;
-
-        Optional<User> optionalUser = userRepository.findById(id);
-
-        if (optionalUser.isEmpty())
-            return null;
-
-        return optionalUser.get();
-    }
 }

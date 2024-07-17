@@ -10,6 +10,7 @@ import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.User;
+import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.service.CustomUserDetails;
 import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +23,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -38,7 +37,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final ScrappedRepository scrappedRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final NoteRepository noteRepository;
 
     // 카테고리에 맞는 글 찾기
@@ -49,7 +48,6 @@ public class PostService {
         //최신순으로 post 정렬
         Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
         Page<Post> postPage;
-
 
         if (category == null || category.isEmpty()) {
             // 모든 글 조회
@@ -109,7 +107,7 @@ public class PostService {
             recommendPost = response.formatRecommendPost(); // 새로운 추천 포스트 리스트 업데이트
         }
         post.setRecommendPost(recommendPost);
-        
+
         return post;
     }
 
@@ -120,26 +118,27 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
 
-        // getUsername에는 email이 들어있음. / email로 유저 찾고 id 찾도록 함.
-
         Long userId = customUserDetails.getUserId();
-        User user = userService.findById(userId);
-
-//            System.out.println("User ID: " + userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId));
 
         // 이미 스크랩했는지 확인
         Optional<Scrapped> existingScrap = scrappedRepository.findByUserIdAndPost_PostId(userId, post.getPostId());
         if (existingScrap.isPresent()) {
-            // 이미 스크랩한 상태라면 스크랩 취소
-            existingScrap.get().changeToUnscrapped(); //status를 unscrapped로 변경
-            scrappedRepository.delete(existingScrap.get());
-            return ScrappedDto.from(existingScrap.get());
+            Scrapped scrap = existingScrap.get();
+
+            if ("SCRAPPED".equals(scrap.getStatus())) { // 이미 스크랩한 상태 -> 스크랩 취소
+                scrap.changeToUnscrapped();
+            } else { //스크랩 하기
+                scrap.changeToScrapped();
+            }
+            return scrappedRepository.save(scrap);
         }
 
-        Scrapped scrapped = new Scrapped();
-        scrapped.setPost(post);
-        scrapped.setUser(user);
-        scrapped.changeToScrapped(); //status를 scrapped로 변경
+        Scrapped scrapped = Scrapped.builder()
+                .post(post)
+                .user(user)
+                .status("SCRAPPED")
+                .build();
 
         return scrappedRepository.save(scrapped);
     }
@@ -147,7 +146,8 @@ public class PostService {
     public Object writeMemo(long id, CustomUserDetails customUserDetails, String targetText, String content) {
 
         Long userId = customUserDetails.getUserId();
-        User user = userService.findById(userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId));
+
 
         // 같은 내용의 targetText-content 세트가 있는지 확인
         Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user, targetText, content);
@@ -156,11 +156,16 @@ public class PostService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 동일한 메모가 존재합니다.");
         }
 
-        Memo memo = new Memo();
-        memo.setPost(postRepository.findByPostId(id));
-        memo.setUser(user);
-        memo.setTargetText(targetText);
-        memo.setContent(content);
+        // Post 객체를 찾을 때 예외 처리
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
+
+        Memo memo = Memo.builder()
+                .post(post)
+                .user(user)
+                .targetText(targetText)
+                .content(content)
+                .build();
 
         return noteRepository.save(memo);
     }
