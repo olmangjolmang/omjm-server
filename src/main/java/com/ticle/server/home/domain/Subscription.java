@@ -20,6 +20,12 @@ public class Subscription extends BaseTimeEntity {
     @Column(name = "subs_id")
     private Long subsId;
 
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "nick_name")
+    private String nickName;
+
     @Column(name = "agree_info")
     private Boolean agreeInfo;
 
@@ -31,11 +37,13 @@ public class Subscription extends BaseTimeEntity {
     private Day subsDay;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private User user;
 
     @Builder
-    public Subscription(Boolean agreeInfo, Boolean agreeMarketing, Day subsDay, User user) {
+    public Subscription(String email, String nickName, Boolean agreeInfo, Boolean agreeMarketing, Day subsDay, User user) {
+        this.email = email;
+        this.nickName = nickName;
         this.agreeInfo = agreeInfo;
         this.agreeMarketing = agreeMarketing;
         this.subsDay = subsDay;
