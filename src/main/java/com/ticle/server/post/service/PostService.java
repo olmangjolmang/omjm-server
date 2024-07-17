@@ -111,7 +111,6 @@ public class PostService {
         return post;
     }
 
-
     public Object scrappedById(long id, CustomUserDetails customUserDetails) {
 
         // 게시물 조회
@@ -123,24 +122,32 @@ public class PostService {
 
         // 이미 스크랩했는지 확인
         Optional<Scrapped> existingScrap = scrappedRepository.findByUserIdAndPost_PostId(userId, post.getPostId());
+
+        Scrapped scrap;
+
         if (existingScrap.isPresent()) {
-            Scrapped scrap = existingScrap.get();
+            scrap = existingScrap.get();
 
             if ("SCRAPPED".equals(scrap.getStatus())) { // 이미 스크랩한 상태 -> 스크랩 취소
                 scrap.changeToUnscrapped();
-            } else { //스크랩 하기
+                post.decreaseScrapCount();
+            } else { // 스크랩
                 scrap.changeToScrapped();
+                post.increaseScrapCount();
             }
-            return scrappedRepository.save(scrap);
+        } else {
+            // 새로운 스크랩 생성
+            scrap = Scrapped.builder()
+                    .post(post)
+                    .user(user)
+                    .status("SCRAPPED")
+                    .build();
+            post.increaseScrapCount(); // 새로운 스크랩 시에도 카운트 증가
         }
 
-        Scrapped scrapped = Scrapped.builder()
-                .post(post)
-                .user(user)
-                .status("SCRAPPED")
-                .build();
-
-        return scrappedRepository.save(scrapped);
+        // post와 scrap 저장
+        postRepository.save(post);
+        return scrappedRepository.save(scrap);
     }
 
     public Object writeMemo(long id, CustomUserDetails customUserDetails, String targetText, String content) {
