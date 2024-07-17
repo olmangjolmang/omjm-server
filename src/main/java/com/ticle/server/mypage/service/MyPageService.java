@@ -11,22 +11,15 @@ import com.ticle.server.opinion.repository.OpinionRepository;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.opinion.domain.Opinion;
-<<<<<<< HEAD
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-=======
 import com.ticle.server.scrapped.repository.ScrappedRepository;
-import com.ticle.server.user.domain.User;
-import com.ticle.server.user.domain.type.Category;
-import com.ticle.server.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
->>>>>>> 63399e9df64ac45d2c5f2ee15efc4789ed67d08c
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,8 +64,10 @@ public class MyPageService {
     }
 
 
-    public List<MyQuestionDto> getMyQuestions(Long userId) {
+    public List<MyQuestionDto> getMyQnA(Long userId) {
+        Long tmp = 1L;
         List<Opinion> questions = opinionRepository.findByUserId(userId);
+        Optional<Comment> comments = commentRepository.findByUserIdAndOpinionId(userId,tmp);
         return questions.stream()
                 .map(MyQuestionDto::toDto)
                 .collect(toList());
@@ -80,9 +75,9 @@ public class MyPageService {
 
     @Transactional
     public void updateComment(Long userId, Long opinionId, String newContent) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Opinion> opinion = opinionRepository.findByOpinionIdWithFetch(opinionId);
-        Comment comment = commentRepository.findByUserAndOpinion(user.get(), opinion.get());
+//        Optional<User> user = userRepository.findById(userId);
+//        Optional<Opinion> opinion = opinionRepository.findByOpinionIdWithFetch(opinionId);
+//        Optional<Comment> comment = commentRepository.findByUserIdAndOpinionId(userId,opinionId);
 
         Comment comment = commentRepository.findByUserIdAndOpinionId(userId,opinionId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
@@ -92,12 +87,12 @@ public class MyPageService {
         }
 
         comment.updateContent(newContent);
-        return commentRepository.save(comment);
+//        return commentRepository.save(comment);
     }
 
     @Transactional
     public void deleteComment(Long userId, Long questionId) {
-        Comment comment = commentRepository.deleteByUserAndOpinion(userId, questionId)
+        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, questionId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         if (!comment.getUser().getId().equals(userId)) {

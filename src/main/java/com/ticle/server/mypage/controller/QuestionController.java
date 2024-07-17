@@ -33,15 +33,11 @@ public class QuestionController {
     @GetMapping("/my-question")
     public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@AuthenticationPrincipal CustomUserDetails customUserDetails){
 
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseTemplate.EMPTY_RESPONSE);
-//        }
-
+//
         Long userId = customUserDetails.getUserId();
 
         List<MyQuestionDto> myQuestionDtos;
-        myQuestionDtos = myPageService.getMyQuestions(userId);
+        myQuestionDtos = myPageService.getMyQnA(userId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -54,7 +50,7 @@ public class QuestionController {
                                                                   @PathVariable("id") Long questionId,
                                                                   @RequestBody UpdateCommentDto updateCommentDto) {
         Long userId = customUserDetails.getUserId();
-        Comment updatedComment = myPageService.updateComment(userId, questionId, updateCommentDto.getContent());
+        myPageService.updateComment(userId, questionId, updateCommentDto.getContent());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
