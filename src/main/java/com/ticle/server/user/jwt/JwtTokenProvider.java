@@ -1,21 +1,21 @@
 package com.ticle.server.user.jwt;
 
 
-import com.ticle.server.user.dto.JwtToken;
+import com.ticle.server.global.util.RedisUtil;
+import com.ticle.server.user.dto.response.JwtTokenResponse;
 import com.ticle.server.user.service.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -29,14 +29,18 @@ import static java.util.stream.Collectors.toList;
 @Component
 public class JwtTokenProvider {
     private final Key key;
+    private final RedisUtil redisUtil;
+
+
     // secret값을 가져와서 key에 저장
-    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey){
+    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey, RedisUtil redisUtil){
+        this.redisUtil = redisUtil;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     // user 정보를 가지고 토큰을 생성하는 메소드
-    public JwtToken generateToken(Authentication authentication){
+    public JwtTokenResponse generateToken(Authentication authentication){
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -55,7 +59,7 @@ public class JwtTokenProvider {
                 .signWith(key,SignatureAlgorithm.HS256)
                 .compact();
 
-        return JwtToken.builder()
+        return JwtTokenResponse.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -78,8 +82,13 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal,"",authorities);
     }
     //토큰 정보를 검증하는 메소드
+
     public boolean validateToken(String token){
         try{
+            if (redisUtil.hasKeyBlackList(token)){
+                // TODO 에러 발생시키는 부분 수정
+                throw new RuntimeException("로그아웃 했지롱~~");
+            }
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
@@ -97,7 +106,7 @@ public class JwtTokenProvider {
         return false;
     }
     //주어진 Access token을 복호화하고, 만료된 토큰인 경우에도 Claims 반환
-    private Claims parseClaims(String accessToken){
+    public Claims parseClaims(String accessToken){
         try{
             return Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -108,4 +117,27 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
+
+    public Long getExpiration(String accessToken){
+        //에세스 토큰 만료시간
+        Date expiration = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody()
+                .getExpiration();
+        //현재시간
+        long now = new Date().getTime();
+        return (expiration.getTime()-now);
+    }
+
+    // Request Header에서 토큰 정보 추출
+    public String resolveToken(HttpServletRequest request){
+        String bearerToken = request.getHeader("Authorization");
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    // Request Header에 Refresh Token 정보를 추출하는 메서드
+
+
+
 }

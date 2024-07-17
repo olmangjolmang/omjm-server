@@ -1,21 +1,33 @@
 package com.ticle.server.user.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
-import com.ticle.server.user.dto.JoinRequest;
-import com.ticle.server.user.dto.JwtToken;
-import com.ticle.server.user.dto.LoginRequest;
-import com.ticle.server.user.dto.UserDto;
+import com.ticle.server.user.domain.User;
+import com.ticle.server.user.dto.request.JoinRequest;
+import com.ticle.server.user.dto.response.JwtTokenResponse;
+import com.ticle.server.user.dto.request.LoginRequest;
+import com.ticle.server.user.dto.response.UserResponse;
 import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.jwt.SecurityUtil;
 import com.ticle.server.user.repository.UserRepository;
+import com.ticle.server.user.service.CustomUserDetails;
 import com.ticle.server.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "User", description = "유저 관련 API")
 @Slf4j
@@ -30,24 +42,30 @@ public class UserController {
 
     @Operation(summary = "로그인", description = "로그인하기")
     @PostMapping("/sign-in")
-    public ResponseEntity<ResponseTemplate<Object>> signIn(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<ResponseTemplate<Object>> signIn(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         String email = loginRequest.email();
         String password = loginRequest.password();
-        log.info("request username = {}, password = {}", email, password);
-        JwtToken jwtToken = userService.signIn(email, password);
-        log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+        JwtTokenResponse jwtTokenResponse = userService.signIn(email, password);
+        response.addHeader("Authorization",jwtTokenResponse.getAccessToken());
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(jwtToken));
+                .status(OK)
+                .body(ResponseTemplate.from(jwtTokenResponse));
     }
 
     @Operation(summary = "회원가입", description = "회원가입하기")
     @PostMapping("sign-up")
     public ResponseEntity<ResponseTemplate<Object>> signUp(@RequestBody JoinRequest joinRequest) {
-        UserDto savedUserDto = userService.signUp(joinRequest);
+        UserResponse savedUserDto = userService.signUp(joinRequest);
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(OK)
                 .body(ResponseTemplate.from(savedUserDto));
+    }
+    @Operation(summary = "로그아웃", description = "로그아웃하기")
+    @DeleteMapping("/logout")
+    public ResponseEntity logout(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletRequest request){
+        String accessToken = jwtTokenProvider.resolveToken(request);
+        return userService.logout(accessToken, userDetails.getUserId());//username = email
+
     }
 
     @Operation(summary = "테스트", description = "테스트하기")
