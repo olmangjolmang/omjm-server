@@ -126,4 +126,18 @@ public class GeminiResponse {
         return quizzes;
     }
 
+    public String getCommonTitle() {
+        String text = "";
+
+        if (candidates != null) {
+            for (Candidate candidate : candidates) {
+                Content content = candidate.getContent();
+                if (content != null && content.getParts() != null && !content.getParts().isEmpty()) {
+                    text = content.getParts().get(0).getText();
+                }
+            }
+        }
+
+        return text;
+    }
 }
