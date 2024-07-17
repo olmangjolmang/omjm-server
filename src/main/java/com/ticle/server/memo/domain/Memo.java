@@ -5,10 +5,6 @@ import com.ticle.server.post.domain.Post;
 import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Table(name = "Memo")
 @Entity
