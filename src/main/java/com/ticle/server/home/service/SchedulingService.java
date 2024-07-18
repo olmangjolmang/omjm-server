@@ -43,7 +43,7 @@ public class SchedulingService implements ApplicationRunner {
     @Value("${gemini.api.url}")
     private String apiUrl;
 
-    @Value("${gemini.api.key}")
+    @Value("${gemini.api.key2}")
     private String geminiApiKey;
 
     private static final int POST_COUNT = 10;
