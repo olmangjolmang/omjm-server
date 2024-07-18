@@ -42,23 +42,30 @@ public class PostService {
 
 
     // 카테고리에 맞는 글 찾기
-    public Page<PostResponse> findAllByCategory(String category, int page) {
+    public Page<PostResponse> findAllByCategory(String category, String sortName, Integer page) {
+
 
         final int SIZE = 9; // 한 페이지에 보여질 객체 수
+        Pageable pageable;
 
-        //최신순으로 post 정렬
-        Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
+        if (sortName.equals("최신순")) {
+            pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
+        } else if (sortName.equals("스크랩순")) {
+            pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "scrapCount"));
+        } else { // 오래된 순
+            pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.ASC, "createdDate"));
+        }
+
         Page<Post> postPage;
 
-        if (category == null || category.isEmpty()) {
+        if (category.isEmpty()) {
             // 모든 글 조회
             postPage = postRepository.findAll(pageable);
         } else {
-            //카테고리에 맞는 글 조회
+            // 카테고리에 맞는 글 조회
             postPage = postRepository.findByCategory(Category.valueOf(category), pageable);
         }
         return postPage.map(PostResponse::from);
-
     }
 
 

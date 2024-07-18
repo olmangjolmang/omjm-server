@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,11 +32,14 @@ public class PostApiController {
     private final PostService postService;
 
     //카테고리로 아티클 조회
-    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | 공백 입력시 모든 카테고리의 아티클 나타남 ")
+    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | post?category={category}&sortName={sortName}&page={page} 과 같은 형식으로 작동합니다. 카테고리 미입력시 모든 아티클, sortName 미입력시 최신순, page 미입력시 1번 페이지입니다. ")
     @GetMapping
-    public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category, @RequestParam(defaultValue = "1") int page) {
+    public ResponseEntity<ResponseTemplate<Object>>
+    findAllArticles(@RequestParam(required = false, defaultValue = "") String category,
+                    @RequestParam(required = false, defaultValue = "최신순") String sortName,
+                    @RequestParam(required = false, defaultValue = "1") Integer page) {
 
-        Page<PostResponse> postPage = postService.findAllByCategory(category, page);
+        Page<PostResponse> postPage = postService.findAllByCategory(category, sortName, page);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
