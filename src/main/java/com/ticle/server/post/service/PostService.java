@@ -2,6 +2,7 @@ package com.ticle.server.post.service;
 
 import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.mypage.repository.NoteRepository;
+import com.ticle.server.post.domain.type.PostSort;
 import com.ticle.server.post.dto.*;
 import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
@@ -42,15 +43,14 @@ public class PostService {
 
 
     // 카테고리에 맞는 글 찾기
-    public Page<PostResponse> findAllByCategory(String category, String sortName, Integer page) {
-
+    public Page<PostResponse> findAllByCategory(Category category, PostSort sortName, Integer page) {
 
         final int SIZE = 9; // 한 페이지에 보여질 객체 수
         Pageable pageable;
 
-        if (sortName.equals("최신순")) {
+        if (sortName == null || sortName == PostSort.최신순) {
             pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
-        } else if (sortName.equals("스크랩순")) {
+        } else if (sortName == PostSort.스크랩순) {
             pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "scrapCount"));
         } else { // 오래된 순
             pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.ASC, "createdDate"));
@@ -58,12 +58,12 @@ public class PostService {
 
         Page<Post> postPage;
 
-        if (category.isEmpty()) {
+        if (category == null) {
             // 모든 글 조회
             postPage = postRepository.findAll(pageable);
         } else {
             // 카테고리에 맞는 글 조회
-            postPage = postRepository.findByCategory(Category.valueOf(category), pageable);
+            postPage = postRepository.findByCategory(category, pageable);
         }
         return postPage.map(PostResponse::from);
     }

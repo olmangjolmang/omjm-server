@@ -5,11 +5,13 @@ import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.memo.dto.MemoDto;
 import com.ticle.server.memo.dto.MemoRequest;
 import com.ticle.server.post.domain.Post;
+import com.ticle.server.post.domain.type.PostSort;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.post.dto.QuizResponse;
 import com.ticle.server.post.service.PostService;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.dto.ScrappedDto;
+import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.user.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,8 +37,8 @@ public class PostApiController {
     @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | post?category={category}&sortName={sortName}&page={page} 과 같은 형식으로 작동합니다. 카테고리 미입력시 모든 아티클, sortName 미입력시 최신순, page 미입력시 1번 페이지입니다. ")
     @GetMapping
     public ResponseEntity<ResponseTemplate<Object>>
-    findAllArticles(@RequestParam(required = false, defaultValue = "") String category,
-                    @RequestParam(required = false, defaultValue = "최신순") String sortName,
+    findAllArticles(@RequestParam(required = false, defaultValue = "") Category category,
+                    @RequestParam(required = false, defaultValue = "최신순") PostSort sortName,
                     @RequestParam(required = false, defaultValue = "1") Integer page) {
 
         Page<PostResponse> postPage = postService.findAllByCategory(category, sortName, page);
