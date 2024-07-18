@@ -2,6 +2,7 @@ package com.ticle.server.post.service;
 
 import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.mypage.repository.NoteRepository;
+import com.ticle.server.post.domain.type.PostSort;
 import com.ticle.server.post.dto.*;
 import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
@@ -42,23 +43,24 @@ public class PostService {
 
 
     // 카테고리에 맞는 글 찾기
-    public Page<PostResponse> findAllByCategory(String category, int page) {
+    public Page<PostResponse> findAllByCategory(Category category, PostSort orderBy, Integer page) {
 
         final int SIZE = 9; // 한 페이지에 보여질 객체 수
+        Pageable pageable;
 
-        //최신순으로 post 정렬
-        Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Sort sort = PostSort.getOrder(orderBy);
+        pageable = PageRequest.of(page - 1, SIZE, sort);
+
         Page<Post> postPage;
 
-        if (category == null || category.isEmpty()) {
+        if (category == null) {
             // 모든 글 조회
             postPage = postRepository.findAll(pageable);
         } else {
-            //카테고리에 맞는 글 조회
-            postPage = postRepository.findByCategory(Category.valueOf(category), pageable);
+            // 카테고리에 맞는 글 조회
+            postPage = postRepository.findByCategory(category, pageable);
         }
         return postPage.map(PostResponse::from);
-
     }
 
 
