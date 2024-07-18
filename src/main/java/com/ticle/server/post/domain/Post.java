@@ -42,6 +42,9 @@ public class Post extends BaseTimeEntity {
     @Column
     private S3Info image;
 
+    @Column(name = "scrap_count")
+    private Long scrapCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
