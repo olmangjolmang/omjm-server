@@ -63,20 +63,22 @@ public class SchedulingService implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        generateTitlePostMultipleTimes();
+        generateCommonTitleMultipleTimes();
     }
 
     @Scheduled(cron = "0 0 0 * * *")
-    public void generateTitlePostMultipleTimes() {
+    public void generateCommonTitleMultipleTimes() {
         postTopicCache.clearCache();
 
-        for (int i = 0; i < POST_COUNT; i++) {
-            generateTitlePost();
+        int count = (int) postRepository.count();
+
+        for (int i = 0; i < 4; i++) {
+            saveCommonTitleAndPostsToCache(count);
         }
     }
 
-    private void generateTitlePost() {
-        Set<Long> selectedPostIds = getRandomIndices();
+    private void saveCommonTitleAndPostsToCache(int count) {
+        Set<Long> selectedPostIds = getRandomIndices(count);
 
         // 선택된 post_id에 해당하는 Post 객체 가져오기
         List<Post> selectedPosts = postRepository.findAllById(selectedPostIds);
@@ -108,13 +110,13 @@ public class SchedulingService implements ApplicationRunner {
         return response.getCommonTitle();
     }
 
-    private Set<Long> getRandomIndices() {
+    private Set<Long> getRandomIndices(int count) {
         // 3개의 랜덤한 post_id 선택하기
         Set<Long> selectedPostIds = new HashSet<>();
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
         while (selectedPostIds.size() < 3) {
-            long randomPostId = random.nextInt((int) postRepository.count()) + 1L;
+            long randomPostId = random.nextInt(count) + 1L;
             selectedPostIds.add(randomPostId);
         }
 

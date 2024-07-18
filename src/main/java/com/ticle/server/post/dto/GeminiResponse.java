@@ -2,6 +2,7 @@ package com.ticle.server.post.dto;
 
 import com.ticle.server.post.repository.PostRepository;
 import lombok.*;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -84,6 +85,7 @@ public class GeminiResponse {
     // quiz 생성 데이터 format
     public List<QuizResponse> formatQuiz(String postTitle) {
         List<QuizResponse> quizzes = new ArrayList<>();
+
         if (candidates != null) {
             System.out.println("Candidates found: " + candidates.size());
             int quizNo = 1;
@@ -122,6 +124,7 @@ public class GeminiResponse {
                 }
             }
         }
+
         System.out.println("Formatted quizzes: " + quizzes);
         return quizzes;
     }
@@ -132,7 +135,8 @@ public class GeminiResponse {
         if (candidates != null) {
             for (Candidate candidate : candidates) {
                 Content content = candidate.getContent();
-                if (content != null && content.getParts() != null && !content.getParts().isEmpty()) {
+
+                if (content != null && !CollectionUtils.isEmpty(content.getParts())) {
                     text = content.getParts().get(0).getText();
                 }
             }

@@ -33,7 +33,10 @@ public class PostTopicCache {
 
         for (int i = 0; i < count; i++) {
             Map.Entry<String, List<Post>> entry = allEntries.get(i);
-            result.put(entry.getKey(), new ArrayList<>(entry.getValue().subList(0, Math.min(count, entry.getValue().size()))));
+
+            int resultSize = Math.min(count, entry.getValue().size());
+
+            result.put(entry.getKey(), new ArrayList<>(entry.getValue().subList(0, resultSize)));
         }
 
         return result;
