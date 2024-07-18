@@ -34,14 +34,14 @@ public class PostApiController {
     private final PostService postService;
 
     //카테고리로 아티클 조회
-    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | post?category={category}&sortName={sortName}&page={page} 과 같은 형식으로 작동합니다. 카테고리 미입력시 모든 아티클, sortName 미입력시 최신순, page 미입력시 1번 페이지입니다. ")
+    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | post?category={category}&sort={sort}&page={page} 과 같은 형식으로 동작합니다. 카테고리 미입력시 모든 아티클, sort 미입력시 최신순, page 미입력시 첫 페이지입니다. ")
     @GetMapping
     public ResponseEntity<ResponseTemplate<Object>>
     findAllArticles(@RequestParam(required = false, defaultValue = "") Category category,
-                    @RequestParam(required = false, defaultValue = "최신순") PostSort sortName,
+                    @RequestParam(required = false, defaultValue = "최신순") PostSort sort,
                     @RequestParam(required = false, defaultValue = "1") Integer page) {
 
-        Page<PostResponse> postPage = postService.findAllByCategory(category, sortName, page);
+        Page<PostResponse> postPage = postService.findAllByCategory(category, sort, page);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

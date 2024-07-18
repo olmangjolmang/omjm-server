@@ -43,14 +43,14 @@ public class PostService {
 
 
     // 카테고리에 맞는 글 찾기
-    public Page<PostResponse> findAllByCategory(Category category, PostSort sortName, Integer page) {
+    public Page<PostResponse> findAllByCategory(Category category, PostSort sort, Integer page) {
 
         final int SIZE = 9; // 한 페이지에 보여질 객체 수
         Pageable pageable;
 
-        if (sortName == null || sortName == PostSort.최신순) {
+        if (sort == null || sort == PostSort.최신순) {
             pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
-        } else if (sortName == PostSort.스크랩순) {
+        } else if (sort == PostSort.스크랩순) {
             pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "scrapCount"));
         } else { // 오래된 순
             pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.ASC, "createdDate"));
