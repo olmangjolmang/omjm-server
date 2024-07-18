@@ -1,12 +1,12 @@
 package com.ticle.server.post.domain;
 
-import com.ticle.server.global.domain.BaseTimeEntity;
 import com.ticle.server.global.domain.S3Info;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.user.domain.type.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Post extends BaseTimeEntity {
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,13 +37,15 @@ public class Post extends BaseTimeEntity {
     @Column(name = "category")
     private Category category;
 
+    @Column(name = "created_date")
+    LocalDate createdDate;
+
     @Embedded
     @Column
     private S3Info image;
 
     @Column(name = "scrap_count")
     private Integer scrapCount;
-
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Scrapped> scrappeds;
