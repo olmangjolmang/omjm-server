@@ -9,10 +9,11 @@ import com.ticle.server.post.dto.GeminiResponse;
 import com.ticle.server.post.exception.PostNotFoundException;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.user.service.EmailService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ import static com.ticle.server.post.exception.errorcode.PostErrorCode.POST_NOT_F
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class SchedulingService {
+public class SchedulingService implements ApplicationRunner {
 
     private final SubscriptionRepository subscriptionRepository;
     private final PostRepository postRepository;
@@ -60,8 +61,8 @@ public class SchedulingService {
         }
     }
 
-    @PostConstruct
-    public void init() {
+    @Override
+    public void run(ApplicationArguments args) {
         generateTitlePostMultipleTimes();
     }
 
