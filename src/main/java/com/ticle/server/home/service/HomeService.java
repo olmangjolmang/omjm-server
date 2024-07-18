@@ -5,7 +5,6 @@ import com.ticle.server.home.dto.request.SubscriptionRequest;
 import com.ticle.server.home.dto.response.HomeResponse;
 import com.ticle.server.home.dto.response.PostSetsResponse;
 import com.ticle.server.home.repository.SubscriptionRepository;
-import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.exception.UserNotFoundException;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.ticle.server.user.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
@@ -54,27 +52,15 @@ public class HomeService {
     }
 
     private HomeResponse findTop3Posts() {
-        List<Post> topPosts = postRepository.findTop3ByOrderByScrapCountDesc();
-
-        List<PostSetsResponse> responses = topPosts.stream()
-                .map(PostSetsResponse::from)
-                .toList();
-
-        return HomeResponse.of("이번주 TOP 3", responses);
+        List<PostSetsResponse> topPosts = postRepository.findTop3ByOrderByScrapCountDesc();
+        return HomeResponse.of("이번주 TOP 3", topPosts);
     }
 
+
     private List<HomeResponse> find3RandomTopicAndPosts() {
-        List<HomeResponse> responses = new ArrayList<>();
-
-        Map<String, List<PostSetsResponse>> randomPosts = postTopicCache.getRandomPosts(3);
-
-        for (Map.Entry<String, List<PostSetsResponse>> entry : randomPosts.entrySet()) {
-            String commonTitle = entry.getKey();
-            List<PostSetsResponse> postSetsResponses = entry.getValue();
-
-            responses.add(HomeResponse.of(commonTitle, postSetsResponses));
-        }
-
-        return responses;
+        return postTopicCache.getRandomPosts(3)
+                .entrySet().stream()
+                .map(entry -> HomeResponse.of(entry.getKey(), entry.getValue()))
+                .toList();
     }
 }
