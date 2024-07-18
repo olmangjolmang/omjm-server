@@ -42,16 +42,30 @@ public class HomeService {
         subscriptionRepository.save(subscription);
     }
 
-    public List<HomeResponse> getPostsByTopic() {
+    public List<HomeResponse> generateHomeInfo() {
+        List<HomeResponse> responseList = new ArrayList<>();
+
         // 이번주 TOP 3
-        List<HomeResponse> responseList = getTop3Posts();
+        responseList.add(findTop3Posts());
         // 랜덤 3개의 주제와 포스트
-        getRandom3TopicAndPosts(responseList);
+        responseList.addAll(find3RandomTopicAndPosts());
 
         return responseList;
     }
 
-    private void getRandom3TopicAndPosts(List<HomeResponse> responseList) {
+    private HomeResponse findTop3Posts() {
+        List<Post> topPosts = postRepository.findTop3ByOrderByScrapCountDesc();
+
+        List<PostSetsResponse> responses = topPosts.stream()
+                .map(PostSetsResponse::from)
+                .toList();
+
+        return HomeResponse.of("이번주 TOP 3", responses);
+    }
+
+    private List<HomeResponse> find3RandomTopicAndPosts() {
+        List<HomeResponse> responses = new ArrayList<>();
+
         Map<String, List<Post>> randomPosts = postTopicCache.getRandomPosts(3);
 
         for (Map.Entry<String, List<Post>> entry : randomPosts.entrySet()) {
@@ -62,19 +76,9 @@ public class HomeService {
                     .map(PostSetsResponse::from)
                     .toList();
 
-            responseList.add(HomeResponse.of(commonTitle, postResponses));
+            responses.add(HomeResponse.of(commonTitle, postResponses));
         }
-    }
 
-    private List<HomeResponse> getTop3Posts() {
-        List<HomeResponse> responseList = new ArrayList<>();
-
-        List<Post> topPosts = postRepository.findTop3ByOrderByScrapCountDesc();
-        List<PostSetsResponse> responses = topPosts.stream()
-                .map(PostSetsResponse::from)
-                .toList();
-
-        responseList.add(HomeResponse.of("이번주 TOP 3", responses));
-        return responseList;
+        return responses;
     }
 }
