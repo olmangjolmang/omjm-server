@@ -155,7 +155,6 @@ public class PostService {
         Long userId = customUserDetails.getUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId));
 
-
         // 같은 내용의 targetText-content 세트가 있는지 확인
         Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user, targetText, content);
 
@@ -174,7 +173,7 @@ public class PostService {
                 .content(content)
                 .build();
 
-        return noteRepository.save(memo);
+      return noteRepository.save(memo);
     }
 
     boolean isValidResponse(GeminiResponse response) {

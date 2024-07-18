@@ -1,4 +1,4 @@
-package com.ticle.server.mypage.dto;
+package com.ticle.server.mypage.dto.response;
 
 import com.ticle.server.global.domain.S3Info;
 import com.ticle.server.post.domain.Post;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @Builder
-public class SavedTicleDto {
+public class SavedTicleResponse {
     private Long postId;
     private String title;
     private String content;
@@ -19,8 +19,8 @@ public class SavedTicleDto {
     private Category postCategory;
     private S3Info image;
 
-    public static SavedTicleDto toDto(Post post) {
-        return SavedTicleDto.builder()
+    public static SavedTicleResponse toDto(Post post) {
+        return SavedTicleResponse.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .content(post.getContent())
