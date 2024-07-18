@@ -26,7 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserService{
+public class UserService {
 
     private final UserRepository userRepository;
 
@@ -35,39 +35,39 @@ public class UserService{
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public JwtToken signIn(String email,String password){
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
+    public JwtToken signIn(String email, String password) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
-        log.info("hello"+authentication.getDetails());
-        log.info("hello22"+authentication.getName());
+        log.info("hello" + authentication.getDetails());
+        log.info("hello22" + authentication.getName());
 
 
         return jwtToken;
     }
 
     @Transactional
-    public UserDto signUp(JoinRequest joinRequest){
-        if(userRepository.existsByEmail(joinRequest.getEmail())){
+    public UserDto signUp(JoinRequest joinRequest) {
+        if (userRepository.existsByEmail(joinRequest.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다");
         }
         String encodedPassword = passwordEncoder.encode(joinRequest.getPassword());
         List<String> roles = new ArrayList<>();
         roles.add("USER");
-        return UserDto.toDto(userRepository.save(joinRequest.toEntity(encodedPassword,roles)));
+        return UserDto.toDto(userRepository.save(joinRequest.toEntity(encodedPassword, roles)));
     }
 
 
-    public User getLoginUserByEmail(String email){
-        if(email == null)
+    public User getLoginUserByEmail(String email) {
+        if (email == null)
             return null;
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
-        if(optionalUser.isEmpty())
+        if (optionalUser.isEmpty())
             return null;
 
         return optionalUser.get();
