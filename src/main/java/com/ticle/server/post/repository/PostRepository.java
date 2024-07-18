@@ -1,5 +1,6 @@
 package com.ticle.server.post.repository;
 
+import com.ticle.server.home.dto.response.PostSetsResponse;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.dto.PostIdTitleDto;
 import com.ticle.server.user.domain.type.Category;
@@ -15,8 +16,6 @@ import java.util.Set;
 
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Post findByPostId(Long postId);
-
     Page<Post> findByCategory(Category category, Pageable pageable);
 
     @Query("SELECT new com.ticle.server.post.dto.PostIdTitleDto(p.postId, p.title) FROM Post p")
@@ -28,7 +27,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.createdDate DESC LIMIT 1")
     Optional<Post> findTopPostByCategory(@Param("category") Category category);
 
-    List<Post> findAllByPostIdIn(Set<Long> topPostIds);
+    @Query("SELECT new com.ticle.server.home.dto.response.PostSetsResponse(p.title, p.image.imageUrl, p.category, p.author, p.createdDate) "
+            + "FROM Post p "
+            + "WHERE p.postId IN (:postIds)")
+    List<PostSetsResponse> findSelectedPostInfoByIds(@Param("postIds") Set<Long> postIds);
 
     List<Post> findTop3ByOrderByScrapCountDesc();
 }

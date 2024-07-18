@@ -2,6 +2,7 @@ package com.ticle.server.home.service;
 
 import com.ticle.server.home.domain.Subscription;
 import com.ticle.server.home.domain.type.Day;
+import com.ticle.server.home.dto.response.PostSetsResponse;
 import com.ticle.server.home.repository.SubscriptionRepository;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.dto.GeminiRequest;
@@ -81,7 +82,7 @@ public class SchedulingService implements ApplicationRunner {
         Set<Long> selectedPostIds = getRandomIndices(count);
 
         // 선택된 post_id에 해당하는 Post 객체 가져오기
-        List<Post> selectedPosts = postRepository.findAllByPostIdIn(selectedPostIds);
+        List<PostSetsResponse> selectedPosts = postRepository.findSelectedPostInfoByIds(selectedPostIds);
 
         // AI에게 3개의 Post 제목을 보내서 공통된 제목 추천받기
         String commonTitle = generateCommonTitle(selectedPosts);
@@ -91,12 +92,12 @@ public class SchedulingService implements ApplicationRunner {
         log.info("post: {}", postTopicCache.getPostsFromCache(commonTitle));
     }
 
-    private String generateCommonTitle(List<Post> selectedPosts) {
+    private String generateCommonTitle(List<PostSetsResponse> selectedPosts) {
         // Gemini에 요청 전송
         String requestUrl = apiUrl + "?key=" + geminiApiKey;
 
         String prompt = selectedPosts.stream()
-                .map(Post::getTitle)
+                .map(PostSetsResponse::title)
                 .toList() + " 다음은 3개의 기사 제목 리스트야. 해당 제목들에 대한 공통제목을 20자 이내로 1개만 추천해줘 " +
                 "예: commonTitle = [개발자를 위한 성장 가이드]";
 

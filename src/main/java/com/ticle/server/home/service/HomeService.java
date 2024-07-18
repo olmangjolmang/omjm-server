@@ -66,17 +66,13 @@ public class HomeService {
     private List<HomeResponse> find3RandomTopicAndPosts() {
         List<HomeResponse> responses = new ArrayList<>();
 
-        Map<String, List<Post>> randomPosts = postTopicCache.getRandomPosts(3);
+        Map<String, List<PostSetsResponse>> randomPosts = postTopicCache.getRandomPosts(3);
 
-        for (Map.Entry<String, List<Post>> entry : randomPosts.entrySet()) {
+        for (Map.Entry<String, List<PostSetsResponse>> entry : randomPosts.entrySet()) {
             String commonTitle = entry.getKey();
-            List<Post> posts = entry.getValue();
+            List<PostSetsResponse> postSetsResponses = entry.getValue();
 
-            List<PostSetsResponse> postResponses = posts.stream()
-                    .map(PostSetsResponse::from)
-                    .toList();
-
-            responses.add(HomeResponse.of(commonTitle, postResponses));
+            responses.add(HomeResponse.of(commonTitle, postSetsResponses));
         }
 
         return responses;
