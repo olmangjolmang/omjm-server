@@ -10,6 +10,7 @@ import com.ticle.server.post.dto.QuizResponse;
 import com.ticle.server.post.service.PostService;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.dto.ScrappedDto;
+import com.ticle.server.user.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -57,9 +58,9 @@ public class PostApiController {
 
     @Operation(summary = "아티클 스크랩", description = "새로운 아티클 스크랩, 스크랩 취소")
     @PostMapping("/{id}/scrap")
-    public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        Object scrapped = postService.scrappedById(id, userDetails);
+        Object scrapped = postService.scrappedById(id, customUserDetails);
 
         if (scrapped instanceof ScrappedDto) { // 이미 스크랩 했던 경우(취소기능)
             return ResponseEntity
@@ -78,9 +79,9 @@ public class PostApiController {
     // post memo
     @Operation(summary = "메모", description = "메모 작성하기")
     @PostMapping("/memo/{id}")
-    public ResponseEntity<ResponseTemplate<Object>> memoArticle(@PathVariable long id, @RequestBody MemoRequest memoRequest, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ResponseTemplate<Object>> memoArticle(@PathVariable long id, @RequestBody MemoRequest memoRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         {
-            Object memo = postService.writeMemo(id, userDetails, memoRequest.getTargetText(), memoRequest.getContent());
+            Object memo = postService.writeMemo(id, customUserDetails, memoRequest.getTargetText(), memoRequest.getContent());
 
             return ResponseEntity
                     .status(HttpStatus.OK)

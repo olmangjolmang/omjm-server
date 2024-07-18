@@ -39,4 +39,8 @@ out/
 ### VS Code ###
 .vscode/
 src/main/resources/*.yml
-src/main/resources/*.sql
+src/main/resources/data.sql
+
+### crawling ###
+crawling/chromedriver.exe
+crawling/velog_url.csv

@@ -55,4 +55,8 @@ public class Comment extends BaseTimeEntity {
     public void subHeartCount() {
         heartCount--;
     }
+
+    public void updateContent(String newContent) {
+        this.content = newContent;
+    }
 }
