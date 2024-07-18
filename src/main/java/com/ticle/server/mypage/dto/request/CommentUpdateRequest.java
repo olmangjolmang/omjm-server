@@ -1,4 +1,4 @@
-package com.ticle.server.mypage.dto;
+package com.ticle.server.mypage.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,11 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class UpdateCommentDto {
+public class CommentUpdateRequest {
     private String content;
 
     @Builder
-    public UpdateCommentDto(String content){
+    public CommentUpdateRequest(String content){
+
         this.content = content;
     }
+
 }

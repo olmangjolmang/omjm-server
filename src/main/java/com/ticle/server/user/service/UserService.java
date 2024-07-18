@@ -28,7 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserService{
+public class UserService {
 
     private final UserRepository userRepository;
 
@@ -46,8 +46,8 @@ public class UserService{
 
         JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authentication);
 
-        log.info("hello"+authentication.getDetails());
-        log.info("hello22"+authentication.getName());
+        log.info("hello" + authentication.getDetails());
+        log.info("hello22" + authentication.getName());
 
 
         return jwtTokenResponse;
@@ -78,17 +78,13 @@ public class UserService{
     }
 
 
-
-
-
-
-    public User getLoginUserByEmail(String email){
-        if(email == null)
+    public User getLoginUserByEmail(String email) {
+        if (email == null)
             return null;
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
-        if(optionalUser.isEmpty())
+        if (optionalUser.isEmpty())
             return null;
 
         return optionalUser.get();
