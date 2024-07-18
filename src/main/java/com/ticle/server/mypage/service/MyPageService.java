@@ -1,9 +1,10 @@
 package com.ticle.server.mypage.service;
 
 import com.ticle.server.memo.domain.Memo;
-import com.ticle.server.mypage.dto.MyNoteDto;
-import com.ticle.server.mypage.dto.MyQuestionDto;
-import com.ticle.server.mypage.dto.SavedTicleDto;
+import com.ticle.server.mypage.dto.request.NoteUpdateRequest;
+import com.ticle.server.mypage.dto.response.NoteResponse;
+import com.ticle.server.mypage.dto.response.QnAResponse;
+import com.ticle.server.mypage.dto.response.SavedTicleResponse;
 import com.ticle.server.mypage.repository.NoteRepository;
 import com.ticle.server.opinion.domain.Comment;
 import com.ticle.server.opinion.repository.CommentRepository;
@@ -11,11 +12,11 @@ import com.ticle.server.opinion.repository.OpinionRepository;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.opinion.domain.Opinion;
-import com.ticle.server.scrapped.repository.ScrappedRepository;
-import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.user.repository.UserRepository;
+import com.ticle.server.user.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import com.ticle.server.scrapped.repository.ScrappedRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,54 +37,106 @@ public class MyPageService {
     private final NoteRepository noteRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+
     private final int SIZE = 9;
 
-    public List<SavedTicleDto> getSavedArticles(Long userId,Pageable pageable) {
+    public List<SavedTicleResponse> getSavedArticles(Long userId, Pageable pageable) {
 //        Pageable pageable = PageRequest.of(page-1,SIZE);
         Page<Scrapped> scraps = scrappedRepository.findByUserId(userId,pageable);
 
         return scraps.stream()
                 .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
                 .filter(post -> post != null)
-                .map(SavedTicleDto::toDto)
+                .map(SavedTicleResponse::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<SavedTicleDto> getSavedArticlesByCategory(Long userId, Category category,Pageable pageable) {
+    public List<SavedTicleResponse> getSavedArticlesByCategory(Long userId, Category category, Pageable pageable) {
 //        Pageable pageable = PageRequest.of(page-1,SIZE);
         Page<Scrapped> scraps = scrappedRepository.findByUserIdAndPostCategory(userId, category,pageable);
 
         return scraps.stream()
                 .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
                 .filter(post -> post != null)
-                .map(SavedTicleDto::toDto)
+                .map(SavedTicleResponse::toDto)
                 .collect(Collectors.toList());
     }
 
 
-    public List<MyQuestionDto> getMyQuestions(Long userId) {
-        List<Opinion> questions = opinionRepository.findByUserId(userId);
-        return questions.stream()
-                .map(MyQuestionDto::toDto)
+    //////////////////////////////////////////////티클문답///////////////////////////////////////////////////////////////
+
+
+    public List<QnAResponse> getMyQnA(Long userId, Pageable pageable) {
+        Page<Opinion> opinions = opinionRepository.findByUserId(userId,pageable);
+        return opinions.stream()
+                .map(opinion -> {
+                    Optional<Comment> commentOpt = commentRepository.findByUserIdAndOpinionId(userId, opinion.getOpinionId());
+                    String comment = commentOpt.get().getContent();
+                    return new QnAResponse(opinion.getQuestion(), comment, opinion.getCreatedDate());
+                })
                 .collect(toList());
     }
 
     @Transactional
     public void updateComment(Long userId, Long opinionId, String newContent) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Opinion> opinion = opinionRepository.findByOpinionIdWithFetch(opinionId);
-        Comment comment = commentRepository.findByUserAndOpinion(user.get(), opinion.get());
+//        Optional<User> user = userRepository.findById(userId);
+//        Optional<Opinion> opinion = opinionRepository.findByOpinionIdWithFetch(opinionId);
+//        Optional<Comment> comment = commentRepository.findByUserIdAndOpinionId(userId,opinionId);
 
+        Comment comment = commentRepository.findByUserIdAndOpinionId(userId,opinionId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
 
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new RuntimeException("You do not have permission to edit this comment");
+        }
 
-
+        comment.updateContent(newContent);
+//        return commentRepository.save(comment);
     }
 
-    public List<MyNoteDto> getMyNotes(Long userId) {
+    @Transactional
+    public void deleteComment(Long userId, Long questionId) {
+        Comment comment = commentRepository.findByUserIdAndOpinionId(userId, questionId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new RuntimeException("You do not have permission to delete this comment");
+        }
+
+        commentRepository.delete(comment);
+    }
+
+    //////////////////////////////////////////////티클노트///////////////////////////////////////////////////////////////
+
+    public List<NoteResponse> getMyNotes(Long userId) {
         List<Memo> memos = noteRepository.findByUserId(userId);
         return memos.stream()
-                .map(MyNoteDto::toDto)
+                .map(NoteResponse::toDto)
                 .collect(toList());
+    }
+
+    @Transactional
+    public void updateNote(CustomUserDetails customUserDetails, Long noteId, NoteUpdateRequest noteUpdateRequest){
+        Memo memo = noteRepository.findById(noteId)
+                .orElseThrow(() -> new RuntimeException("Memo not found"));
+
+        if (!memo.getUser().getId().equals(customUserDetails.getUserId())) {
+            throw new RuntimeException("You do not have permission to edit this memo");
+        }
+
+        memo.updateNote(noteUpdateRequest.getContent());
+        noteRepository.save(memo);
+    }
+
+    @Transactional
+    public void deleteNote(CustomUserDetails customUserDetails, Long noteId) {
+        Memo memo = noteRepository.findById(noteId)
+                .orElseThrow(() -> new RuntimeException("Memo not found"));
+
+        if (!memo.getUser().getId().equals(customUserDetails.getUserId())) {
+            throw new RuntimeException("You do not have permission to delete this memo");
+        }
+        noteRepository.delete(memo);
     }
 
 }

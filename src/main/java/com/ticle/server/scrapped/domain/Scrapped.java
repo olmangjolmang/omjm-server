@@ -1,5 +1,6 @@
 package com.ticle.server.scrapped.domain;
 
+import com.ticle.server.global.domain.BaseTimeEntity;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor()
 @AllArgsConstructor
 @Builder
-public class Scrapped {
+public class Scrapped extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +26,7 @@ public class Scrapped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
-    
+
     @Column(name = "status")
     private String status;
 

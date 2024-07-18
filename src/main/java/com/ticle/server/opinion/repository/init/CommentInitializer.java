@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(2)
+@Order(3)
 @LocalDummyDataInit
 public class CommentInitializer implements ApplicationRunner {
 
