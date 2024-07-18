@@ -1,16 +1,18 @@
 package com.ticle.server.user.jwt;
 
 
-import com.ticle.server.global.util.RedisUtil;
+import com.ticle.server.user.redis.RedisDao;
 import com.ticle.server.user.dto.response.JwtTokenResponse;
 import com.ticle.server.user.service.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,12 +31,24 @@ import static java.util.stream.Collectors.toList;
 @Component
 public class JwtTokenProvider {
     private final Key key;
-    private final RedisUtil redisUtil;
+    private final RedisDao redisDao;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    // Header KEY 값
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    // 사용자 권한 값의 KEY
+    private static final String AUTHORIZATION_KEY = "auth";
+    // Token 식별자
+    private static final String BEARER_PREFIX = "Bearer ";
+
+    private static final long ACCESS_TOKEN_TIME =
+            1000 * 60 * 30L; // 30 분 1000ms(=1s) *60=(1min)*30 =(30min)
+    private static final long REFRESH_TOKEN_TIME = 1000 * 60 * 60 * 24 * 7L;// 7일
 
 
     // secret값을 가져와서 key에 저장
-    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey, RedisUtil redisUtil){
-        this.redisUtil = redisUtil;
+    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey, RedisDao redisDao, AuthenticationManagerBuilder authenticationManagerBuilder){
+        this.redisDao = redisDao;
+        this.authenticationManagerBuilder = authenticationManagerBuilder;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
@@ -78,15 +92,14 @@ public class JwtTokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(toList());
 
-        CustomUserDetails principal = new CustomUserDetails(Long.parseLong(claims.getSubject()), "", authorities);
+        CustomUserDetails principal = new CustomUserDetails(Long.parseLong(claims.getSubject()), "", "",authorities);
         return new UsernamePasswordAuthenticationToken(principal,"",authorities);
     }
     //토큰 정보를 검증하는 메소드
 
     public boolean validateToken(String token){
         try{
-            if (redisUtil.hasKeyBlackList(token)){
-                // TODO 에러 발생시키는 부분 수정
+            if (redisDao.hasKey(token)){
                 throw new RuntimeException("로그아웃 했지롱~~");
             }
             Jwts.parserBuilder()
@@ -136,7 +149,20 @@ public class JwtTokenProvider {
         return null;
     }
 
-    // Request Header에 Refresh Token 정보를 추출하는 메서드
+    public JwtTokenResponse reissueAtk(String email, String password,String reToken) {
+        // 레디스 저장된 리프레쉬토큰값을 가져와서 입력된 reToken 같은지 유무 확인
+        if (!redisDao.getRefreshToken(email).equals(reToken)) {
+            throw new RuntimeException("Refresh");
+        }
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        String accessToken = generateToken(authentication).getAccessToken();
+        String refreshToken = generateToken(authentication).getRefreshToken();
+        redisDao.setRefreshToken(email, refreshToken, REFRESH_TOKEN_TIME);
+        return new JwtTokenResponse("Bearer",accessToken, refreshToken);
+    }
 
 
 

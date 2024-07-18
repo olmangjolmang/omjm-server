@@ -12,12 +12,15 @@ import java.util.Collection;
 public class CustomUserDetails implements UserDetails {
 
     private final Long userId;
+    private final String email;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
     public Long getUserId() {
         return userId;
     }
+
+    public String getEmail(){return email;}
 
     @Override
     public String getUsername() {

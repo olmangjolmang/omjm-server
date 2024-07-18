@@ -1,13 +1,13 @@
 package com.ticle.server.user.service;
 
-import com.ticle.server.global.util.RedisUtil;
+import com.ticle.server.user.redis.CacheNames;
+import com.ticle.server.user.redis.RedisDao;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.dto.request.JoinRequest;
 import com.ticle.server.user.dto.response.JwtTokenResponse;
 import com.ticle.server.user.dto.response.UserResponse;
 import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 public class UserService {
 
@@ -35,20 +35,17 @@ public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final RedisUtil redisUtil;
+    private final RedisDao redisDao;
 
-    @Cacheable(cacheNames = "LOGIN_USER", key = "#email", unless = "#result== null")
+//    @Cacheable(cacheNames = CacheNames.LOGINUSER, key = "'login'+#p0", unless = "#result== null")
     @Transactional
     public JwtTokenResponse signIn(String email, String password){
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
 
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authentication);
-
-        log.info("hello" + authentication.getDetails());
-        log.info("hello22" + authentication.getName());
-
 
         return jwtTokenResponse;
     }
@@ -63,31 +60,20 @@ public class UserService {
         roles.add("USER");
         return UserResponse.toDto(userRepository.save(joinRequest.toEntity(encodedPassword,roles)));
     }
-    @CacheEvict(cacheNames = "USERBYID", key = "'login'+#p1")
+
+//    @CacheEvict(cacheNames = CacheNames.USERBYEMAIL, key = "'login'+#p1")
     @Transactional
-    public ResponseEntity logout(String accessToken, Long id) {
+    public ResponseEntity logout(String accessToken, String email) {
+
         // 레디스에 accessToken 사용못하도록 등록
         Long expiration = jwtTokenProvider.getExpiration(accessToken);
-        redisUtil.setBlackList(accessToken, "logout", expiration);
-        if (redisUtil.hasKey(id)) {
-            redisUtil.delete(id);
+        redisDao.setBlackList(accessToken, "logout", expiration);
+        if (redisDao.hasKey(email)) {
+            redisDao.deleteRefreshToken(email);
         } else {
             throw new IllegalArgumentException("이미 로그아웃한 유저입니다.");
         }
         return ResponseEntity.ok("로그아웃 완료");
-    }
-
-
-    public User getLoginUserByEmail(String email) {
-        if (email == null)
-            return null;
-
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-
-        if (optionalUser.isEmpty())
-            return null;
-
-        return optionalUser.get();
     }
 
 }

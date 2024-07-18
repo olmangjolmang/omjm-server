@@ -3,11 +3,11 @@ package com.ticle.server.user.controller;
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.dto.request.JoinRequest;
+import com.ticle.server.user.dto.request.ReissueTokenRequest;
 import com.ticle.server.user.dto.response.JwtTokenResponse;
 import com.ticle.server.user.dto.request.LoginRequest;
 import com.ticle.server.user.dto.response.UserResponse;
 import com.ticle.server.user.jwt.JwtTokenProvider;
-import com.ticle.server.user.jwt.SecurityUtil;
 import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.service.CustomUserDetails;
 import com.ticle.server.user.service.UserService;
@@ -64,13 +64,16 @@ public class UserController {
     @DeleteMapping("/logout")
     public ResponseEntity logout(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletRequest request){
         String accessToken = jwtTokenProvider.resolveToken(request);
-        return userService.logout(accessToken, userDetails.getUserId());//username = email
-
+        String email = userRepository.findById(userDetails.getUserId()).get().getEmail();
+        return userService.logout(accessToken, email);//username = email
     }
 
-    @Operation(summary = "테스트", description = "테스트하기")
-    @PostMapping("/test")
-    public String test() {
-        return SecurityUtil.getCurrentUsername();
+    @PostMapping("/reissue-token")
+    public JwtTokenResponse reissueToken(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                      @RequestBody ReissueTokenRequest tokenRequest){
+        //유저 객체 정보를 이용하여 토큰 발행
+//        UserResponse user = UserResponse.of(userDetails.get);
+        return jwtTokenProvider.reissueAtk(userDetails.getEmail(), userDetails.getPassword(),tokenRequest.getRefreshToken());
     }
+
 }

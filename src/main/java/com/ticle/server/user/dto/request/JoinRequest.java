@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
+@NoArgsConstructor
 public class JoinRequest {
     // DTO는 주로 데이터 전송을 위한 객체
     // 클라이언트와 서버 간 또는 애플리케이션 계층 간에 데이터를 전송하는 데 사용됨

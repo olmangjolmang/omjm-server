@@ -16,11 +16,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Table(name = "user")
+@Table(name = "User")
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor()
+@NoArgsConstructor
 @AllArgsConstructor
 public class User {
     // 애플리케이션의 핵심 비즈니스 로직을 담고 있는 개체
