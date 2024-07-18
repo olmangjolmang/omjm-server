@@ -81,7 +81,7 @@ public class SchedulingService implements ApplicationRunner {
         Set<Long> selectedPostIds = getRandomIndices(count);
 
         // 선택된 post_id에 해당하는 Post 객체 가져오기
-        List<Post> selectedPosts = postRepository.findAllById(selectedPostIds);
+        List<Post> selectedPosts = postRepository.findAllByPostIdIn(selectedPostIds);
 
         // AI에게 3개의 Post 제목을 보내서 공통된 제목 추천받기
         String commonTitle = generateCommonTitle(selectedPosts);

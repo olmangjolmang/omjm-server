@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -27,7 +28,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.createdDate DESC LIMIT 1")
     Optional<Post> findTopPostByCategory(@Param("category") Category category);
 
-    List<Post> findByPostIdIn(List<Long> topPostIds);
+    List<Post> findAllByPostIdIn(Set<Long> topPostIds);
 
     List<Post> findTop3ByOrderByScrapCountDesc();
 }
