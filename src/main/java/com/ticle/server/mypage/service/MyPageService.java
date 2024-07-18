@@ -65,6 +65,7 @@ public class MyPageService {
 
     //////////////////////////////////////////////티클문답///////////////////////////////////////////////////////////////
 
+
     public List<QnAResponse> getMyQnA(Long userId, Pageable pageable) {
         Page<Opinion> opinions = opinionRepository.findByUserId(userId,pageable);
         return opinions.stream()

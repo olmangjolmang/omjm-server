@@ -11,6 +11,8 @@ public class CommentUpdateRequest {
 
     @Builder
     public CommentUpdateRequest(String content){
+
         this.content = content;
     }
+
 }

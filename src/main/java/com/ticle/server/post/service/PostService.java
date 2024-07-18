@@ -39,7 +39,7 @@ public class PostService {
     private final ScrappedRepository scrappedRepository;
     private final UserRepository userRepository;
     private final NoteRepository noteRepository;
-    private final UserRepository userRepository;
+
 
     // 카테고리에 맞는 글 찾기
     public Page<PostResponse> findAllByCategory(String category, int page) {
@@ -156,7 +156,7 @@ public class PostService {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId));
 
         // 같은 내용의 targetText-content 세트가 있는지 확인
-        Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user.get(), targetText, content);
+        Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user, targetText, content);
 
         if (existingMemo != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 동일한 메모가 존재합니다.");

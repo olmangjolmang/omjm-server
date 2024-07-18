@@ -5,8 +5,6 @@ import com.ticle.server.mypage.dto.response.QnAResponse;
 import com.ticle.server.mypage.dto.response.QuestionResponse;
 import com.ticle.server.mypage.dto.request.CommentUpdateRequest;
 import com.ticle.server.mypage.service.MyPageService;
-import com.ticle.server.opinion.domain.Comment;
-import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -69,4 +67,5 @@ public class QuestionController {
                 .body(ResponseTemplate.from(userId + "님의 질문에 대한 댓글이 성공적으로 삭제되었습니다."));
 
     }
+
 }
