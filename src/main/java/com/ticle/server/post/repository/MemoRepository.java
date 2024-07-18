@@ -1,4 +1,4 @@
-package com.ticle.server.mypage.repository;
+package com.ticle.server.post.repository;
 
 import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.user.domain.User;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface NoteRepository extends JpaRepository<Memo, Long> {
+public interface MemoRepository extends JpaRepository<Memo, Long> {
     List<Memo> findByUserId(Long userId);
 
     Memo findByUserAndTargetTextAndContent(User user, String targetText, String content);

@@ -1,9 +1,8 @@
 package com.ticle.server.post.service;
 
 import com.ticle.server.memo.domain.Memo;
-import com.ticle.server.mypage.repository.NoteRepository;
+import com.ticle.server.post.repository.MemoRepository;
 import com.ticle.server.post.dto.*;
-import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
@@ -12,7 +11,6 @@ import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.service.CustomUserDetails;
-import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -38,7 +36,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final ScrappedRepository scrappedRepository;
     private final UserRepository userRepository;
-    private final NoteRepository noteRepository;
+    private final MemoRepository memoRepository;
 
 
     // 카테고리에 맞는 글 찾기
@@ -156,7 +154,7 @@ public class PostService {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId));
 
         // 같은 내용의 targetText-content 세트가 있는지 확인
-        Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user, targetText, content);
+        Memo existingMemo = memoRepository.findByUserAndTargetTextAndContent(user, targetText, content);
 
         if (existingMemo != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 동일한 메모가 존재합니다.");
@@ -171,7 +169,7 @@ public class PostService {
                 .targetText(targetText)
                 .content(content)
                 .build();
-        return noteRepository.save(memo);
+        return memoRepository.save(memo);
     }
 
     boolean isValidResponse(GeminiResponse response) {
