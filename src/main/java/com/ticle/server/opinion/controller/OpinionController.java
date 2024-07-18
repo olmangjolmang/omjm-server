@@ -33,7 +33,7 @@ public class OpinionController {
     @Operation(summary = "댓글 등록", description = "질문에 대한 댓글 등록하기")
     @PostMapping("/{opinionId}/comment")
     public ResponseEntity<ResponseTemplate<Object>> uploadComment(
-            @PathVariable Long opinionId,
+            @PathVariable("opinionId") Long opinionId,
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody CommentUploadRequest request) {
 
@@ -48,7 +48,7 @@ public class OpinionController {
             "유저가 좋아요 했던 댓글이라면 취소를, 좋아요 하지 않았던 댓글이라면 좋아요를 할 수 있습니다.")
     @PostMapping("/comment/{commentId}/heart")
     public ResponseEntity<ResponseTemplate<Object>> heartComment(
-            @PathVariable Long commentId,
+            @PathVariable("commentId") Long commentId,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         opinionService.heartComment(commentId, userDetails);
@@ -63,7 +63,7 @@ public class OpinionController {
             "isHeart는 해당 유저가 좋아요를 눌렀는지 유무를 나타냅니다.")
     @GetMapping("/{opinionId}")
     public ResponseEntity<ResponseTemplate<Object>> getComments(
-            @PathVariable Long opinionId,
+            @PathVariable("opinionId") Long opinionId,
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(required = false, defaultValue = "TIME") Order orderBy) {
 

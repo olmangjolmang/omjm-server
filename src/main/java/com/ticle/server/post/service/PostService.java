@@ -40,6 +40,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final NoteRepository noteRepository;
 
+
     // 카테고리에 맞는 글 찾기
     public Page<PostResponse> findAllByCategory(String category, int page) {
 
@@ -151,7 +152,6 @@ public class PostService {
     }
 
     public Object writeMemo(long id, CustomUserDetails customUserDetails, String targetText, String content) {
-
         Long userId = customUserDetails.getUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId));
 
@@ -161,7 +161,6 @@ public class PostService {
         if (existingMemo != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 동일한 메모가 존재합니다.");
         }
-
         // Post 객체를 찾을 때 예외 처리
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id의 post 찾을 수 없음 id: " + id));
@@ -172,8 +171,7 @@ public class PostService {
                 .targetText(targetText)
                 .content(content)
                 .build();
-
-      return noteRepository.save(memo);
+        return noteRepository.save(memo);
     }
 
     boolean isValidResponse(GeminiResponse response) {

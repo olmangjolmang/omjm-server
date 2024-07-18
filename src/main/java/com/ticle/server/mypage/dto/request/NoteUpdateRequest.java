@@ -14,5 +14,4 @@ public class NoteUpdateRequest {
     public NoteUpdateRequest(String content){
         this.content = content;
     }
-
 }
