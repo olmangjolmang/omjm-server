@@ -9,6 +9,7 @@ import com.ticle.server.post.dto.GeminiResponse;
 import com.ticle.server.post.exception.PostNotFoundException;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.user.service.EmailService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,6 +58,11 @@ public class SchedulingService {
 
             emailService.sendEmail(subscription.getEmail(), topPost);
         }
+    }
+
+    @PostConstruct
+    public void init() {
+        generateTitlePostMultipleTimes();
     }
 
     @Scheduled(cron = "0 0 0 * * *")

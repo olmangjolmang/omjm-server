@@ -26,4 +26,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE p.category = :category " +
             "ORDER BY p.createdDate DESC LIMIT 1")
     Optional<Post> findTopPostByCategory(@Param("category") Category category);
+
+    List<Post> findByPostIdIn(List<Long> topPostIds);
+
+    List<Post> findTop3ByOrderByScrapCountDesc();
 }
