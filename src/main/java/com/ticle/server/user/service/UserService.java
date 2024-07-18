@@ -1,5 +1,6 @@
 package com.ticle.server.user.service;
 
+import com.ticle.server.user.dto.request.LoginRequest;
 import com.ticle.server.user.redis.CacheNames;
 import com.ticle.server.user.redis.RedisDao;
 import com.ticle.server.user.domain.User;
@@ -37,15 +38,20 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RedisDao redisDao;
 
-//    @Cacheable(cacheNames = CacheNames.LOGINUSER, key = "'login'+#p0", unless = "#result== null")
+    public static final long REFRESH_TOKEN_TIME = 1000 * 60 * 60 * 24 * 7L;// 7일
+
+    @Cacheable(cacheNames = CacheNames.LOGINUSER, key = "#p0.email()", unless = "#result== null")
     @Transactional
-    public JwtTokenResponse signIn(String email, String password){
+    public JwtTokenResponse signIn(LoginRequest loginRequest){
+        String email = loginRequest.email();
+        String password = loginRequest.password();
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authentication);
+        redisDao.setRefreshToken(email, jwtTokenResponse.getRefreshToken(), REFRESH_TOKEN_TIME);
 
         return jwtTokenResponse;
     }
@@ -61,7 +67,7 @@ public class UserService {
         return UserResponse.toDto(userRepository.save(joinRequest.toEntity(encodedPassword,roles)));
     }
 
-//    @CacheEvict(cacheNames = CacheNames.USERBYEMAIL, key = "'login'+#p1")
+    @CacheEvict(cacheNames = CacheNames.USERBYEMAIL, key = "#p1")
     @Transactional
     public ResponseEntity logout(String accessToken, String email) {
 
@@ -74,6 +80,29 @@ public class UserService {
             throw new IllegalArgumentException("이미 로그아웃한 유저입니다.");
         }
         return ResponseEntity.ok("로그아웃 완료");
+    }
+
+    public JwtTokenResponse reissueAtk(CustomUserDetails customUserDetails,String reToken) {
+        String email = null;
+        String password = null;
+
+        Optional<User> user = userRepository.findById(customUserDetails.getUserId());
+        if(user.isPresent()){
+            email = user.get().getEmail();
+            password = user.get().getPassword();
+        }
+        // 레디스 저장된 리프레쉬토큰값을 가져와서 입력된 reToken 같은지 유무 확인
+        if (!redisDao.getRefreshToken(email).equals(reToken)) {
+            throw new RuntimeException("Refresh");
+        }
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        String accessToken = jwtTokenProvider.generateToken(authentication).getAccessToken();
+        String refreshToken = jwtTokenProvider.generateToken(authentication).getRefreshToken();
+        redisDao.setRefreshToken(email, refreshToken, REFRESH_TOKEN_TIME);
+        return new JwtTokenResponse("Bearer",accessToken, refreshToken);
     }
 
 }

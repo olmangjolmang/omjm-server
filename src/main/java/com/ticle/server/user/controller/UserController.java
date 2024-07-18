@@ -43,9 +43,8 @@ public class UserController {
     @Operation(summary = "로그인", description = "로그인하기")
     @PostMapping("/sign-in")
     public ResponseEntity<ResponseTemplate<Object>> signIn(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        String email = loginRequest.email();
-        String password = loginRequest.password();
-        JwtTokenResponse jwtTokenResponse = userService.signIn(email, password);
+
+        JwtTokenResponse jwtTokenResponse = userService.signIn(loginRequest);
         response.addHeader("Authorization",jwtTokenResponse.getAccessToken());
         return ResponseEntity
                 .status(OK)
@@ -63,8 +62,11 @@ public class UserController {
     @Operation(summary = "로그아웃", description = "로그아웃하기")
     @DeleteMapping("/logout")
     public ResponseEntity logout(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletRequest request){
+        String email = "";
         String accessToken = jwtTokenProvider.resolveToken(request);
-        String email = userRepository.findById(userDetails.getUserId()).get().getEmail();
+        if(userRepository.findById(userDetails.getUserId()).isPresent()){
+            email = userRepository.findById(userDetails.getUserId()).get().getEmail();
+        }
         return userService.logout(accessToken, email);//username = email
     }
 
@@ -73,7 +75,7 @@ public class UserController {
                                       @RequestBody ReissueTokenRequest tokenRequest){
         //유저 객체 정보를 이용하여 토큰 발행
 //        UserResponse user = UserResponse.of(userDetails.get);
-        return jwtTokenProvider.reissueAtk(userDetails.getEmail(), userDetails.getPassword(),tokenRequest.getRefreshToken());
+        return userService.reissueAtk(userDetails,tokenRequest.getRefreshToken());
     }
 
 }

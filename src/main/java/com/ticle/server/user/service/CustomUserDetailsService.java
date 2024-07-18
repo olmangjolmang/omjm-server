@@ -39,7 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .map(SimpleGrantedAuthority::new)
                 .collect(toList());
 
-        return new CustomUserDetails(user.getId(), user.getPassword(),user.getEmail() ,authorities);
+        return new CustomUserDetails(user.getId(), user.getPassword() ,authorities);
     }
 }
 

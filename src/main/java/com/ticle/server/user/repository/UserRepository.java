@@ -15,8 +15,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findById(Long id);
     boolean existsByEmail(String email);
     boolean existsByNickName(String nickName);
-    @Cacheable(cacheNames = CacheNames.USERBYEMAIL, key = "'login'+#p0", unless = "#result==null")
-    @EntityGraph(attributePaths = "roles")
+//    @Cacheable(cacheNames = CacheNames.USERBYEMAIL, key = "'login'+#p0", unless = "#result==null")
+//    @EntityGraph(attributePaths = "roles")
     Optional<User> findByEmail(String email);
 
 }
