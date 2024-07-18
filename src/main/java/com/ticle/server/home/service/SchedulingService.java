@@ -72,7 +72,7 @@ public class SchedulingService implements ApplicationRunner {
 
         int count = (int) postRepository.count();
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < POST_COUNT; i++) {
             saveCommonTitleAndPostsToCache(count);
         }
     }
