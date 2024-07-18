@@ -59,7 +59,7 @@ public class HomeService {
             List<Post> posts = entry.getValue();
 
             List<PostSetsResponse> postResponses = posts.stream()
-                    .map(PostSetsResponse::of)
+                    .map(PostSetsResponse::from)
                     .toList();
 
             responseList.add(HomeResponse.of(commonTitle, postResponses));
@@ -71,7 +71,7 @@ public class HomeService {
 
         List<Post> topPosts = postRepository.findTop3ByOrderByScrapCountDesc();
         List<PostSetsResponse> responses = topPosts.stream()
-                .map(PostSetsResponse::of)
+                .map(PostSetsResponse::from)
                 .toList();
 
         responseList.add(HomeResponse.of("이번주 TOP 3", responses));

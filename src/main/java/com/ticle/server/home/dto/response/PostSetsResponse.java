@@ -12,7 +12,7 @@ public record PostSetsResponse(
         String author,
         LocalDate createdDate
 ) {
-    public static PostSetsResponse of(Post post) {
+    public static PostSetsResponse from(Post post) {
         return new PostSetsResponse(
                 post.getTitle(),
                 post.getImage().getImageUrl(),

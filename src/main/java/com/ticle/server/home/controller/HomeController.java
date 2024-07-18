@@ -39,7 +39,7 @@ public class HomeController {
                 .body(EMPTY_RESPONSE);
     }
 
-    @Operation(summary = "홈화면 정보 가져오기", description = "TOP 3와 3개의 소주제를 가져옵니다.(각각 3개의 아티클 포함)")
+    @Operation(summary = "홈화면 정보 가져오기", description = "TOP 3와 3개의 소주제를 가져옵니다. (각각 3개의 아티클 포함)")
     @GetMapping("")
     public ResponseEntity<ResponseTemplate<Object>> getPostsByTopic() {
 
