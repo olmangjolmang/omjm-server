@@ -5,7 +5,7 @@ import com.ticle.server.mypage.dto.request.NoteUpdateRequest;
 import com.ticle.server.mypage.dto.response.NoteResponse;
 import com.ticle.server.mypage.dto.response.QnAResponse;
 import com.ticle.server.mypage.dto.response.SavedTicleResponse;
-import com.ticle.server.mypage.repository.NoteRepository;
+import com.ticle.server.post.repository.MemoRepository;
 import com.ticle.server.opinion.domain.Comment;
 import com.ticle.server.opinion.repository.CommentRepository;
 import com.ticle.server.opinion.repository.OpinionRepository;
@@ -34,7 +34,7 @@ public class MyPageService {
     private final UserRepository userRepository;
     private final ScrappedRepository scrappedRepository;
     private final OpinionRepository opinionRepository;
-    private final NoteRepository noteRepository;
+    private final MemoRepository memoRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
@@ -109,7 +109,7 @@ public class MyPageService {
     //////////////////////////////////////////////티클노트///////////////////////////////////////////////////////////////
 
     public List<NoteResponse> getMyNotes(Long userId) {
-        List<Memo> memos = noteRepository.findByUserId(userId);
+        List<Memo> memos = memoRepository.findByUserId(userId);
         return memos.stream()
                 .map(NoteResponse::toDto)
                 .collect(toList());
@@ -117,7 +117,7 @@ public class MyPageService {
 
     @Transactional
     public void updateNote(CustomUserDetails customUserDetails, Long noteId, NoteUpdateRequest noteUpdateRequest){
-        Memo memo = noteRepository.findById(noteId)
+        Memo memo = memoRepository.findById(noteId)
                 .orElseThrow(() -> new RuntimeException("Memo not found"));
 
         if (!memo.getUser().getId().equals(customUserDetails.getUserId())) {
@@ -125,18 +125,18 @@ public class MyPageService {
         }
 
         memo.updateNote(noteUpdateRequest.getContent());
-        noteRepository.save(memo);
+        memoRepository.save(memo);
     }
 
     @Transactional
     public void deleteNote(CustomUserDetails customUserDetails, Long noteId) {
-        Memo memo = noteRepository.findById(noteId)
+        Memo memo = memoRepository.findById(noteId)
                 .orElseThrow(() -> new RuntimeException("Memo not found"));
 
         if (!memo.getUser().getId().equals(customUserDetails.getUserId())) {
             throw new RuntimeException("You do not have permission to delete this memo");
         }
-        noteRepository.delete(memo);
+        memoRepository.delete(memo);
     }
 
 }
