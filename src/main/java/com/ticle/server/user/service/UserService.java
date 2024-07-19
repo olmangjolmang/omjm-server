@@ -9,6 +9,7 @@ import com.ticle.server.user.dto.response.JwtTokenResponse;
 import com.ticle.server.user.dto.response.UserResponse;
 import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,8 +69,12 @@ public class UserService {
 
     @CacheEvict(cacheNames = CacheNames.USERBYEMAIL, key = "#p1")
     @Transactional
-    public ResponseEntity logout(String accessToken, String email) {
-
+    public ResponseEntity logout(CustomUserDetails customUserDetails, HttpServletRequest request) {
+        String email = "";
+        String accessToken = jwtTokenProvider.resolveToken(request);
+        if(userRepository.findById(customUserDetails.getUserId()).isPresent()){
+            email = userRepository.findById(customUserDetails.getUserId()).get().getEmail();
+        }
         // 레디스에 accessToken 사용못하도록 등록
         Long expiration = jwtTokenProvider.getExpiration(accessToken);
         redisDao.setBlackList(accessToken, "logout", expiration);
@@ -83,8 +87,8 @@ public class UserService {
     }
 
     public JwtTokenResponse reissueAtk(CustomUserDetails customUserDetails,String reToken) {
-        String email = null;
-        String password = null;
+        String email = "";
+        String password = "";
 
         Optional<User> user = userRepository.findById(customUserDetails.getUserId());
         if(user.isPresent()){

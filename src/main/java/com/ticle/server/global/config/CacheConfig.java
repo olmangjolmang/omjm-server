@@ -1,5 +1,7 @@
-package com.ticle.server.user.redis;
+package com.ticle.server.global.config;
 
+import com.ticle.server.user.redis.CacheNames;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -14,6 +16,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+@EnableCaching
 @Configuration
 public class CacheConfig {
 

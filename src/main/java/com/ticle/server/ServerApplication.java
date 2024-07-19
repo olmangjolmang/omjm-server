@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
-@EnableCaching
 public class ServerApplication {
 
     public static void main(String[] args) {

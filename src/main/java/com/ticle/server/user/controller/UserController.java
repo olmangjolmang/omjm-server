@@ -61,21 +61,20 @@ public class UserController {
     }
     @Operation(summary = "로그아웃", description = "로그아웃하기")
     @DeleteMapping("/logout")
-    public ResponseEntity logout(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletRequest request){
-        String email = "";
-        String accessToken = jwtTokenProvider.resolveToken(request);
-        if(userRepository.findById(userDetails.getUserId()).isPresent()){
-            email = userRepository.findById(userDetails.getUserId()).get().getEmail();
-        }
-        return userService.logout(accessToken, email);//username = email
+    public ResponseEntity<ResponseTemplate<Object>> logout(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletRequest request){
+
+        return  ResponseEntity
+                .status(OK)
+                .body(ResponseTemplate.from(userService.logout(userDetails, request)));
     }
 
     @PostMapping("/reissue-token")
-    public JwtTokenResponse reissueToken(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ResponseEntity<ResponseTemplate<Object>> reissueToken(@AuthenticationPrincipal CustomUserDetails userDetails,
                                       @RequestBody ReissueTokenRequest tokenRequest){
         //유저 객체 정보를 이용하여 토큰 발행
-//        UserResponse user = UserResponse.of(userDetails.get);
-        return userService.reissueAtk(userDetails,tokenRequest.getRefreshToken());
+        return ResponseEntity
+                .status(OK)
+                .body(ResponseTemplate.from(userService.reissueAtk(userDetails,tokenRequest.getRefreshToken())));
     }
 
 }
