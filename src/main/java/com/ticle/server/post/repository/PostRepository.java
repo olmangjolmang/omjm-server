@@ -21,9 +21,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT new com.ticle.server.post.dto.PostIdTitleDto(p.postId, p.title) FROM Post p")
     List<PostIdTitleDto> findAllPostSummaries();
 
+    // 카테고리 검색
     @Query("SELECT p " +
             "FROM Post p " +
             "WHERE p.category = :category " +
             "ORDER BY p.createdDate DESC LIMIT 1")
     Optional<Post> findTopPostByCategory(@Param("category") Category category);
+
+    @Query("SELECT p FROM Post p WHERE " +
+            "(:keyword IS NULL OR p.title LIKE %:keyword%) AND " +
+            "(:category IS NULL OR p.category = :category)")
+    Page<Post> findByKeywordAndCategory(
+            @Param("category") Category category,
+            @Param("keyword") String keyword,
+            Pageable pageable);
 }

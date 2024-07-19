@@ -39,25 +39,14 @@ public class PostService {
     private final UserRepository userRepository;
     private final MemoRepository memoRepository;
 
+    private static final int SIZE = 9; // 한 페이지에 보여질 객체 수
 
-    // 카테고리에 맞는 글 찾기
-    public Page<PostResponse> findAllByCategory(Category category, PostSort orderBy, Integer page) {
-
-        final int SIZE = 9; // 한 페이지에 보여질 객체 수
-        Pageable pageable;
-
+    public Page<PostResponse> getArticles(Category category, String keyword, PostSort orderBy, Integer page) {
         Sort sort = PostSort.getOrder(orderBy);
-        pageable = PageRequest.of(page - 1, SIZE, sort);
+        Pageable pageable = PageRequest.of(page - 1, SIZE, sort);
 
-        Page<Post> postPage;
+        Page<Post> postPage = postRepository.findByKeywordAndCategory(category, keyword, pageable);
 
-        if (category == null) {
-            // 모든 글 조회
-            postPage = postRepository.findAll(pageable);
-        } else {
-            // 카테고리에 맞는 글 조회
-            postPage = postRepository.findByCategory(category, pageable);
-        }
         return postPage.map(PostResponse::from);
     }
 
@@ -73,7 +62,7 @@ public class PostService {
     private String geminiApiKey;
 
     //postId로 조회한 특정 post 정보 리턴
-    public Post findById(long id) {
+    public Post findArticleById(long id) {
 
         Optional<Post> optionalPost = postRepository.findById(id);
         Post post = optionalPost.orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + id));
@@ -320,4 +309,5 @@ public class PostService {
         return quizSet;
 
     }
+
 }

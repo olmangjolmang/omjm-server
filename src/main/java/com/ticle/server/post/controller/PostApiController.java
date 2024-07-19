@@ -34,25 +34,27 @@ public class PostApiController {
     private final PostService postService;
 
     //카테고리로 아티클 조회
-    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | post?category={category}&orderBy={orderBy}&page={page} 과 같은 형식으로 동작합니다. category 미입력시 모든 아티클, orderBy 미입력시 최신순, page 미입력시 첫 페이지입니다. ")
+    @Operation(summary = "아티클 조회 & 검색", description = "카테고리로 아티클 조회 | post?category={category}&orderBy={orderBy}&page={page} 과 같은 형식으로 동작합니다. category 미입력시 모든 아티클, orderBy 미입력시 최신순, page 미입력시 첫 페이지입니다. ")
     @GetMapping
-    public ResponseEntity<ResponseTemplate<Object>>
-    findAllArticles(@RequestParam(required = false, defaultValue = "") Category category,
-                    @RequestParam(required = false, defaultValue = "LATEST") PostSort orderBy,
-                    @RequestParam(required = false, defaultValue = "1") Integer page) {
+    public ResponseEntity<ResponseTemplate<Object>> getArticle(
+            @RequestParam(required = false) Category category,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false, defaultValue = "LATEST") PostSort orderBy,
+            @RequestParam(required = false, defaultValue = "1") Integer page) {
 
-        Page<PostResponse> postPage = postService.findAllByCategory(category, orderBy, page);
+        Page<PostResponse> postPage = postService.getArticles(category, keyword, orderBy, page);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResponseTemplate.from(postPage));
+
     }
 
     //특정 아티클 조회
     @Operation(summary = "특정 아티클 조회", description = "특정 아티클 조회")
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseTemplate<Object>> findArticle(@PathVariable long id) {
-        Post post = postService.findById(id);
+    public ResponseEntity<ResponseTemplate<Object>> getArticleDetail(@PathVariable long id) {
+        Post post = postService.findArticleById(id);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -79,7 +81,6 @@ public class PostApiController {
 
     }
 
-
     // post memo
     @Operation(summary = "메모", description = "메모 작성하기")
     @PostMapping("/memo/{id}")
@@ -92,6 +93,7 @@ public class PostApiController {
                     .body(ResponseTemplate.from(MemoDto.from((Memo) memo)));
         }
     }
+
 
     @Operation(summary = "퀴즈", description = "퀴즈 생성")
     @GetMapping("/quiz/{id}")
