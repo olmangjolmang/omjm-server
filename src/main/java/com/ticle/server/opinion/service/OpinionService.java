@@ -1,5 +1,6 @@
 package com.ticle.server.opinion.service;
 
+import com.ticle.server.global.dto.PageInfo;
 import com.ticle.server.opinion.domain.Comment;
 import com.ticle.server.opinion.domain.Opinion;
 import com.ticle.server.opinion.domain.type.Order;
@@ -113,11 +114,12 @@ public class OpinionService {
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE, getOrder(TIME));
 
         Page<Opinion> opinionPage = opinionRepository.findAll(pageable);
+        PageInfo pageInfo = PageInfo.from(opinionPage);
 
         List<OpinionResponse> opinionResponseList = opinionPage.stream()
                 .map(OpinionResponse::from)
                 .toList();
 
-        return OpinionResponseList.from(opinionResponseList);
+        return OpinionResponseList.from(pageInfo, opinionResponseList);
     }
 }
