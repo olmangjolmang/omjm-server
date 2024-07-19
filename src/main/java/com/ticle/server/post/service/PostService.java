@@ -2,7 +2,6 @@ package com.ticle.server.post.service;
 
 import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.post.repository.MemoRepository;
-import com.ticle.server.mypage.repository.NoteRepository;
 import com.ticle.server.post.domain.type.PostSort;
 import com.ticle.server.post.dto.*;
 import com.ticle.server.user.domain.type.Category;
