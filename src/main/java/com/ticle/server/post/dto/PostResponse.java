@@ -1,13 +1,13 @@
 package com.ticle.server.post.dto;
 
-import com.ticle.server.post.domain.Post;
 import com.ticle.server.global.domain.S3Info;
+import com.ticle.server.post.domain.Post;
 import com.ticle.server.user.domain.type.Category;
-import lombok.Getter;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -19,7 +19,7 @@ public class PostResponse {
     private String title;
     private String content;
     private String author;
-    private LocalDateTime createdDate;
+    private LocalDate createdDate;
     private Category postCategory;
     private S3Info image;
     private List recommendPost;

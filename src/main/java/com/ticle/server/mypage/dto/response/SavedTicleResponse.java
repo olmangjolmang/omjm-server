@@ -3,9 +3,11 @@ package com.ticle.server.mypage.dto.response;
 import com.ticle.server.global.domain.S3Info;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.user.domain.type.Category;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
@@ -15,7 +17,7 @@ public class SavedTicleResponse {
     private String title;
     private String content;
     private String author;
-    private LocalDateTime createDate;
+    private LocalDate createDate;
     private Category postCategory;
     private S3Info image;
 
