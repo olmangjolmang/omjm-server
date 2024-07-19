@@ -34,7 +34,9 @@ public class PostApiController {
     private final PostService postService;
 
     //카테고리로 아티클 조회
-    @Operation(summary = "아티클 조회 & 검색", description = "카테고리로 아티클 조회 | post?category={category}&orderBy={orderBy}&page={page} 과 같은 형식으로 동작합니다. category 미입력시 모든 아티클, orderBy 미입력시 최신순, page 미입력시 첫 페이지입니다. ")
+    @Operation(summary = "아티클 조회 & 검색",
+            description = "카테고리로 아티클 조회 | category 미입력시 모든 아티클, orderBy 미입력시 최신순, page 미입력시 첫 페이지. " +
+                    "(keyword 입력시 제목에서 keyword 검색하여 필터링, 미입력시 필터링 없음)")
     @GetMapping
     public ResponseEntity<ResponseTemplate<Object>> getArticle(
             @RequestParam(required = false) Category category,
