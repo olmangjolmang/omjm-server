@@ -5,11 +5,13 @@ import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.memo.dto.MemoDto;
 import com.ticle.server.memo.dto.MemoRequest;
 import com.ticle.server.post.domain.Post;
+import com.ticle.server.post.domain.type.PostSort;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.post.dto.QuizResponse;
 import com.ticle.server.post.service.PostService;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.dto.ScrappedDto;
+import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.user.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,11 +34,14 @@ public class PostApiController {
     private final PostService postService;
 
     //카테고리로 아티클 조회
-    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | 공백 입력시 모든 카테고리의 아티클 나타남 ")
+    @Operation(summary = "아티클 조회", description = "카테고리로 아티클 조회 | post?category={category}&orderBy={orderBy}&page={page} 과 같은 형식으로 동작합니다. category 미입력시 모든 아티클, orderBy 미입력시 최신순, page 미입력시 첫 페이지입니다. ")
     @GetMapping
-    public ResponseEntity<ResponseTemplate<Object>> findAllArticles(@RequestParam(required = false) String category, @RequestParam(defaultValue = "1") int page) {
+    public ResponseEntity<ResponseTemplate<Object>>
+    findAllArticles(@RequestParam(required = false, defaultValue = "") Category category,
+                    @RequestParam(required = false, defaultValue = "LATEST") PostSort orderBy,
+                    @RequestParam(required = false, defaultValue = "1") Integer page) {
 
-        Page<PostResponse> postPage = postService.findAllByCategory(category, page);
+        Page<PostResponse> postPage = postService.findAllByCategory(category, orderBy, page);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
