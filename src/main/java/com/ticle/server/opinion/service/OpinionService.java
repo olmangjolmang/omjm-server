@@ -14,6 +14,7 @@ import com.ticle.server.opinion.repository.CommentRepository;
 import com.ticle.server.opinion.repository.HeartRepository;
 import com.ticle.server.opinion.repository.OpinionRepository;
 import com.ticle.server.user.domain.User;
+import com.ticle.server.user.exception.UserNotFoundException;
 import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import static com.ticle.server.opinion.domain.type.Order.TIME;
 import static com.ticle.server.opinion.domain.type.Order.getOrder;
 import static com.ticle.server.opinion.exception.errorcode.OpinionErrorCode.COMMENT_NOT_FOUND;
 import static com.ticle.server.opinion.exception.errorcode.OpinionErrorCode.OPINION_NOT_FOUND;
+import static com.ticle.server.user.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -48,7 +50,7 @@ public class OpinionService {
     @Transactional
     public void uploadComment(CommentUploadRequest request, Long talkId, CustomUserDetails userId) {
         User user = userRepository.findById(userId.getUserId())
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
         Opinion opinion = opinionRepository.findById(talkId)
                 .orElseThrow(() -> new OpinionNotFoundException(OPINION_NOT_FOUND));
 
@@ -80,8 +82,6 @@ public class OpinionService {
 
     @Transactional
     public List<CommentResponse> getCommentsByOpinion(Long opinionId, CustomUserDetails userDetails, Order orderBy) {
-        User user = userRepository.findById(userDetails.getUserId())
-                .orElseThrow(RuntimeException::new);
         Opinion opinion = opinionRepository.findByOpinionIdWithFetch(opinionId)
                 .orElseThrow(() -> new OpinionNotFoundException(OPINION_NOT_FOUND));
 
@@ -94,8 +94,16 @@ public class OpinionService {
 
         return comments.stream()
                 .map(comment -> {
-                    boolean isHeart = comment.getHearts().stream()
-                            .anyMatch(heart -> heart.getUser().equals(user));
+                    boolean isHeart = false;
+
+                    if (userDetails != null) {
+                        User user = userRepository.findById(userDetails.getUserId())
+                                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+                        isHeart = comment.getHearts().stream()
+                                .anyMatch(heart -> heart.getUser().equals(user));
+                    }
+
                     return CommentResponse.of(comment, isHeart);
                 })
                 .toList();
