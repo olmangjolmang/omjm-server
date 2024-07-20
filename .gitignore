@@ -42,5 +42,5 @@ src/main/resources/*.yml
 src/main/resources/data.sql
 
 ### crawling ###
-crawling/chromedriver.exe
-crawling/velog_url.csv
+**/crawling/chromedriver.exe
+**/crawling/velog_url.csv

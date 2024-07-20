@@ -1,9 +1,9 @@
 package com.ticle.server.post.service;
 
 import com.ticle.server.memo.domain.Memo;
-import com.ticle.server.mypage.repository.NoteRepository;
+import com.ticle.server.post.repository.MemoRepository;
+import com.ticle.server.post.domain.type.PostSort;
 import com.ticle.server.post.dto.*;
-import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
@@ -12,7 +12,6 @@ import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.service.CustomUserDetails;
-import com.ticle.server.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -38,27 +37,17 @@ public class PostService {
     private final PostRepository postRepository;
     private final ScrappedRepository scrappedRepository;
     private final UserRepository userRepository;
-    private final NoteRepository noteRepository;
+    private final MemoRepository memoRepository;
 
+    private static final int SIZE = 9; // 한 페이지에 보여질 객체 수
 
-    // 카테고리에 맞는 글 찾기
-    public Page<PostResponse> findAllByCategory(String category, int page) {
+    public Page<PostResponse> getArticles(Category category, String keyword, PostSort orderBy, Integer page) {
+        Sort sort = PostSort.getOrder(orderBy);
+        Pageable pageable = PageRequest.of(page - 1, SIZE, sort);
 
-        final int SIZE = 9; // 한 페이지에 보여질 객체 수
+        Page<Post> postPage = postRepository.findByKeywordAndCategory(category, keyword, pageable);
 
-        //최신순으로 post 정렬
-        Pageable pageable = PageRequest.of(page - 1, SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Page<Post> postPage;
-
-        if (category == null || category.isEmpty()) {
-            // 모든 글 조회
-            postPage = postRepository.findAll(pageable);
-        } else {
-            //카테고리에 맞는 글 조회
-            postPage = postRepository.findByCategory(Category.valueOf(category), pageable);
-        }
         return postPage.map(PostResponse::from);
-
     }
 
 
@@ -73,7 +62,7 @@ public class PostService {
     private String geminiApiKey;
 
     //postId로 조회한 특정 post 정보 리턴
-    public Post findById(long id) {
+    public Post findArticleById(long id) {
 
         Optional<Post> optionalPost = postRepository.findById(id);
         Post post = optionalPost.orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + id));
@@ -156,7 +145,7 @@ public class PostService {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId));
 
         // 같은 내용의 targetText-content 세트가 있는지 확인
-        Memo existingMemo = noteRepository.findByUserAndTargetTextAndContent(user, targetText, content);
+        Memo existingMemo = memoRepository.findByUserAndTargetTextAndContent(user, targetText, content);
 
         if (existingMemo != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 동일한 메모가 존재합니다.");
@@ -171,7 +160,7 @@ public class PostService {
                 .targetText(targetText)
                 .content(content)
                 .build();
-        return noteRepository.save(memo);
+        return memoRepository.save(memo);
     }
 
     boolean isValidResponse(GeminiResponse response) {
@@ -320,4 +309,5 @@ public class PostService {
         return quizSet;
 
     }
+
 }
