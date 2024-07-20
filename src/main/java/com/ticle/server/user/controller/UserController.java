@@ -46,7 +46,6 @@ public class UserController {
     public ResponseEntity<ResponseTemplate<Object>> signIn(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 
         JwtTokenResponse jwtTokenResponse = userService.signIn(loginRequest);
-        response.addHeader("Authorization",jwtTokenResponse.getAccessToken());
         return ResponseEntity
                 .status(OK)
                 .body(ResponseTemplate.from(jwtTokenResponse));
