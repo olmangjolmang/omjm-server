@@ -120,6 +120,6 @@ public class OpinionService {
                 .map(OpinionResponse::from)
                 .toList();
 
-        return OpinionResponseList.from(pageInfo, opinionResponseList);
+        return OpinionResponseList.of(pageInfo, opinionResponseList);
     }
 }

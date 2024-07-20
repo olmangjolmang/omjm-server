@@ -11,7 +11,7 @@ public record OpinionResponseList(
         List<OpinionResponse> opinionResponseList
 ) {
 
-    public static OpinionResponseList from(PageInfo pageInfo, List<OpinionResponse> opinionList) {
+    public static OpinionResponseList of(PageInfo pageInfo, List<OpinionResponse> opinionList) {
         return new OpinionResponseList(pageInfo, opinionList);
     }
 }
