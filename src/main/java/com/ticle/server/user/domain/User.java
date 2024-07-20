@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Table(name = "user")
 @Entity
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -63,5 +63,14 @@ public class User {
         return this.roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+    }
+
+    public void updateProfile(String newNickName,String newEmail) {
+        if (newNickName != null && !newNickName.isEmpty()) {
+            this.nickName = newNickName;
+        }
+        if (newEmail != null && !newEmail.isEmpty()) {
+            this.email = newEmail;
+        }
     }
 }
