@@ -5,11 +5,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Optional;
 
-@Getter
-@NoArgsConstructor
-public class ProfileUpdateRequest {
 
-    private Optional<String> nickName = Optional.empty();
-    private Optional<String> email = Optional.empty();
+public record ProfileUpdateRequest(Optional<String> nickName, Optional<String> email) {
 
 }

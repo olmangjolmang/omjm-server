@@ -2,11 +2,8 @@ package com.ticle.server.user.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.user.domain.User;
-import com.ticle.server.user.dto.request.JoinRequest;
-import com.ticle.server.user.dto.request.ProfileUpdateRequest;
-import com.ticle.server.user.dto.request.ReissueTokenRequest;
+import com.ticle.server.user.dto.request.*;
 import com.ticle.server.user.dto.response.JwtTokenResponse;
-import com.ticle.server.user.dto.request.LoginRequest;
 import com.ticle.server.user.dto.response.UserResponse;
 import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.repository.UserRepository;
@@ -59,6 +56,17 @@ public class UserController {
                 .status(OK)
                 .body(ResponseTemplate.from(savedUserDto));
     }
+
+//    @Operation(summary = "관심직무 선택", description = "회원가입 이후 ")
+//    @PostMapping("/sign-up/category")
+//    public ResponseEntity<ResponseTemplate<Object>> selectCategory(@RequestBody CategoryRequest categoryRequest){
+//        userService.addCategory(categoryRequest);
+//
+//        return ResponseEntity
+//                .status(OK)
+//                .body(ResponseTemplate.from(categoryRequest.toString()));
+//    }
+
     @Operation(summary = "로그아웃", description = "로그아웃하기")
     @DeleteMapping("/logout")
     public ResponseEntity<ResponseTemplate<Object>> logout(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletRequest request){
@@ -76,7 +84,10 @@ public class UserController {
                 .status(OK)
                 .body(ResponseTemplate.from(userService.reissueAtk(userDetails,tokenRequest.getRefreshToken())));
     }
-    @Operation(summary = "프로필 수정", description = "닉네임과 이메일 수정할 수 있는 페이지입니다.")
+
+
+
+    @Operation(summary = "프로필 수정", description = "닉네임과 이메일을 수정할 수 있는 페이지입니다.")
     @PutMapping("/profile")
     public ResponseEntity<ResponseTemplate<Object>> updateProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ProfileUpdateRequest profileUpdateRequest){
         userService.updateProfile(customUserDetails, profileUpdateRequest);
@@ -84,6 +95,16 @@ public class UserController {
         return ResponseEntity
                  .status(OK)
                  .body(ResponseTemplate.from(customUserDetails.getUserId() + "님의 회원정보가 수정되었습니다.\n" + profileUpdateRequest.toString()));
+    }
+
+    @Operation(summary = "관심분야 수정", description = "관심분야를 수정할 수 있는 페이지입니다.")
+    @PutMapping("/category")
+    public ResponseEntity<ResponseTemplate<Object>> updateCategory(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody CategoryUpdateRequest categoryUpdateRequest){
+        userService.updateCategory(customUserDetails, categoryUpdateRequest);
+
+        return ResponseEntity
+                .status(OK)
+                .body(ResponseTemplate.from(customUserDetails.getUserId() + "님의 회원정보가 수정되었습니다.\n" + categoryUpdateRequest.toString()));
     }
 
     @Operation(summary = "탈퇴하기", description ="유저의 정보를 삭제합니다.")
