@@ -3,6 +3,7 @@ package com.ticle.server.user.controller;
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.dto.request.JoinRequest;
+import com.ticle.server.user.dto.request.ProfileUpdateRequest;
 import com.ticle.server.user.dto.request.ReissueTokenRequest;
 import com.ticle.server.user.dto.response.JwtTokenResponse;
 import com.ticle.server.user.dto.request.LoginRequest;
@@ -52,7 +53,7 @@ public class UserController {
     }
 
     @Operation(summary = "회원가입", description = "회원가입하기")
-    @PostMapping("sign-up")
+    @PostMapping("/sign-up")
     public ResponseEntity<ResponseTemplate<Object>> signUp(@RequestBody JoinRequest joinRequest) {
         UserResponse savedUserDto = userService.signUp(joinRequest);
         return ResponseEntity
@@ -75,6 +76,25 @@ public class UserController {
         return ResponseEntity
                 .status(OK)
                 .body(ResponseTemplate.from(userService.reissueAtk(userDetails,tokenRequest.getRefreshToken())));
+    }
+    @Operation(summary = "프로필 수정", description = "닉네임과 이메일 수정할 수 있는 페이지입니다.")
+    @PutMapping("/profile")
+    public ResponseEntity<ResponseTemplate<Object>> updateProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody ProfileUpdateRequest profileUpdateRequest){
+        userService.updateProfile(customUserDetails, profileUpdateRequest);
+
+        return ResponseEntity
+                 .status(OK)
+                 .body(ResponseTemplate.from(customUserDetails.getUserId() + "님의 회원정보가 수정되었습니다.\n" + profileUpdateRequest.toString()));
+    }
+
+    @Operation(summary = "탈퇴하기", description ="유저의 정보를 삭제합니다.")
+    @DeleteMapping("/profile")
+    public ResponseEntity<ResponseTemplate<Object>> deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+        userService.deleteUser(customUserDetails);
+
+        return ResponseEntity
+                .status(OK)
+                .body(ResponseTemplate.from(customUserDetails.getUserId() + "님의 회원정보가 삭제되었습니다.\n" ));
     }
 
 }
