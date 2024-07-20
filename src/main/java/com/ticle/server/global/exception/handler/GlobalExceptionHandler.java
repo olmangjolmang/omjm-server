@@ -3,10 +3,12 @@ package com.ticle.server.global.exception.handler;
 import com.ticle.server.global.exception.errorcode.ErrorCode;
 import com.ticle.server.global.exception.errorcode.GlobalErrorCode;
 import com.ticle.server.global.exception.response.ErrorResponse;
+import com.ticle.server.user.exception.InvalidPasswordException;
 import lombok.extern.slf4j.Slf4j;
 import com.ticle.server.global.exception.response.ErrorResponse.ValidationError;
 import com.ticle.server.global.exception.response.ErrorResponse.ValidationErrors;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -52,6 +54,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> handleExceptionInternal(final ErrorCode errorCode) {
         return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(makeErrorResponse(errorCode));
+    }
+
+    // 비밀번호 일치하지 않을 때
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<Object> handleInvalidPasswordException(InvalidPasswordException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 
     private ErrorResponse makeErrorResponse(final ErrorCode errorCode) {

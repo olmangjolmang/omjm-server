@@ -19,11 +19,14 @@ public class JoinRequest {
     // DTO는 주로 데이터 전송을 위한 객체
     // 클라이언트와 서버 간 또는 애플리케이션 계층 간에 데이터를 전송하는 데 사용됨
     @Email
+    @NotBlank(message = "email은 필수 입력 값입니다. ")
     private String email;
+
+    @NotBlank(message = "비밀번호를 필수 입력 값입니다.")
     private String password;
 //    private String passwordCheck;
     private String nickName;
-    private String category;
+    private Category category;
     private boolean agreeTerms;
     private List<String> roles = new ArrayList<>();
 
@@ -32,7 +35,7 @@ public class JoinRequest {
                 .email(email)
                 .password(encodedPassword)
                 .nickName(nickName)
-                .category(Category.valueOf(category))
+                .category(category)
                 .agreeTerms(agreeTerms)
                 .roles(roles)
                 .build();
