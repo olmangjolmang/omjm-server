@@ -17,6 +17,7 @@ import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -94,7 +95,7 @@ public class OpinionService {
                 .map(comment -> {
                     boolean isHeart = false;
 
-                    if (userDetails != null) {
+                    if (ObjectUtils.isNotEmpty(userDetails)) {
                         User user = userRepository.findById(userDetails.getUserId())
                                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
@@ -106,7 +107,7 @@ public class OpinionService {
                 })
                 .toList();
 
-        return CommentResponseList.of(opinion.getQuestion(), responses);
+        return CommentResponseList.of(opinion.getQuestion(), ObjectUtils.isNotEmpty(userDetails) ? userDetails.getUsername() : "", responses);
     }
 
     public OpinionResponseList getOpinionsByPage(int page) {
