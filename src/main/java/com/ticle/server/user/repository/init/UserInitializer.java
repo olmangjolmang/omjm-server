@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 public class UserInitializer implements ApplicationRunner {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -31,7 +33,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user1 = User.builder()
                     .email("user1@example.com")
-                    .password("password1")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user1")
                     .category(Category.BACKEND)
                     .agreeTerms(true)
@@ -39,7 +41,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user2 = User.builder()
                     .email("user2@example.com")
-                    .password("password2")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user2")
                     .category(Category.WEB_FRONT)
                     .agreeTerms(true)
@@ -47,7 +49,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user3 = User.builder()
                     .email("user3@example.com")
-                    .password("password3")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user3")
                     .category(Category.NETWORK)
                     .agreeTerms(true)
@@ -55,7 +57,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user4 = User.builder()
                     .email("user4@example.com")
-                    .password("password4")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user4")
                     .category(Category.APP)
                     .agreeTerms(true)
@@ -63,7 +65,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user5 = User.builder()
                     .email("user5@example.com")
-                    .password("password5")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user5")
                     .category(Category.SECURITY)
                     .agreeTerms(true)
@@ -71,7 +73,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user6 = User.builder()
                     .email("user6@example.com")
-                    .password("password6")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user6")
                     .category(Category.AI)
                     .agreeTerms(true)
@@ -79,7 +81,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user7 = User.builder()
                     .email("user7@example.com")
-                    .password("password7")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user7")
                     .category(Category.VISION)
                     .agreeTerms(true)
@@ -87,7 +89,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user8 = User.builder()
                     .email("user8@example.com")
-                    .password("password8")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user8")
                     .category(Category.INFRA)
                     .agreeTerms(true)
@@ -95,7 +97,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user9 = User.builder()
                     .email("user9@example.com")
-                    .password("password9")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user9")
                     .category(Category.ETC)
                     .agreeTerms(true)
@@ -103,7 +105,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user10 = User.builder()
                     .email("user10@example.com")
-                    .password("password10")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user10")
                     .category(Category.BACKEND)
                     .agreeTerms(true)
@@ -111,7 +113,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user11 = User.builder()
                     .email("user11@example.com")
-                    .password("password11")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user11")
                     .category(Category.WEB_FRONT)
                     .agreeTerms(true)
@@ -119,7 +121,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user12 = User.builder()
                     .email("user12@example.com")
-                    .password("password12")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user12")
                     .category(Category.NETWORK)
                     .agreeTerms(true)
@@ -127,7 +129,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user13 = User.builder()
                     .email("user13@example.com")
-                    .password("password13")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user13")
                     .category(Category.APP)
                     .agreeTerms(true)
@@ -135,7 +137,7 @@ public class UserInitializer implements ApplicationRunner {
 
             User user14 = User.builder()
                     .email("user14@example.com")
-                    .password("password14")
+                    .password(passwordEncoder.encode("password2"))
                     .nickName("user14")
                     .category(Category.SECURITY)
                     .agreeTerms(true)
