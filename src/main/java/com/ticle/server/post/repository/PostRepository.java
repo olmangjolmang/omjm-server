@@ -26,7 +26,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "FROM Post p " +
             "WHERE p.category = :category " +
             "ORDER BY p.createdDate DESC LIMIT 1")
-    Optional<Post> findTopPostByCategory(@Param("category") Category category);
+    Optional<Post> findTopPostByCategory(@Param("category") List<Category> category);
 
     @Query("SELECT new com.ticle.server.home.dto.response.PostSetsResponse(p.title, p.image.imageUrl, p.category, p.author, p.createdDate) " +
             "FROM Post p " +

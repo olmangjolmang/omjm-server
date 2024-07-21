@@ -34,7 +34,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user1@example.com")
                     .password("password1")
                     .nickName("user1")
-                    .category(Category.BACKEND)
+                    .category(Arrays.asList(Category.BACKEND,Category.INFRA))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -43,7 +43,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user2@example.com")
                     .password("password2")
                     .nickName("user2")
-                    .category(Category.WEB_FRONT)
+                    .category(Arrays.asList(Category.WEB_FRONT))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -52,7 +52,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user3@example.com")
                     .password("password3")
                     .nickName("user3")
-                    .category(Category.NETWORK)
+                    .category(Arrays.asList(Category.NETWORK))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -61,7 +61,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user4@example.com")
                     .password("password4")
                     .nickName("user4")
-                    .category(Category.APP)
+                    .category(Arrays.asList(Category.APP))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -70,7 +70,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user5@example.com")
                     .password("password5")
                     .nickName("user5")
-                    .category(Category.SECURITY)
+                    .category(Arrays.asList(Category.BACKEND))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -79,7 +79,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user6@example.com")
                     .password("password6")
                     .nickName("user6")
-                    .category(Category.AI)
+                    .category(Arrays.asList(Category.VISION))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -88,7 +88,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user7@example.com")
                     .password("password7")
                     .nickName("user7")
-                    .category(Category.VISION)
+                    .category(Arrays.asList(Category.AI,Category.INFRA))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -97,7 +97,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user8@example.com")
                     .password("password8")
                     .nickName("user8")
-                    .category(Category.INFRA)
+                    .category(Arrays.asList(Category.APP))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -106,7 +106,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user9@example.com")
                     .password("password9")
                     .nickName("user9")
-                    .category(Category.ETC)
+                    .category(Arrays.asList(Category.APP))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -115,7 +115,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user10@example.com")
                     .password("password10")
                     .nickName("user10")
-                    .category(Category.BACKEND)
+                    .category(Arrays.asList(Category.WEB_FRONT))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -124,7 +124,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user11@example.com")
                     .password("password11")
                     .nickName("user11")
-                    .category(Category.WEB_FRONT)
+                    .category(Arrays.asList(Category.NETWORK))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -133,7 +133,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user12@example.com")
                     .password("password12")
                     .nickName("user12")
-                    .category(Category.NETWORK)
+                    .category(Arrays.asList(Category.APP))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -142,7 +142,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user13@example.com")
                     .password("password13")
                     .nickName("user13")
-                    .category(Category.APP)
+                    .category(Arrays.asList(Category.INFRA,Category.AI))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();
@@ -151,7 +151,7 @@ public class UserInitializer implements ApplicationRunner {
                     .email("user14@example.com")
                     .password("password14")
                     .nickName("user14")
-                    .category(Category.SECURITY)
+                    .category(Arrays.asList(Category.VISION,Category.ETC))
                     .agreeTerms(true)
                     .roles(Arrays.asList("USER"))
                     .build();

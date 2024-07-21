@@ -41,7 +41,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private Category category;
+    private List<Category> category;
 
     @Column(name = "agree_terms")
     private boolean agreeTerms;

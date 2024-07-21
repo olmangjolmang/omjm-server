@@ -28,7 +28,7 @@ public class JoinRequest {
     private String password;
 //    private String passwordCheck;
     private String nickName;
-    private Category category;
+    private List<Category> category;
     private boolean agreeTerms;
     private List<String> roles = new ArrayList<>();
 
