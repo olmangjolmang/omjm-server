@@ -12,6 +12,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -35,6 +36,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user1")
                     .category(Category.BACKEND)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user2 = User.builder()
@@ -43,6 +45,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user2")
                     .category(Category.WEB_FRONT)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user3 = User.builder()
@@ -51,6 +54,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user3")
                     .category(Category.NETWORK)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user4 = User.builder()
@@ -59,6 +63,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user4")
                     .category(Category.APP)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user5 = User.builder()
@@ -67,6 +72,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user5")
                     .category(Category.SECURITY)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user6 = User.builder()
@@ -75,6 +81,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user6")
                     .category(Category.AI)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user7 = User.builder()
@@ -83,6 +90,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user7")
                     .category(Category.VISION)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user8 = User.builder()
@@ -91,6 +99,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user8")
                     .category(Category.INFRA)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user9 = User.builder()
@@ -99,6 +108,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user9")
                     .category(Category.ETC)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user10 = User.builder()
@@ -107,6 +117,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user10")
                     .category(Category.BACKEND)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user11 = User.builder()
@@ -115,6 +126,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user11")
                     .category(Category.WEB_FRONT)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user12 = User.builder()
@@ -123,6 +135,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user12")
                     .category(Category.NETWORK)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user13 = User.builder()
@@ -131,6 +144,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user13")
                     .category(Category.APP)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             User user14 = User.builder()
@@ -139,6 +153,7 @@ public class UserInitializer implements ApplicationRunner {
                     .nickName("user14")
                     .category(Category.SECURITY)
                     .agreeTerms(true)
+                    .roles(Arrays.asList("USER"))
                     .build();
 
             userList.add(user1);
