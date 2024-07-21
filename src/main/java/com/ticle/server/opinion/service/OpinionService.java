@@ -5,10 +5,7 @@ import com.ticle.server.opinion.domain.Comment;
 import com.ticle.server.opinion.domain.Opinion;
 import com.ticle.server.opinion.domain.type.Order;
 import com.ticle.server.opinion.dto.request.CommentUploadRequest;
-import com.ticle.server.opinion.dto.response.CommentResponse;
-import com.ticle.server.opinion.dto.response.HeartResponse;
-import com.ticle.server.opinion.dto.response.OpinionResponse;
-import com.ticle.server.opinion.dto.response.OpinionResponseList;
+import com.ticle.server.opinion.dto.response.*;
 import com.ticle.server.opinion.exception.CommentNotFoundException;
 import com.ticle.server.opinion.exception.OpinionNotFoundException;
 import com.ticle.server.opinion.repository.CommentRepository;
@@ -20,6 +17,7 @@ import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -82,7 +80,7 @@ public class OpinionService {
     }
 
     @Transactional
-    public List<CommentResponse> getCommentsByOpinion(Long opinionId, CustomUserDetails userDetails, Order orderBy) {
+    public CommentResponseList getCommentsByOpinion(Long opinionId, CustomUserDetails userDetails, Order orderBy) {
         Opinion opinion = opinionRepository.findByOpinionIdWithFetch(opinionId)
                 .orElseThrow(() -> new OpinionNotFoundException(OPINION_NOT_FOUND));
 
@@ -93,11 +91,11 @@ public class OpinionService {
 
         List<Comment> comments = commentRepository.findAllByOpinion(opinion, sort);
 
-        return comments.stream()
+        List<CommentResponse> responses = comments.stream()
                 .map(comment -> {
                     boolean isHeart = false;
 
-                    if (userDetails != null) {
+                    if (ObjectUtils.isNotEmpty(userDetails)) {
                         User user = userRepository.findById(userDetails.getUserId())
                                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
@@ -108,6 +106,8 @@ public class OpinionService {
                     return CommentResponse.of(comment, isHeart);
                 })
                 .toList();
+
+        return CommentResponseList.of(opinion.getQuestion(), ObjectUtils.isNotEmpty(userDetails) ? userDetails.getUsername() : "", responses);
     }
 
     public OpinionResponseList getOpinionsByPage(int page) {

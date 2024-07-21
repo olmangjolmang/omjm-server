@@ -3,7 +3,7 @@ package com.ticle.server.opinion.controller;
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.opinion.domain.type.Order;
 import com.ticle.server.opinion.dto.request.CommentUploadRequest;
-import com.ticle.server.opinion.dto.response.CommentResponse;
+import com.ticle.server.opinion.dto.response.CommentResponseList;
 import com.ticle.server.opinion.dto.response.OpinionResponseList;
 import com.ticle.server.opinion.service.OpinionService;
 import com.ticle.server.user.service.CustomUserDetails;
@@ -16,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static com.ticle.server.global.dto.ResponseTemplate.EMPTY_RESPONSE;
 
@@ -67,7 +65,7 @@ public class OpinionController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(required = false, defaultValue = "TIME") Order orderBy) {
 
-        List<CommentResponse> responses = opinionService.getCommentsByOpinion(opinionId, userDetails, orderBy);
+        CommentResponseList responses = opinionService.getCommentsByOpinion(opinionId, userDetails, orderBy);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

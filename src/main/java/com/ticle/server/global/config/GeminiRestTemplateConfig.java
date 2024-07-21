@@ -1,4 +1,4 @@
-package com.ticle.server.post.dto;
+package com.ticle.server.global.config;
 
 
 import lombok.RequiredArgsConstructor;
