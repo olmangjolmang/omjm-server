@@ -57,10 +57,10 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.SERVER_DOMAIN }}/global/health-check")
+          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.SERVER_DOMAIN }}/api/global/health-check")
           echo $STATUS
           if [ $STATUS = 200 ]; then
-            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.SERVER_DOMAIN }}/global/health-check")
+            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.SERVER_DOMAIN }}/api/global/health-check")
           else
             CURRENT_UPSTREAM=green
           fi
@@ -89,7 +89,7 @@ jobs:
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v4
         with:
-          url: http://${{ secrets.LIVE_SERVER_IP }}:${{ env.STOPPED_PORT }}/global/health-check
+          url: http://${{ secrets.LIVE_SERVER_IP }}:${{ env.STOPPED_PORT }}/api/global/health-check
           max-attempts: 5
           retry-delay: 10s
 

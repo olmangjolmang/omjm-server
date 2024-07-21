@@ -1,11 +1,13 @@
 package com.ticle.server.user.service;
 
 import com.ticle.server.user.domain.User;
+import com.ticle.server.user.dto.request.CategoryUpdateRequest;
 import com.ticle.server.user.dto.request.JoinRequest;
 import com.ticle.server.user.dto.request.LoginRequest;
 import com.ticle.server.user.dto.request.ProfileUpdateRequest;
 import com.ticle.server.user.dto.response.JwtTokenResponse;
 import com.ticle.server.user.dto.response.UserResponse;
+import com.ticle.server.user.exception.InvalidPasswordException;
 import com.ticle.server.user.exception.UserNotFoundException;
 import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.redis.CacheNames;
@@ -52,7 +54,7 @@ public class UserService {
         String password = loginRequest.password();
         User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException(USER_NOT_FOUND));
         if(!passwordEncoder.matches(password,user.getPassword())){
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
@@ -75,6 +77,7 @@ public class UserService {
         roles.add("USER");
         return UserResponse.toDto(userRepository.save(joinRequest.toEntity(encodedPassword,roles)));
     }
+
 
     @CacheEvict(cacheNames = CacheNames.USERBYEMAIL, key = "#p1")
     @Transactional
@@ -124,8 +127,18 @@ public class UserService {
         Long userId = customUserDetails.getUserId();
         User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("not found user"));
 
-        profileUpdateRequest.getNickName().ifPresent(user::setNickName);
-        profileUpdateRequest.getEmail().ifPresent(user::setEmail);
+        profileUpdateRequest.nickName().ifPresent(user::setNickName);
+        profileUpdateRequest.email().ifPresent(user::setEmail);
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateCategory(CustomUserDetails customUserDetails, CategoryUpdateRequest categoryUpdateRequest){
+        Long userId = customUserDetails.getUserId();
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("not found user"));
+
+        user.setCategory(categoryUpdateRequest.category());
 
         userRepository.save(user);
     }
