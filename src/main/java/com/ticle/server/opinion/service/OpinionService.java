@@ -81,6 +81,8 @@ public class OpinionService {
 
     @Transactional
     public CommentResponseList getCommentsByOpinion(Long opinionId, CustomUserDetails userDetails, Order orderBy) {
+        User user = userRepository.findById(userDetails.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
         Opinion opinion = opinionRepository.findByOpinionIdWithFetch(opinionId)
                 .orElseThrow(() -> new OpinionNotFoundException(OPINION_NOT_FOUND));
 
@@ -96,9 +98,6 @@ public class OpinionService {
                     boolean isHeart = false;
 
                     if (ObjectUtils.isNotEmpty(userDetails)) {
-                        User user = userRepository.findById(userDetails.getUserId())
-                                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
-
                         isHeart = comment.getHearts().stream()
                                 .anyMatch(heart -> heart.getUser().equals(user));
                     }
@@ -107,7 +106,7 @@ public class OpinionService {
                 })
                 .toList();
 
-        return CommentResponseList.of(opinion.getQuestion(), ObjectUtils.isNotEmpty(userDetails) ? userDetails.getUsername() : "", responses);
+        return CommentResponseList.of(opinion.getQuestion(), ObjectUtils.isNotEmpty(userDetails) ? user.getNickName() : "", responses);
     }
 
     public OpinionResponseList getOpinionsByPage(int page) {
