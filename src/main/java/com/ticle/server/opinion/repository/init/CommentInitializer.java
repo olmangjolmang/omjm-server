@@ -31,15 +31,15 @@ public class CommentInitializer implements ApplicationRunner {
         if (commentRepository.count() > 0) {
             log.info("[Comment] 더미 데이터 존재");
         } else {
-            User dummyUser = userRepository.findById(2L).orElseThrow();
-            User dummyUser2 = userRepository.findById(3L).orElseThrow();
-            User dummyUser3 = userRepository.findById(4L).orElseThrow();
-            User dummyUser4 = userRepository.findById(5L).orElseThrow();
-            User dummyUser5 = userRepository.findById(6L).orElseThrow();
+            User user1 = userRepository.findById(1L).orElseThrow();
+            User user2 = userRepository.findById(2L).orElseThrow();
+            User user3 = userRepository.findById(3L).orElseThrow();
+            User user4 = userRepository.findById(4L).orElseThrow();
+            User user5 = userRepository.findById(5L).orElseThrow();
+            User user6 = userRepository.findById(6L).orElseThrow();
 
             Opinion opinion1 = opinionRepository.findById(1L).orElseThrow();
             Opinion opinion2 = opinionRepository.findById(2L).orElseThrow();
-
 
             List<Comment> commentList = new ArrayList<>();
 
@@ -47,70 +47,70 @@ public class CommentInitializer implements ApplicationRunner {
                     .opinion(opinion1)
                     .content("좋은 리더에게는 리더십이 필요해")
                     .heartCount(5L)
-                    .user(dummyUser)
+                    .user(user1)
                     .build();
 
             Comment comment2 = Comment.builder()
                     .opinion(opinion1)
                     .content("리더는 소통 능력이 중요하다고 생각해")
                     .heartCount(8L)
-                    .user(dummyUser2)
+                    .user(user1)
                     .build();
 
             Comment comment3 = Comment.builder()
                     .opinion(opinion1)
                     .content("책임감과 결단력이 있어야 해")
                     .heartCount(10L)
-                    .user(dummyUser3)
+                    .user(user1)
                     .build();
 
             Comment comment4 = Comment.builder()
                     .opinion(opinion1)
                     .content("팀원들의 의견을 존중하는 리더가 필요해")
                     .heartCount(7L)
-                    .user(dummyUser4)
+                    .user(user4)
                     .build();
 
             Comment comment5 = Comment.builder()
                     .opinion(opinion1)
                     .content("문제를 해결하는 능력도 중요하지")
                     .heartCount(6L)
-                    .user(dummyUser5)
+                    .user(user5)
                     .build();
 
             Comment comment6 = Comment.builder()
                     .opinion(opinion2)
                     .content("모두가 중요한 역할을 하지만, 프로젝트 매니저가 핵심이라고 생각해")
                     .heartCount(5L)
-                    .user(dummyUser4)
+                    .user(user4)
                     .build();
 
             Comment comment7 = Comment.builder()
                     .opinion(opinion2)
                     .content("팀의 기술 리더가 가장 중요한 구성원이라고 생각해")
                     .heartCount(8L)
-                    .user(dummyUser)
+                    .user(user1)
                     .build();
 
             Comment comment8 = Comment.builder()
                     .opinion(opinion2)
                     .content("커뮤니케이션을 담당하는 사람이 중요하다고 봐")
                     .heartCount(10L)
-                    .user(dummyUser5)
+                    .user(user5)
                     .build();
 
             Comment comment9 = Comment.builder()
                     .opinion(opinion2)
                     .content("모든 팀원이 각자의 역할을 충실히 하는 것이 가장 중요해")
                     .heartCount(7L)
-                    .user(dummyUser2)
+                    .user(user2)
                     .build();
 
             Comment comment10 = Comment.builder()
                     .opinion(opinion2)
                     .content("팀워크를 이끌어가는 리더가 가장 중요한 구성원이지")
                     .heartCount(6L)
-                    .user(dummyUser3)
+                    .user(user3)
                     .build();
 
             commentList.add(comment1);
