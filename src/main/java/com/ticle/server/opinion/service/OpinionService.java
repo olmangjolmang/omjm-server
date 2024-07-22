@@ -87,8 +87,10 @@ public class OpinionService {
         // 질문에 대한 댓글들 보기 위해 클릭했을 시 질문 조회수 +1
         opinion.addViewCount();
 
-        Sort sort = getOrder(orderBy);
+        // 로그인 하지 않은 유저라면 "", 로그인 한 유저라면 닉네임을 반환
+        String userNickname = getUserNickname(userDetails);
 
+        Sort sort = getOrder(orderBy);
         List<Comment> comments = commentRepository.findAllByOpinion(opinion, sort);
 
         List<CommentResponse> responses = comments.stream()
@@ -107,7 +109,19 @@ public class OpinionService {
                 })
                 .toList();
 
-        return CommentResponseList.of(opinion.getQuestion(), ObjectUtils.isNotEmpty(userDetails) ? userDetails.getUsername() : "", responses);
+        return CommentResponseList.of(opinion.getQuestion(), ObjectUtils.isNotEmpty(userDetails) ? userNickname : "", responses);
+    }
+
+    private String getUserNickname(CustomUserDetails userDetails) {
+        String userNickname = "";
+
+        if (ObjectUtils.isNotEmpty(userDetails)) {
+            User user = userRepository.findById(userDetails.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+            userNickname = user.getNickName();
+        }
+        return userNickname;
     }
 
     public OpinionResponseList getOpinionsByPage(int page) {
