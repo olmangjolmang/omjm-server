@@ -16,6 +16,7 @@ public class NoteResponse {
     private LocalDateTime memoDate;
     private Long postId;
     private String postTitle;
+    private String targetText;
 
     public static NoteResponse toDto(Memo memo){
         return NoteResponse.builder()
@@ -24,6 +25,7 @@ public class NoteResponse {
                 .memoDate(memo.getCreatedDate())
                 .postId(memo.getPost().getPostId())
                 .postTitle(memo.getPost().getTitle())
+                .targetText(memo.getTargetText())
                 .build();
     }
 }
