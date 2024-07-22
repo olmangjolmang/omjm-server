@@ -62,7 +62,7 @@ public class PostService {
     private String geminiApiKey;
 
     //postId로 조회한 특정 post 정보 리턴
-    public Post findArticleById(long id) {
+    public Post findArticleById(Long id) {
 
         Optional<Post> optionalPost = postRepository.findById(id);
         Post post = optionalPost.orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + id));

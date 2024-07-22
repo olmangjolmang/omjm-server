@@ -14,6 +14,6 @@ public interface ScrappedRepository extends JpaRepository<Scrapped, Long> {
     Optional<Scrapped> findByUserIdAndPost_PostId(Long userId, Long postId);
 
     Page<Scrapped> findByUserId(Long userId, Pageable pageable);
-    Page<Scrapped> findByUserIdAndPostCategory(@Param("userid") Long userId, @Param("category") Category category, Pageable pageable);
+    Page<Scrapped> findByUserIdAndPostCategory(Long userId, Category category, Pageable pageable);
 
 }

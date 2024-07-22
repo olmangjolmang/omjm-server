@@ -66,7 +66,7 @@ public class PostApiController {
 
     @Operation(summary = "아티클 스크랩", description = "새로운 아티클 스크랩, 스크랩 취소")
     @PostMapping("/{id}/scrap")
-    public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<ResponseTemplate<Object>> scrappedArticle(@PathVariable("id") Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         Object scrapped = postService.scrappedById(id, customUserDetails);
 
