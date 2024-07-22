@@ -6,7 +6,7 @@ import com.ticle.server.opinion.dto.request.CommentUploadRequest;
 import com.ticle.server.opinion.dto.response.CommentResponseList;
 import com.ticle.server.opinion.dto.response.OpinionResponseList;
 import com.ticle.server.opinion.service.OpinionService;
-import com.ticle.server.user.service.CustomUserDetails;
+import com.ticle.server.user.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

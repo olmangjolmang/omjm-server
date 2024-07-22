@@ -12,7 +12,7 @@ import com.ticle.server.post.service.PostService;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.dto.ScrappedDto;
 import com.ticle.server.user.domain.type.Category;
-import com.ticle.server.user.service.CustomUserDetails;
+import com.ticle.server.user.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

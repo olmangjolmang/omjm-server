@@ -4,6 +4,8 @@ import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @ToString
 @AllArgsConstructor
@@ -14,7 +16,7 @@ public class UserResponse {
     private Long id;
     private String nickName;
     private String email;
-    private Category category;
+    private List<Category> category;
 
     public static UserResponse toDto(User user){
         return UserResponse.builder()
