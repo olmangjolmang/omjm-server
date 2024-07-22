@@ -29,7 +29,7 @@ public class SavedTicleController {
     @GetMapping("/saved-ticles")
     public ResponseEntity<ResponseTemplate<Object>> getSavedTicles(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                                    @RequestParam(value = "category", required = false) Category category,
-                                                                   @RequestParam(defaultValue = "1") int page) {
+                                                                   @RequestParam(value = "page", defaultValue = "1") int page) {
 
         SavedTicleResponseList savedTicleResponses;
 
