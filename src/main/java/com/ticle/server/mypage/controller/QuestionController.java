@@ -31,7 +31,7 @@ public class QuestionController {
 
     @Operation(summary = "티클문답",description = "Jwt token을 통해 userId를 가져온 후 티클문답의 질문들을 가져옴")
     @GetMapping("/my-question")
-    public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PageableDefault(page=0,size=9,sort="created_date",direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<ResponseTemplate<Object>> getMyQuestions(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PageableDefault(page=0,size=9,sort="createdDate",direction = Sort.Direction.DESC) Pageable pageable){
 
         Long userId = customUserDetails.getUserId();
 

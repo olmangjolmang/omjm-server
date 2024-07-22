@@ -13,6 +13,8 @@ import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.opinion.domain.Opinion;
 import com.ticle.server.user.domain.type.Category;
+import com.ticle.server.user.exception.UserNotFoundException;
+import com.ticle.server.user.exception.errorcode.UserErrorCode;
 import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.jwt.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +48,12 @@ public class MyPageService {
 //        Pageable pageable = PageRequest.of(page-1,SIZE);
         log.info("Pageable: page={}, size={}, sort={}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
 
-        Long userId = customUserDetails.getUserId();
+        Long userId;
+        try{
+            userId = customUserDetails.getUserId();
+        }catch (UserNotFoundException e){
+            throw new UserNotFoundException(UserErrorCode.USER_NOT_FOUND);
+        }
         Page<Scrapped> scraps = scrappedRepository.findByUserId(userId,pageable);
 
         return scraps.stream()
@@ -57,8 +64,12 @@ public class MyPageService {
     public List<SavedTicleResponse> getSavedArticlesByCategory(CustomUserDetails customUserDetails, Category category, Pageable pageable) {
 //        Pageable pageable = PageRequest.of(page-1,SIZE);
         log.info("Pageable: page={}, size={}, sort={}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
-
-        Long userId = customUserDetails.getUserId();
+        Long userId;
+        try{
+            userId = customUserDetails.getUserId();
+        }catch (UserNotFoundException e){
+            throw new UserNotFoundException(UserErrorCode.USER_NOT_FOUND);
+        }
         Page<Scrapped> scraps = scrappedRepository.findByUserIdAndPostCategory(userId, category,pageable);
 
         return scraps.stream()

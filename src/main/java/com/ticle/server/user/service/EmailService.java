@@ -98,29 +98,29 @@ public class EmailService {
 
     private static String getContent(Post latestPost) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String content = "<div style='margin:20px; background-color: lightblue;'>"
-                + "<br>"
-                + "<h1 style='color: white; text-align: center;'>새로운 아티클을 만나보세요!</h1>"
-                + "<br>"
-                + "<div align='center' style='font-family:verdana; color:black'>"
-                + "<h2 style='text-align: center;'>" + latestPost.getTitle() + "</h2>"
-                + "<p style='font-size: 15px; text-align: center;'>" + latestPost.getAuthor() + " | "
-                + simpleDateFormat.format(latestPost.getCreatedDate())+ "</p>"
-                + "<br>"
-                + "<p style='font-size: 15px; text-align: center;'>" + latestPost.getContent() + "</p>";
+        String content = "<div style='margin:20px; padding:20px; background-color:#f9f9f9; border:1px solid #ddd; border-radius:10px;'>"
+                + "<div style='text-align:center;'>"
+                + "<h1 style='color:#333;'>새로운 아티클을 만나보세요!</h1>"
+                + "</div>"
+                + "<div style='text-align:center; font-family:Verdana, sans-serif; color:#333;'>"
+                + "<h2 style='font-size:24px;'>" + latestPost.getTitle() + "</h2>"
+                + "<p style='font-size:14px; color:#666;'>" + latestPost.getAuthor() + " | " + simpleDateFormat.format(latestPost.getCreatedDate()) + "</p>"
+                + "<p style='font-size:16px; margin-top:20px;'>" + latestPost.getContent() + "</p>";
 
         if (latestPost.getImage() != null) {
-            content += "<br>"
-                    + "<p style='font-size: 15px; text-align: center;'> <img src='" + latestPost.getImage().getImageUrl() + "' width='300'></p>";
+            content += "<div style='margin-top:20px;'>"
+                    + "<img src='" + latestPost.getImage().getImageUrl() + "' style='width:100%; max-width:500px; border-radius:10px;' alt='Article Image'>"
+                    + "</div>";
         }
 
-        content += "<br>" + "<br>"
-                + "<p style='font-size: 17px; text-align: center;'>"
-                + "다양하고 재미있는 글과 인사이트를 얻고 싶다면 " +  "<span style='font-weight: bold;'>" + "티클" + "</span>"
-                + "을 다시 방문해주세요!" + "</p>"
-                + "<br>"
+        content += "<div style='margin-top:30px; text-align:center;'>"
+                + "<p style='font-size:16px;'>"
+                + "다양하고 재미있는 글과 인사이트를 얻고 싶다면 <span style='font-weight:bold; color:#007BFF;'>티클</span>을 다시 방문해주세요!"
+                + "</p>"
+                + "</div>"
                 + "</div>";
 
         return content;
     }
+
 }

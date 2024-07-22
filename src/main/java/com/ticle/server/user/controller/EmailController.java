@@ -17,7 +17,7 @@ public class EmailController {
     private final EmailService emailService;
 
     @Operation(summary = "이메일 인증", description = "이메일 인증코드")
-    @PostMapping("/emailSend")
+    @PostMapping("/email-send")
     public String mailConfirm(@RequestParam(value = "email", required = false) String email) throws Exception{
         String code = emailService.sendSimpleMessage(email);
         return code;
