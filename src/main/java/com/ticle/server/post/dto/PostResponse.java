@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -19,7 +20,7 @@ public class PostResponse {
     private String title;
     private String content;
     private String author;
-    private LocalDate createdDate;
+    private Date createdDate;
     private Category postCategory;
     private S3Info image;
     private List recommendPost;

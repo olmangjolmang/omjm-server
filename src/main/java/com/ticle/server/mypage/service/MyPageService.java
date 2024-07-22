@@ -17,6 +17,7 @@ import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.jwt.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import com.ticle.server.scrapped.repository.ScrappedRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MyPageService {
     private final UserRepository userRepository;
     private final ScrappedRepository scrappedRepository;
@@ -40,8 +42,11 @@ public class MyPageService {
 
     private final int SIZE = 9;
 
-    public List<SavedTicleResponse> getSavedArticles(Long userId, Pageable pageable) {
+    public List<SavedTicleResponse> getSavedArticles(CustomUserDetails customUserDetails, Pageable pageable) {
 //        Pageable pageable = PageRequest.of(page-1,SIZE);
+        log.info("Pageable: page={}, size={}, sort={}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+
+        Long userId = customUserDetails.getUserId();
         Page<Scrapped> scraps = scrappedRepository.findByUserId(userId,pageable);
 
         return scraps.stream()
@@ -51,8 +56,11 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
-    public List<SavedTicleResponse> getSavedArticlesByCategory(Long userId, Category category, Pageable pageable) {
+    public List<SavedTicleResponse> getSavedArticlesByCategory(CustomUserDetails customUserDetails, Category category, Pageable pageable) {
 //        Pageable pageable = PageRequest.of(page-1,SIZE);
+        log.info("Pageable: page={}, size={}, sort={}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+
+        Long userId = customUserDetails.getUserId();
         Page<Scrapped> scraps = scrappedRepository.findByUserIdAndPostCategory(userId, category,pageable);
 
         return scraps.stream()

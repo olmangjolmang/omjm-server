@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 
@@ -38,7 +39,7 @@ public class Post {
     private Category category;
 
     @Column(name = "created_date")
-    LocalDate createdDate;
+    Date createdDate;
 
     @Embedded
     @Column

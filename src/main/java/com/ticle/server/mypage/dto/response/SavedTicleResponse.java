@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Getter
 @AllArgsConstructor
@@ -17,7 +20,7 @@ public class SavedTicleResponse {
     private String title;
     private String content;
     private String author;
-    private LocalDate createDate;
+    private Date createDate;
     private Category postCategory;
     private S3Info image;
 
@@ -32,7 +35,5 @@ public class SavedTicleResponse {
                 .image(post.getImage())
                 .build();
     }
-
-
 
 }
