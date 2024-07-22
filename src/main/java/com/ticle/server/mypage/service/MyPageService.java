@@ -106,7 +106,7 @@ public class MyPageService {
                     log.info("Fetching comment for userId: {}, opinionId: {}", userId, comment.getOpinion().getOpinionId());
                     Opinion opinion = opinionRepository.findByOpinionIdWithFetch(comment.getOpinion().getOpinionId())
                             .orElseThrow(() -> new RuntimeException("댓글이 없습니다"));
-                    return new QnAResponse(opinion.getQuestion(), comment.getOpinion().getOpinionId(), comment.getContent(), opinion.getCreatedDate().format(DateTimeFormatter.ISO_DATE_TIME));
+                    return new QnAResponse(opinion.getQuestion(), opinion.getOpinionId(), comment.getContent(), opinion.getCreatedDate().format(DateTimeFormatter.ISO_DATE_TIME));
                 })
                 .collect(Collectors.toList());
     }

@@ -69,7 +69,7 @@ public class UserController {
                 .body(ResponseTemplate.from(userService.logout(userDetails, request)));
     }
 
-    @PatchMapping("/reissue")
+    @PostMapping("/reissue")
     public ResponseEntity<ResponseTemplate<Object>> reissueToken(@AuthenticationPrincipal CustomUserDetails userDetails,
                                       @RequestBody ReissueTokenRequest tokenRequest){
         //유저 객체 정보를 이용하여 토큰 발행
