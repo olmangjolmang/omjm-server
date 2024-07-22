@@ -8,6 +8,9 @@ import com.ticle.server.user.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,9 +28,9 @@ public class NoteController {
 
     @Operation(summary="티클노트 조회",description = "userId에 해당하는 note들을 불러옴")
     @GetMapping("/my-note")
-    public ResponseEntity<ResponseTemplate<Object>> getMyNotes(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public ResponseEntity<ResponseTemplate<Object>> getMyNotes(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PageableDefault(page=0,size=9,sort="createdDate",direction = Sort.Direction.DESC) Pageable pageable){
         Long userId = customUserDetails.getUserId();
-        List<NoteResponse> noteResponses = myPageService.getMyNotes(userId);
+        List<NoteResponse> noteResponses = myPageService.getMyNotes(userId,pageable);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResponseTemplate.from(noteResponses));
