@@ -13,5 +13,5 @@ public class QnAResponse {
 
     private String question;
     private String comment;
-    private LocalDateTime createdDate;
+    private String createdDate;
 }

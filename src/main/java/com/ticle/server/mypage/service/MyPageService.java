@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -105,7 +106,7 @@ public class MyPageService {
                     log.info("Fetching comment for userId: {}, opinionId: {}", userId, comment.getOpinion().getOpinionId());
                     Opinion opinion = opinionRepository.findByOpinionIdWithFetch(comment.getOpinion().getOpinionId())
                             .orElseThrow(() -> new RuntimeException("댓글이 없습니다"));
-                    return new QnAResponse(opinion.getQuestion(), comment.getContent(), opinion.getCreatedDate());
+                    return new QnAResponse(opinion.getQuestion(), comment.getContent(), opinion.getCreatedDate().format(DateTimeFormatter.ISO_DATE_TIME));
                 })
                 .collect(Collectors.toList());
     }
