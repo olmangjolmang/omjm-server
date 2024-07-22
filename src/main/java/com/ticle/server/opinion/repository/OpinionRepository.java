@@ -24,5 +24,6 @@ public interface OpinionRepository extends JpaRepository<Opinion, Long> {
 
     Page<Opinion> findByUserId(Long userId,Pageable pageable);
 
+
 //    Optional<Opinion> findByOpinionId(Long opinionId);
 }

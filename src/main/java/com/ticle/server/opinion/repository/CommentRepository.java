@@ -3,6 +3,8 @@ package com.ticle.server.opinion.repository;
 import com.ticle.server.opinion.domain.Comment;
 import com.ticle.server.opinion.domain.Opinion;
 import com.ticle.server.user.domain.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +22,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllByOpinion(Opinion opinion, Sort sort);
 
     Optional<Comment> findByUserAndOpinion(User user,Opinion opinion);
+    Page<Comment> findByUser(User user, Pageable pageable);
+
     @Query("DELETE FROM Comment c WHERE c.user.id = :userId AND c.opinion.opinionId = :opinionId")
     void deleteByUserAndOpinion(@Param("userId") Long userId, @Param("opinionId") Long opinionId);
     @Query("SELECT c FROM Comment c WHERE c.user.id = :userId AND c.opinion.opinionId = :opinionId")

@@ -46,7 +46,7 @@ public class UserService {
     private final RedisDao redisDao;
 
 
-    @Cacheable(cacheNames = CacheNames.LOGINUSER, key = "#p0.email()", unless = "#result== null")
+//    @Cacheable(cacheNames = CacheNames.LOGINUSER, key = "#p0.email()", unless = "#result== null")
     @Transactional
     public JwtTokenResponse signIn(LoginRequest loginRequest){
         String email = loginRequest.email();
@@ -56,11 +56,6 @@ public class UserService {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
-        // Redis에 저장된 Refresh Token 확인
-//        String storedRefreshToken = redisDao.getRefreshToken(email);
-//        if (storedRefreshToken == null || !storedRefreshToken.equals(reToken)) {
-//            throw new InvalidTokenException("Invalid refresh token");
-//        }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);

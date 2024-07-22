@@ -12,6 +12,7 @@ import com.ticle.server.opinion.repository.OpinionRepository;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.opinion.domain.Opinion;
+import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.user.exception.UserNotFoundException;
 import com.ticle.server.user.exception.errorcode.UserErrorCode;
@@ -82,14 +83,18 @@ public class MyPageService {
 
 
     public List<QnAResponse> getMyQnA(Long userId, Pageable pageable) {
-        Page<Opinion> opinions = opinionRepository.findByUserId(userId,pageable);
-        return opinions.stream()
-                .map(opinion -> {
-                    Optional<Comment> commentOpt = commentRepository.findByUserIdAndOpinionId(userId, opinion.getOpinionId());
-                    String comment = commentOpt.get().getContent();
-                    return new QnAResponse(opinion.getQuestion(), comment, opinion.getCreatedDate());
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
+//        Page<Opinion> opinions = opinionRepository.findByUserId(userId, pageable);
+        Page<Comment> comments = commentRepository.findByUser(user,pageable);
+
+        return comments.stream()
+                .map(comment -> {
+                    log.info("Fetching comment for userId: {}, opinionId: {}", userId, comment.getOpinion().getOpinionId());
+                    Opinion opinion = opinionRepository.findByOpinionIdWithFetch(comment.getOpinion().getOpinionId())
+                            .orElseThrow(() -> new RuntimeException("댓글이 없습니다"));
+                    return new QnAResponse(opinion.getQuestion(), comment.getContent(), opinion.getCreatedDate());
                 })
-                .collect(toList());
+                .collect(Collectors.toList());
     }
 
     @Transactional

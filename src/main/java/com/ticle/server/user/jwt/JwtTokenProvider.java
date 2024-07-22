@@ -49,6 +49,10 @@ public class JwtTokenProvider {
         long now = (new Date()).getTime();
 
         Date accessTokenExpiresIn = new Date(now+ExpireTime.ACCESS_TOKEN_EXPIRE_TIME);
+
+        String accessTokenId = UUID.randomUUID().toString();
+        String refreshTokenId = UUID.randomUUID().toString();
+
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth",authorities)
@@ -63,6 +67,11 @@ public class JwtTokenProvider {
                 .setIssuedAt(new Date(now))
                 .signWith(key,SignatureAlgorithm.HS256)
                 .compact();
+
+        log.info("Access Token ID: {}", accessTokenId);
+        log.info("Refresh Token ID: {}", refreshTokenId);
+        log.info("Access Token: {}", accessToken);
+        log.info("Refresh Token: {}", refreshToken);
 
         return JwtTokenResponse.builder()
                 .grantType("Bearer")
