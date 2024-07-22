@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class QnAResponse {
 
     private String question;
+    private Long questionId;
     private String comment;
     private String createdDate;
 }
