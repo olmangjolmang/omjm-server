@@ -11,7 +11,7 @@ import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.repository.UserRepository;
-import com.ticle.server.user.service.CustomUserDetails;
+import com.ticle.server.user.jwt.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 

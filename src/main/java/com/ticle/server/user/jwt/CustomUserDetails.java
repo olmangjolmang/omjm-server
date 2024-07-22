@@ -1,4 +1,4 @@
-package com.ticle.server.user.service;
+package com.ticle.server.user.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;

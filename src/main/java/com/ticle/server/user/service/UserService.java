@@ -9,6 +9,8 @@ import com.ticle.server.user.dto.response.JwtTokenResponse;
 import com.ticle.server.user.dto.response.UserResponse;
 import com.ticle.server.user.exception.InvalidPasswordException;
 import com.ticle.server.user.exception.UserNotFoundException;
+import com.ticle.server.user.jwt.CustomUserDetails;
+import com.ticle.server.user.jwt.ExpireTime;
 import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.redis.CacheNames;
 import com.ticle.server.user.redis.RedisDao;
@@ -23,7 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,13 +40,11 @@ import static com.ticle.server.user.exception.errorcode.UserErrorCode.USER_NOT_F
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final RedisDao redisDao;
 
-    public static final long REFRESH_TOKEN_TIME = 1000 * 60 * 60 * 24 * 7L;// 7일
 
     @Cacheable(cacheNames = CacheNames.LOGINUSER, key = "#p0.email()", unless = "#result== null")
     @Transactional
@@ -57,12 +56,18 @@ public class UserService {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
+        // Redis에 저장된 Refresh Token 확인
+//        String storedRefreshToken = redisDao.getRefreshToken(email);
+//        if (storedRefreshToken == null || !storedRefreshToken.equals(reToken)) {
+//            throw new InvalidTokenException("Invalid refresh token");
+//        }
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authentication);
-        redisDao.setRefreshToken(email, jwtTokenResponse.getRefreshToken(), REFRESH_TOKEN_TIME);
+        redisDao.setRefreshToken(email, jwtTokenResponse.getRefreshToken(), ExpireTime.REFRESH_TOKEN_EXPIRE_TIME);
 
         return jwtTokenResponse;
     }
@@ -99,7 +104,7 @@ public class UserService {
     }
 
     @Transactional
-    public JwtTokenResponse reissueAtk(CustomUserDetails customUserDetails,String reToken) {
+    public JwtTokenResponse reissueAtk(CustomUserDetails customUserDetails,String refreshToken) {
         String email = "";
         String password = "";
 
@@ -109,17 +114,17 @@ public class UserService {
             password = user.get().getPassword();
         }
         // 레디스 저장된 리프레쉬토큰값을 가져와서 입력된 reToken 같은지 유무 확인
-        if (!redisDao.getRefreshToken(email).equals(reToken)) {
+        if (!redisDao.getRefreshToken(email).equals(refreshToken)) {
             throw new RuntimeException("Refresh");
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        String accessToken = jwtTokenProvider.generateToken(authentication).getAccessToken();
-        String refreshToken = jwtTokenProvider.generateToken(authentication).getRefreshToken();
-        redisDao.setRefreshToken(email, refreshToken, REFRESH_TOKEN_TIME);
-        return new JwtTokenResponse("Bearer",accessToken, refreshToken);
+        String newAccessToken = jwtTokenProvider.generateToken(authentication).getAccessToken();
+        String newRefreshToken = jwtTokenProvider.generateToken(authentication).getRefreshToken();
+        redisDao.setRefreshToken(email, newRefreshToken, ExpireTime.REFRESH_TOKEN_EXPIRE_TIME);
+        return new JwtTokenResponse("Bearer",newAccessToken, newRefreshToken);
     }
 
     @Transactional

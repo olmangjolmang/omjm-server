@@ -4,7 +4,7 @@ import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.home.dto.request.SubscriptionRequest;
 import com.ticle.server.home.dto.response.HomeResponse;
 import com.ticle.server.home.service.HomeService;
-import com.ticle.server.user.service.CustomUserDetails;
+import com.ticle.server.user.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

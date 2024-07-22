@@ -4,7 +4,7 @@ import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.mypage.dto.response.SavedTicleResponse;
 import com.ticle.server.mypage.service.MyPageService;
 import com.ticle.server.user.domain.type.Category;
-import com.ticle.server.user.service.CustomUserDetails;
+import com.ticle.server.user.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

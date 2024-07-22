@@ -1,29 +1,22 @@
 package com.ticle.server.user.controller;
 
 import com.ticle.server.global.dto.ResponseTemplate;
-import com.ticle.server.user.domain.User;
 import com.ticle.server.user.dto.request.*;
 import com.ticle.server.user.dto.response.JwtTokenResponse;
 import com.ticle.server.user.dto.response.UserResponse;
 import com.ticle.server.user.jwt.JwtTokenProvider;
 import com.ticle.server.user.repository.UserRepository;
-import com.ticle.server.user.service.CustomUserDetails;
+import com.ticle.server.user.jwt.CustomUserDetails;
 import com.ticle.server.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -76,7 +69,7 @@ public class UserController {
                 .body(ResponseTemplate.from(userService.logout(userDetails, request)));
     }
 
-    @PostMapping("/reissue-token")
+    @PatchMapping("/reissue")
     public ResponseEntity<ResponseTemplate<Object>> reissueToken(@AuthenticationPrincipal CustomUserDetails userDetails,
                                       @RequestBody ReissueTokenRequest tokenRequest){
         //유저 객체 정보를 이용하여 토큰 발행

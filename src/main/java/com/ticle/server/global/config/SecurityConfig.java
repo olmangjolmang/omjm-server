@@ -1,5 +1,6 @@
 package com.ticle.server.global.config;
 
+import com.ticle.server.user.exception.ExceptionHandlerFilter;
 import com.ticle.server.user.jwt.JwtAuthenticationFilter;
 import com.ticle.server.user.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,10 +23,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
+//    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+//    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        httpSecurity
                 .httpBasic(HttpBasicConfigurer::disable)
                 .csrf(CsrfConfigurer::disable)
                 .cors(Customizer.withDefaults())
@@ -38,7 +40,10 @@ public class SecurityConfig {
                                 .requestMatchers("/users/**","/mypage/**").hasRole("USER")
                                 .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(exceptionHandlerFilter,JwtAuthenticationFilter.class);
+//        httpSecurity.exceptionHandling(customAccessDeniedHandler);
+
+        return httpSecurity.build();
     }
 
 
@@ -46,4 +51,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
+
 }

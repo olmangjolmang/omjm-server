@@ -9,7 +9,7 @@ import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.exception.UserNotFoundException;
 import com.ticle.server.user.repository.UserRepository;
-import com.ticle.server.user.service.CustomUserDetails;
+import com.ticle.server.user.jwt.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
