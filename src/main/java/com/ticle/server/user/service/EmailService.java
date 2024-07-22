@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
@@ -96,6 +97,7 @@ public class EmailService {
     }
 
     private static String getContent(Post latestPost) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String content = "<div style='margin:20px; background-color: lightblue;'>"
                 + "<br>"
                 + "<h1 style='color: white; text-align: center;'>새로운 아티클을 만나보세요!</h1>"
@@ -103,7 +105,7 @@ public class EmailService {
                 + "<div align='center' style='font-family:verdana; color:black'>"
                 + "<h2 style='text-align: center;'>" + latestPost.getTitle() + "</h2>"
                 + "<p style='font-size: 15px; text-align: center;'>" + latestPost.getAuthor() + " | "
-                + latestPost.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "</p>"
+                + simpleDateFormat.format(latestPost.getCreatedDate())+ "</p>"
                 + "<br>"
                 + "<p style='font-size: 15px; text-align: center;'>" + latestPost.getContent() + "</p>";
 

@@ -50,8 +50,6 @@ public class MyPageService {
         Page<Scrapped> scraps = scrappedRepository.findByUserId(userId,pageable);
 
         return scraps.stream()
-                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
-                .filter(post -> post != null)
                 .map(SavedTicleResponse::toDto)
                 .collect(Collectors.toList());
     }
@@ -64,8 +62,6 @@ public class MyPageService {
         Page<Scrapped> scraps = scrappedRepository.findByUserIdAndPostCategory(userId, category,pageable);
 
         return scraps.stream()
-                .map(scrap -> postRepository.findById(scrap.getPost().getPostId()).orElse(null))
-                .filter(post -> post != null)
                 .map(SavedTicleResponse::toDto)
                 .collect(Collectors.toList());
     }
