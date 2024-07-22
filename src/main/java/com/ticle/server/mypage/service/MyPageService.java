@@ -1,80 +1,90 @@
 package com.ticle.server.mypage.service;
 
+import com.ticle.server.global.dto.PageInfo;
 import com.ticle.server.memo.domain.Memo;
 import com.ticle.server.mypage.dto.request.NoteUpdateRequest;
 import com.ticle.server.mypage.dto.response.NoteResponse;
 import com.ticle.server.mypage.dto.response.QnAResponse;
 import com.ticle.server.mypage.dto.response.SavedTicleResponse;
-import com.ticle.server.post.repository.MemoRepository;
+import com.ticle.server.mypage.dto.response.SavedTicleResponseList;
 import com.ticle.server.opinion.domain.Comment;
+import com.ticle.server.opinion.domain.Opinion;
 import com.ticle.server.opinion.repository.CommentRepository;
 import com.ticle.server.opinion.repository.OpinionRepository;
-import com.ticle.server.post.repository.PostRepository;
+import com.ticle.server.post.repository.MemoRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
-import com.ticle.server.opinion.domain.Opinion;
+import com.ticle.server.scrapped.repository.ScrappedRepository;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.user.exception.UserNotFoundException;
 import com.ticle.server.user.exception.errorcode.UserErrorCode;
-import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.jwt.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import com.ticle.server.scrapped.repository.ScrappedRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static com.ticle.server.opinion.domain.type.Order.TIME;
+import static com.ticle.server.opinion.domain.type.Order.getOrder;
 import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MyPageService {
-    private final UserRepository userRepository;
+
     private final ScrappedRepository scrappedRepository;
     private final OpinionRepository opinionRepository;
     private final MemoRepository memoRepository;
-    private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
     private final int SIZE = 9;
 
-    public List<SavedTicleResponse> getSavedArticles(CustomUserDetails customUserDetails, Pageable pageable) {
-//        Pageable pageable = PageRequest.of(page-1,SIZE);
-        log.info("Pageable: page={}, size={}, sort={}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+    public SavedTicleResponseList getSavedArticles(CustomUserDetails customUserDetails, int page) {
+        Pageable pageable = PageRequest.of(page - 1, SIZE, getOrder(TIME));
 
         Long userId;
+
         try{
             userId = customUserDetails.getUserId();
-        }catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             throw new UserNotFoundException(UserErrorCode.USER_NOT_FOUND);
         }
-        Page<Scrapped> scraps = scrappedRepository.findByUserId(userId,pageable);
 
-        return scraps.stream()
+        Page<Scrapped> scrappeds = scrappedRepository.findByUserId(userId,pageable);
+        PageInfo pageInfo = PageInfo.from(scrappeds);
+
+        List<SavedTicleResponse> responses = scrappeds.stream()
                 .map(SavedTicleResponse::toDto)
-                .collect(Collectors.toList());
+                .toList();
+
+        return SavedTicleResponseList.of(pageInfo, responses);
     }
 
-    public List<SavedTicleResponse> getSavedArticlesByCategory(CustomUserDetails customUserDetails, Category category, Pageable pageable) {
-//        Pageable pageable = PageRequest.of(page-1,SIZE);
-        log.info("Pageable: page={}, size={}, sort={}", pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
+    public SavedTicleResponseList getSavedArticlesByCategory(CustomUserDetails customUserDetails, Category category, int page) {
+        Pageable pageable = PageRequest.of(page - 1, SIZE, getOrder(TIME));
+
         Long userId;
-        try{
+
+        try {
             userId = customUserDetails.getUserId();
-        }catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             throw new UserNotFoundException(UserErrorCode.USER_NOT_FOUND);
         }
-        Page<Scrapped> scraps = scrappedRepository.findByUserIdAndPostCategory(userId, category,pageable);
 
-        return scraps.stream()
+        Page<Scrapped> scrappeds = scrappedRepository.findByUserIdAndPostCategory(userId, category, pageable);
+        PageInfo pageInfo = PageInfo.from(scrappeds);
+
+        List<SavedTicleResponse> responses = scrappeds.stream()
                 .map(SavedTicleResponse::toDto)
-                .collect(Collectors.toList());
+                .toList();
+
+        return SavedTicleResponseList.of(pageInfo, responses);
     }
 
 
