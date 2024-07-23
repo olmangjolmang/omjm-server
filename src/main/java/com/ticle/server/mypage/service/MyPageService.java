@@ -100,13 +100,14 @@ public class MyPageService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
 //        Page<Opinion> opinions = opinionRepository.findByUserId(userId, pageable);
         Page<Comment> comments = commentRepository.findByUser(user,pageable);
+        PageInfo pageInfo = PageInfo.from(comments);
 
         return comments.stream()
                 .map(comment -> {
                     log.info("Fetching comment for userId: {}, opinionId: {}", userId, comment.getOpinion().getOpinionId());
                     Opinion opinion = opinionRepository.findByOpinionIdWithFetch(comment.getOpinion().getOpinionId())
                             .orElseThrow(() -> new RuntimeException("댓글이 없습니다"));
-                    return new QnAResponse(opinion.getQuestion(), comment.getOpinion().getOpinionId(), comment.getContent(), opinion.getCreatedDate().format(DateTimeFormatter.ISO_DATE_TIME));
+                    return new QnAResponse(opinion.getQuestion(), comment.getOpinion().getOpinionId(), comment.getContent(), opinion.getCreatedDate().format(DateTimeFormatter.ISO_DATE_TIME), pageInfo);
                 })
                 .collect(Collectors.toList());
     }
@@ -138,6 +139,7 @@ public class MyPageService {
         }
 
         commentRepository.delete(comment);
+        comment.subHeartCount();
     }
 
     //////////////////////////////////////////////티클노트///////////////////////////////////////////////////////////////

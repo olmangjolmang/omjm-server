@@ -1,5 +1,6 @@
 package com.ticle.server.mypage.dto.response;
 
+import com.ticle.server.global.dto.PageInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ public class QnAResponse {
     private Long questionId;
     private String comment;
     private String createdDate;
+    private PageInfo pageInfo;
 }
