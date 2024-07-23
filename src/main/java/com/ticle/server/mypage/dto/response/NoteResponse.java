@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @AllArgsConstructor
@@ -16,7 +17,7 @@ public class NoteResponse {
     PageInfo pageInfo;
     private Long noteId;
     private String content;
-    private LocalDateTime memoDate;
+    private String memoDate;
     private Long postId;
     private String postTitle;
     private String targetText;
@@ -26,7 +27,7 @@ public class NoteResponse {
                 .pageInfo(pageInfo)
                 .noteId(memo.getMemoId())
                 .content(memo.getContent())
-                .memoDate(memo.getCreatedDate())
+                .memoDate(memo.getCreatedDate().format(DateTimeFormatter.ISO_DATE_TIME))
                 .postId(memo.getPost().getPostId())
                 .postTitle(memo.getPost().getTitle())
                 .targetText(memo.getTargetText())

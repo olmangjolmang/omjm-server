@@ -34,7 +34,6 @@ public class PostInitializer implements ApplicationRunner {
         if (postRepository.count() > 0) {
             log.info("[Post] 더미 데이터 존재");
         } else {
-            List<Post> postList = new ArrayList<>();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             Post post1 = Post.builder()
@@ -457,36 +456,15 @@ public class PostInitializer implements ApplicationRunner {
                     .scrapCount(1)
                     .build();
 
-            postList.add(post1);
-            postList.add(post2);
-            postList.add(post3);
-            postList.add(post4);
-            postList.add(post5);
-            postList.add(post6);
-            postList.add(post7);
-            postList.add(post8);
-            postList.add(post9);
-            postList.add(post10);
-            postList.add(post11);
-            postList.add(post12);
-            postList.add(post13);
-            postList.add(post14);
-            postList.add(post15);
-            postList.add(post16);
-            postList.add(post17);
-            postList.add(post18);
-            postList.add(post19);
-            postList.add(post20);
-            postList.add(post21);
-            postList.add(post22);
-            postList.add(post23);
-            postList.add(post24);
-            postList.add(post25);
-            postList.add(post26);
-            postList.add(post27);
-            postList.add(post28);
-            postList.add(post29);
-            postList.add(post30);
+            List<Post> postList = new ArrayList<>();
+
+            Post[] posts = {post1, post2, post3, post4, post5, post6, post7, post8, post9, post10,
+                    post11, post12, post13, post14, post15, post16, post17, post18, post19, post20,
+                    post21, post22, post23, post24, post25, post26, post27, post28, post29, post30};
+
+            for (Post post : posts) {
+                postList.add(post);
+            }
 
             postRepository.saveAll(postList);
         }

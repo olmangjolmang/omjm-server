@@ -34,8 +34,6 @@ public class CommentInitializer implements ApplicationRunner {
             User user1 = userRepository.findById(1L).orElseThrow();
             User user2 = userRepository.findById(2L).orElseThrow();
             User user3 = userRepository.findById(3L).orElseThrow();
-            User user4 = userRepository.findById(4L).orElseThrow();
-            User user5 = userRepository.findById(5L).orElseThrow();
 
 
             Opinion opinion1 = opinionRepository.findById(1L).orElseThrow();
