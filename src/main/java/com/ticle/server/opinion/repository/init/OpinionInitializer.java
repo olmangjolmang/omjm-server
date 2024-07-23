@@ -36,98 +36,84 @@ public class OpinionInitializer implements ApplicationRunner {
                     .question("좋은 리더란 어떤 자질이 필요할까요?")
                     .viewCount(5L)
                     .commentCount(4L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion2 = Opinion.builder()
                     .question("팀에서 가장 중요한 구성원은 누구인가요?")
                     .viewCount(10L)
                     .commentCount(3L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion3 = Opinion.builder()
                     .question("롤모델이 있다면 누구이고 이유는 무엇인가요?")
                     .viewCount(14L)
                     .commentCount(5L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion4 = Opinion.builder()
                     .question("인생에서 가장 필요한 사항은 무엇이라 생각하나요?")
                     .viewCount(20L)
                     .commentCount(7L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion5 = Opinion.builder()
                     .question("대인관계에서 가장 중요하게 생각하는 것은 무엇인가요?")
                     .viewCount(4L)
                     .commentCount(2L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion6 = Opinion.builder()
                     .question("가장 기억에 남는 프로젝트는 무엇인가요?")
                     .viewCount(12L)
                     .commentCount(6L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion7 = Opinion.builder()
                     .question("성공적인 팀워크를 위해 가장 필요한 요소는 무엇인가요?")
                     .viewCount(8L)
                     .commentCount(3L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion8 = Opinion.builder()
                     .question("기술 발전이 사회에 미치는 영향은 무엇인가요?")
                     .viewCount(15L)
                     .commentCount(4L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion9 = Opinion.builder()
                     .question("효과적인 문제 해결 방법은 무엇이라 생각하나요?")
                     .viewCount(9L)
                     .commentCount(2L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion10 = Opinion.builder()
                     .question("업무에서 동기부여를 유지하는 방법은 무엇인가요?")
                     .viewCount(18L)
                     .commentCount(5L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion11 = Opinion.builder()
                     .question("IT 업계에서 가장 중요한 기술 트렌드는 무엇인가요?")
                     .viewCount(11L)
                     .commentCount(3L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion12 = Opinion.builder()
                     .question("효과적인 의사소통 방법은 무엇이라고 생각하나요?")
                     .viewCount(7L)
                     .commentCount(4L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion13 = Opinion.builder()
                     .question("최근에 배운 가장 중요한 교훈은 무엇인가요?")
                     .viewCount(10L)
                     .commentCount(5L)
-                    .user(dummyAdmin)
                     .build();
 
             Opinion opinion14 = Opinion.builder()
                     .question("미래의 커리어 목표는 무엇인가요?")
                     .viewCount(13L)
                     .commentCount(6L)
-                    .user(dummyAdmin)
                     .build();
 
             opinionList.add(opinion1);

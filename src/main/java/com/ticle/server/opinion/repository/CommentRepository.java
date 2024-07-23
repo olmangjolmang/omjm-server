@@ -21,11 +21,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @EntityGraph(attributePaths = {"hearts", "user"})
     List<Comment> findAllByOpinion(Opinion opinion, Sort sort);
 
-    Optional<Comment> findByUserAndOpinion(User user,Opinion opinion);
     Page<Comment> findByUser(User user, Pageable pageable);
 
-    @Query("DELETE FROM Comment c WHERE c.user.id = :userId AND c.opinion.opinionId = :opinionId")
-    void deleteByUserAndOpinion(@Param("userId") Long userId, @Param("opinionId") Long opinionId);
     @Query("SELECT c FROM Comment c WHERE c.user.id = :userId AND c.opinion.opinionId = :opinionId")
     Optional<Comment> findByUserIdAndOpinionId(@Param("userId") Long userId, @Param("opinionId") Long opinionId);
 

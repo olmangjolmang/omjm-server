@@ -47,9 +47,6 @@ public class User {
     private boolean agreeTerms;
 
     @OneToMany(mappedBy = "user")
-    private List<Opinion> opinions;
-
-    @OneToMany(mappedBy = "user")
     private List<Memo> memos;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
