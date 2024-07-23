@@ -82,7 +82,7 @@ public class OpinionService {
     @Transactional
     public CommentResponseList getCommentsByOpinion(Long opinionId, CustomUserDetails userDetails, Order orderBy) {
         Opinion opinion = opinionRepository.findByOpinionIdWithFetch(opinionId)
-                .orElseThrow(() -> new OpinionNotFoundException(OPINION_NOT_FOUND));
+                .orElseThrow(() -> new CommentNotFoundException(COMMENT_NOT_FOUND));
 
         // 질문에 대한 댓글들 보기 위해 클릭했을 시 질문 조회수 +1
         opinion.addViewCount();

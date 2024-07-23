@@ -3,10 +3,14 @@ package com.ticle.server.global.exception.handler;
 import com.ticle.server.global.exception.errorcode.ErrorCode;
 import com.ticle.server.global.exception.errorcode.GlobalErrorCode;
 import com.ticle.server.global.exception.response.ErrorResponse;
-import com.ticle.server.user.exception.InvalidPasswordException;
-import lombok.extern.slf4j.Slf4j;
 import com.ticle.server.global.exception.response.ErrorResponse.ValidationError;
 import com.ticle.server.global.exception.response.ErrorResponse.ValidationErrors;
+import com.ticle.server.opinion.exception.CommentNotFoundException;
+import com.ticle.server.opinion.exception.OpinionNotFoundException;
+import com.ticle.server.post.exception.PostNotFoundException;
+import com.ticle.server.user.exception.InvalidPasswordException;
+import com.ticle.server.user.exception.UserNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -28,6 +32,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleIllegalArgument(final IllegalArgumentException e) {
         final ErrorCode errorCode = GlobalErrorCode.INVALID_PARAMETER;
         return handleExceptionInternal(errorCode, e.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Object> handleMemberNotFound(final UserNotFoundException e) {
+        final ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ResponseEntity<Object> handleMemberNotFound(final CommentNotFoundException e) {
+        final ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
+
+    @ExceptionHandler(OpinionNotFoundException.class)
+    public ResponseEntity<Object> handleMemberNotFound(final OpinionNotFoundException e) {
+        final ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
+
+    @ExceptionHandler(PostNotFoundException.class)
+    public ResponseEntity<Object> handleMemberNotFound(final PostNotFoundException e) {
+        final ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
     }
 
     /**
