@@ -9,12 +9,13 @@ import com.ticle.server.mypage.dto.response.SavedTicleResponse;
 import com.ticle.server.mypage.dto.response.SavedTicleResponseList;
 import com.ticle.server.opinion.domain.Comment;
 import com.ticle.server.opinion.domain.Opinion;
+import com.ticle.server.opinion.exception.OpinionNotFoundException;
 import com.ticle.server.opinion.repository.CommentRepository;
 import com.ticle.server.opinion.repository.OpinionRepository;
 import com.ticle.server.post.repository.MemoRepository;
 import com.ticle.server.scrapped.domain.Scrapped;
-import com.ticle.server.user.domain.User;
 import com.ticle.server.scrapped.repository.ScrappedRepository;
+import com.ticle.server.user.domain.User;
 import com.ticle.server.user.domain.type.Category;
 import com.ticle.server.user.exception.UserNotFoundException;
 import com.ticle.server.user.exception.errorcode.UserErrorCode;
@@ -30,12 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ticle.server.opinion.domain.type.Order.TIME;
 import static com.ticle.server.opinion.domain.type.Order.getOrder;
-import static java.util.stream.Collectors.toList;
+import static com.ticle.server.opinion.exception.errorcode.OpinionErrorCode.OPINION_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -98,7 +98,6 @@ public class MyPageService {
 
     public List<QnAResponse> getMyQnA(Long userId, Pageable pageable) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(UserErrorCode.USER_NOT_FOUND));
-//        Page<Opinion> opinions = opinionRepository.findByUserId(userId, pageable);
         Page<Comment> comments = commentRepository.findByUser(user,pageable);
         PageInfo pageInfo = PageInfo.from(comments);
 
@@ -113,12 +112,7 @@ public class MyPageService {
     }
 
     @Transactional
-    public void updateComment(Long userId, Long opinionId, String newContent) {
-//        Optional<User> user = userRepository.findById(userId);
-//        Optional<Opinion> opinion = opinionRepository.findByOpinionIdWithFetch(opinionId);
-//        Optional<Comment> comment = commentRepository.findByUserIdAndOpinionId(userId,opinionId);
-
-        Comment comment = commentRepository.findByUserIdAndOpinionId(userId,opinionId)
+    public void updateComment(Long userId, Long opinionId, String newContent) {Comment comment = commentRepository.findByUserIdAndOpinionId(userId,opinionId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         if (!comment.getUser().getId().equals(userId)) {
@@ -126,20 +120,21 @@ public class MyPageService {
         }
 
         comment.updateContent(newContent);
-//        return commentRepository.save(comment);
     }
 
     @Transactional
     public void deleteComment(Long userId, Long questionId) {
         Comment comment = commentRepository.findByUserIdAndOpinionId(userId, questionId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
+        Opinion opinion = opinionRepository.findById(questionId)
+                .orElseThrow(() -> new OpinionNotFoundException(OPINION_NOT_FOUND));
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new RuntimeException("You do not have permission to delete this comment");
         }
 
         commentRepository.delete(comment);
-        comment.subHeartCount();
+        opinion.subCommentCount();
     }
 
     //////////////////////////////////////////////티클노트///////////////////////////////////////////////////////////////
@@ -175,5 +170,4 @@ public class MyPageService {
         }
         memoRepository.delete(memo);
     }
-
 }
