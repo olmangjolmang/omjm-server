@@ -7,6 +7,7 @@ import com.ticle.server.user.domain.type.Category;
 import java.util.Date;
 
 public record PostSetsResponse(
+        Long postId,
         String title,
         String imageUrl,
         Category category,
@@ -16,6 +17,7 @@ public record PostSetsResponse(
 ) {
     public static PostSetsResponse from(Post post) {
         return new PostSetsResponse(
+                post.getPostId(),
                 post.getTitle(),
                 post.getImage().getImageUrl(),
                 post.getCategory(),
