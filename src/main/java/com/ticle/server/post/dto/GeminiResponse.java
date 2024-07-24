@@ -16,8 +16,6 @@ public class GeminiResponse {
     private List<Candidate> candidates;
     private PromptFeedback promptFeedback;
 
-//    private PostRepository postRepository;
-
     @Data
     public static class Candidate {
         private Content content;

@@ -66,10 +66,8 @@ public class PostApiController {
     @Operation(summary = "함께 읽으면 좋을 아티클 추천", description = "함께 읽으면 좋을 아티클 추천")
     @GetMapping("/recommend/{id}")
     public ResponseEntity<ResponseTemplate<Object>> ReadRecommendPost(@PathVariable long id) {
-        // Retrieve recommended posts from the service
         List<Post> posts = postService.ArticleReadRecommend(id);
 
-        // Create a ResponseTemplate containing the recommended posts
         ResponseTemplate<Object> response = ResponseTemplate.from(posts);
 
         return ResponseEntity
