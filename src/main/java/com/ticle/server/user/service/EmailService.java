@@ -1,10 +1,16 @@
 package com.ticle.server.user.service;
 
+import com.ticle.server.home.domain.Subscription;
+import com.ticle.server.home.domain.type.Day;
+import com.ticle.server.home.repository.SubscriptionRepository;
 import com.ticle.server.post.domain.Post;
+import com.ticle.server.post.exception.PostNotFoundException;
+import com.ticle.server.post.repository.PostRepository;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,10 +18,15 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Random;
 
+import static com.ticle.server.post.exception.errorcode.PostErrorCode.POST_NOT_FOUND;
+
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
     @Autowired
@@ -123,4 +134,60 @@ public class EmailService {
         return content;
     }
 
+    public void sendEmail2(String email, Post topPost) {
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+
+            message.addRecipients(Message.RecipientType.TO, email);
+            message.setSubject("[ticle] 구독 서비스 아티클 알림");
+
+            String content = getContent2(topPost);
+
+            message.setContent(content, "text/html; charset=UTF-8");
+            message.setFrom(new InternetAddress("omjmticle@gmail.com", "ticle"));
+
+            emailSender.send(message);
+        } catch (MessagingException | UnsupportedEncodingException s) {
+            throw new IllegalArgumentException();
+        }
+    }
+    private static String getContent2(Post latestPost) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = simpleDateFormat.format(latestPost.getCreatedDate());
+        String imageUrl = latestPost.getImage() != null ? latestPost.getImage().getImageUrl() : "https://via.placeholder.com/454x288";
+
+        String content = "<div style='display: flex; justify-content: center; align-items: center; margin: 0; font-family: Pretendard, Arial, sans-serif; background-color: #F4F4F7;'>"
+                + "<div style='width: 792px; height: 981px; padding: 120px 68px; background: #F4F4F7; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;'>"
+                + "<div style='width: 100%; height: 741px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 36px;'>"
+                + "<div style='height: 118px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 12px;'>"
+                + "<img src='https://via.placeholder.com/103x70' alt='Logo' style='width: 103px; height: 70px;'/>"
+                + "<div style='align-self:stretch; text-align: center;'>"
+                + "<span style='color: #463EFB; font-size:20px;font-family:Pretendard;font-weight:600; line-height:36px;word-wrap: break-word'>티클</span>"
+                + "<span style='color: black;font-size: 20px; font-family: Pretendard; font-weight: 600; line-height: 36px; word-wrap: break-word'>에서 이번 주 뉴스레터가 도착했어요!</span>"
+                + "</div>"
+                + "</div>"
+
+                + "<div style='width: 100%; height: 1px; background-color: #AFAFB6;'></div>"
+                + "<div style='height: 551px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 53px;'>"
+                + "<div style='width: 100%; height: 396px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 36px;'>"
+                + "<div style='height: 72px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 12px;'>"
+                + "<div style='text-align: center; color: black; font-size: 18px; font-weight: 600; line-height: 36px; word-wrap: break-word;'>" + latestPost.getTitle() + "</div>"
+                + "<div style='display: flex; justify-content: flex-start; align-items: flex-start; gap: 16px;'>"
+                + "<div style='color: black; font-size: 14px; font-family: Pretendard; font-weight: 600; line-height: 24px; word-wrap: break-word'>" + latestPost.getAuthor() + "</div>"
+                + "<div style='color: #7F7F86; font-size: 12px; font-family: Pretendard; font-weight: 600; line-height: 24px; word-wrap: break-word'>" + formattedDate + "</div>"
+                + "</div>"
+                + "</div>"
+
+                + "<img src='" + imageUrl + "' alt='Article Image' style='width: 100%; height: 288px; border-radius: 24px;'/>"
+                + "</div>"
+                + "<div style='height: 102px; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 12px;'>"
+                + "<div style='align-self: stretch; text-align: center; color: black; font-size: 14px; font-family: Pretendard; font-weight: 600; line-height: 24px; word-wrap: break-word'>좀 더 알아보고 싶다면?</div>"
+                + "<div onclick='window.open('http://3.36.247.28/')' style='width: 100%; padding: 21px 176px; background: #463EFB; border-radius: 50px; display: flex; justify-content: center; align-items: center; color: white; font-size: 16px; font-weight: 600; text-align: center; cursor: pointer;'>아티클 바로가기</div>"
+                + "</div>"
+                + "</div>"
+                + "</div>"
+                + "</div>";
+
+        return content;
+    }
 }

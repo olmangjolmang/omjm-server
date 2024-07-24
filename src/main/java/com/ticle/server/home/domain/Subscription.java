@@ -4,13 +4,11 @@ import com.ticle.server.global.domain.BaseTimeEntity;
 import com.ticle.server.home.domain.type.Day;
 import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Table(name = "subscription")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Subscription extends BaseTimeEntity {

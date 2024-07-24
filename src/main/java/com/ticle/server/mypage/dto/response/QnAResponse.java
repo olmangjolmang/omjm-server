@@ -16,5 +16,6 @@ public class QnAResponse {
     private Long questionId;
     private String comment;
     private String createdDate;
+//    private String modifiedDate;
     private PageInfo pageInfo;
 }

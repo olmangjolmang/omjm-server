@@ -124,4 +124,5 @@ public class SchedulingService implements ApplicationRunner {
         log.info("selectedPostIds: {}", selectedPostIds);
         return selectedPostIds;
     }
+
 }
