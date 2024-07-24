@@ -54,4 +54,8 @@ public class Opinion extends BaseTimeEntity {
     public void addCommentCount() {
         this.commentCount++;
     }
+
+    public void minusCommentCount() {
+        this.commentCount--;
+    }
 }

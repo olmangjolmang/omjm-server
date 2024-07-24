@@ -132,14 +132,15 @@ public class MyPageService {
     @Transactional
     public void deleteComment(Long userId, Long questionId) {
         Comment comment = commentRepository.findByUserIdAndOpinionId(userId, questionId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new RuntimeException("Comment Not Found"));
+        Opinion opinion = opinionRepository.findById(questionId).orElseThrow(()-> new RuntimeException("Opinion Not Found"));
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new RuntimeException("You do not have permission to delete this comment");
         }
-
+        opinion.minusCommentCount();
         commentRepository.delete(comment);
-        comment.subHeartCount();
+//        comment.subHeartCount();
     }
 
     //////////////////////////////////////////////티클노트///////////////////////////////////////////////////////////////
