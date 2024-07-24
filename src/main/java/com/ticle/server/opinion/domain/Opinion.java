@@ -1,7 +1,6 @@
 package com.ticle.server.opinion.domain;
 
 import com.ticle.server.global.domain.BaseTimeEntity;
-import com.ticle.server.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,10 +27,6 @@ public class Opinion extends BaseTimeEntity {
     @Column(name = "view_count")
     private Long viewCount;
 
-//    @JoinColumn(name = "user_id")
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private User user;
-
     @OneToMany(mappedBy = "opinion", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
@@ -42,7 +37,6 @@ public class Opinion extends BaseTimeEntity {
     public Opinion(String question, Long viewCount,List<Comment> comments, Long commentCount) {
         this.question = question;
         this.viewCount = viewCount;
-//        this.user = user;
         this.comments = comments;
         this.commentCount = commentCount;
     }
@@ -55,7 +49,8 @@ public class Opinion extends BaseTimeEntity {
         this.commentCount++;
     }
 
-    public void minusCommentCount() {
+
+    public void subCommentCount() {
         this.commentCount--;
     }
 }

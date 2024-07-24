@@ -28,12 +28,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.createdDate DESC LIMIT 1")
     Optional<Post> findTopPostByCategory(@Param("category") List<Category> category);
 
-    @Query("SELECT new com.ticle.server.home.dto.response.PostSetsResponse(p.title, p.image.imageUrl, p.category, p.author, p.createdDate) " +
+    @Query("SELECT new com.ticle.server.home.dto.response.PostSetsResponse(p.postId, p.title, p.image.imageUrl, p.category, p.author, p.createdDate) " +
             "FROM Post p " +
             "WHERE p.postId IN (:postIds)")
     List<PostSetsResponse> findSelectedPostInfoByIds(@Param("postIds") Set<Long> postIds);
 
-    @Query("SELECT new com.ticle.server.home.dto.response.PostSetsResponse(p.title, p.image.imageUrl, p.category, p.author, p.createdDate) " +
+    @Query("SELECT new com.ticle.server.home.dto.response.PostSetsResponse(p.postId, p.title, p.image.imageUrl, p.category, p.author, p.createdDate) " +
             "FROM Post p " +
             "ORDER BY p.scrapCount DESC LIMIT 3")
     List<PostSetsResponse> findTop3ByOrderByScrapCountDesc();
