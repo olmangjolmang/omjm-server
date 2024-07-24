@@ -96,7 +96,7 @@ public class PostService {
         String prompt = "현재 기사의 제목은 " + now_post_title + " 이야. " +
                 "다음은 기사의 리스트야. 리스트 안의 title과 비교해서 " +
                 "현재의 기사 제목과 가장 연관 된 기사 3개의 id를 리스트로 추출해줘." +
-                "단, 현재 기사는 제외하고 무조건 3개를 추출해." +
+                "단, 현재 기사의 게시글번호인 " + id + "는 절대 포함되면 안돼. 3개를 추출해." +
                 "예시: [게시글번호,게시글번호,게시글번호]\n" +
                 "위의 형식을 꼭 지켜서 배열로 출력해줘." +
                 "다음은 기사의 리스트야. " + same_category_posts;
@@ -119,7 +119,7 @@ public class PostService {
             recommendPosts = response.extractRecommendedPosts(response, postRepository);
         }
 
-        post.setRecommendPost(recommendPosts);
+//        post.setRecommendPost(recommendPosts);
         return recommendPosts;
     }
 
