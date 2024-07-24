@@ -118,8 +118,6 @@ public class PostService {
             response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
             recommendPosts = response.extractRecommendedPosts(response, postRepository);
         }
-
-//        post.setRecommendPost(recommendPosts);
         return recommendPosts;
     }
 
