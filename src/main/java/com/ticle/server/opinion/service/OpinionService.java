@@ -13,6 +13,7 @@ import com.ticle.server.opinion.repository.HeartRepository;
 import com.ticle.server.opinion.repository.OpinionRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.exception.UserNotFoundException;
+import com.ticle.server.user.exception.UserNotLoginException;
 import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.jwt.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import static com.ticle.server.opinion.domain.type.Order.getOrder;
 import static com.ticle.server.opinion.exception.errorcode.OpinionErrorCode.COMMENT_NOT_FOUND;
 import static com.ticle.server.opinion.exception.errorcode.OpinionErrorCode.OPINION_NOT_FOUND;
 import static com.ticle.server.user.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
+import static com.ticle.server.user.exception.errorcode.UserErrorCode.USER_NOT_LOGIN;
 
 @Slf4j
 @Service
@@ -47,8 +49,12 @@ public class OpinionService {
     private static final int PAGE_SIZE = 5;
 
     @Transactional
-    public void uploadComment(CommentUploadRequest request, Long talkId, CustomUserDetails userId) {
-        User user = userRepository.findById(userId.getUserId())
+    public void uploadComment(CommentUploadRequest request, Long talkId, CustomUserDetails userDetails) {
+        if (ObjectUtils.isEmpty(userDetails)) {
+            throw new UserNotLoginException(USER_NOT_LOGIN);
+        }
+
+        User user = userRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
         Opinion opinion = opinionRepository.findById(talkId)
                 .orElseThrow(() -> new OpinionNotFoundException(OPINION_NOT_FOUND));
@@ -61,6 +67,10 @@ public class OpinionService {
 
     @Transactional
     public void heartComment(Long commentId, CustomUserDetails userDetails) {
+        if (ObjectUtils.isEmpty(userDetails)) {
+            throw new UserNotLoginException(USER_NOT_LOGIN);
+        }
+
         User user = userRepository.findById(userDetails.getUserId())
                 .orElseThrow(RuntimeException::new);
         Comment comment = commentRepository.findById(commentId)

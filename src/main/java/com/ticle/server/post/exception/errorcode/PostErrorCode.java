@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum PostErrorCode implements ErrorCode {
-    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "Post not found"),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 아티클입니다"),
     ;
 
     private final HttpStatus httpStatus;

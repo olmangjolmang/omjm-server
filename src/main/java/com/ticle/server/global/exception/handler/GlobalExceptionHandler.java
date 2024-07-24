@@ -9,8 +9,8 @@ import com.ticle.server.opinion.exception.CommentNotFoundException;
 import com.ticle.server.opinion.exception.OpinionNotFoundException;
 import com.ticle.server.post.exception.PostNotFoundException;
 import com.ticle.server.user.exception.InvalidPasswordException;
-import com.ticle.server.user.exception.TokenNotValidationException;
 import com.ticle.server.user.exception.UserNotFoundException;
+import com.ticle.server.user.exception.UserNotLoginException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,6 +33,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleIllegalArgument(final IllegalArgumentException e) {
         final ErrorCode errorCode = GlobalErrorCode.INVALID_PARAMETER;
         return handleExceptionInternal(errorCode, e.getMessage());
+    }
+
+    @ExceptionHandler(UserNotLoginException.class)
+    public ResponseEntity<Object> handleMemberNotFound(final UserNotLoginException e) {
+        final ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
     }
 
     @ExceptionHandler(UserNotFoundException.class)

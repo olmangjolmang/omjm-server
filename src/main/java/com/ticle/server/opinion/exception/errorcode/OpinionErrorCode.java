@@ -8,8 +8,8 @@ import com.ticle.server.global.exception.errorcode.ErrorCode;
 @Getter
 @RequiredArgsConstructor
 public enum OpinionErrorCode implements ErrorCode {
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Comment not found"),
-    OPINION_NOT_FOUND(HttpStatus.NOT_FOUND, "Opinion not found"),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 댓글입니다"),
+    OPINION_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 질문입니다"),
     ;
 
     private final HttpStatus httpStatus;

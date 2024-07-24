@@ -8,10 +8,12 @@ import com.ticle.server.home.repository.SubscriptionRepository;
 import com.ticle.server.post.repository.PostRepository;
 import com.ticle.server.user.domain.User;
 import com.ticle.server.user.exception.UserNotFoundException;
+import com.ticle.server.user.exception.UserNotLoginException;
 import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.jwt.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ticle.server.user.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
+import static com.ticle.server.user.exception.errorcode.UserErrorCode.USER_NOT_LOGIN;
 
 @Slf4j
 @Service
@@ -33,6 +36,10 @@ public class HomeService {
 
     @Transactional
     public void uploadSubscription(SubscriptionRequest request, CustomUserDetails userDetails) {
+        if (ObjectUtils.isEmpty(userDetails)) {
+            throw new UserNotLoginException(USER_NOT_LOGIN);
+        }
+
         User user = userRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
 
