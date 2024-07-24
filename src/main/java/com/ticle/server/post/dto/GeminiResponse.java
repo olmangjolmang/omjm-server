@@ -16,7 +16,7 @@ public class GeminiResponse {
     private List<Candidate> candidates;
     private PromptFeedback promptFeedback;
 
-    private PostRepository postRepository;
+//    private PostRepository postRepository;
 
     @Data
     public static class Candidate {
@@ -49,7 +49,7 @@ public class GeminiResponse {
     }
 
 
-    public List<Post> formatRecommendPosts(GeminiResponse response) {
+    public List<Post> extractRecommendedPosts(GeminiResponse response, PostRepository postRepository) {
         List<Post> recommendPosts = new ArrayList<>();
 
         if (response.getCandidates() != null) {
@@ -69,7 +69,11 @@ public class GeminiResponse {
                             try {
                                 Long postId = Long.parseLong(postIdString.trim());
                                 // Verify if the postId exists in the repository
-                                postRepository.findById(postId).ifPresent(recommendPosts::add);
+//                                postRepository.findById(postId).ifPresent(recommendPosts::add);
+                                postRepository.findById(postId).ifPresent(post -> {
+                                    post.setScrappeds(null); // scrappeds 필드를 null로 설정
+                                    recommendPosts.add(post);
+                                });
                             } catch (NumberFormatException e) {
                                 System.out.println("Invalid postId format: " + postIdString);
                             }

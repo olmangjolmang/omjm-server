@@ -107,7 +107,7 @@ public class PostService {
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
         System.out.println("response = " + response);
 
-        List<Post> recommendPosts = extractRecommendedPosts(response);
+        List<Post> recommendPosts = response.extractRecommendedPosts(response, postRepository);
 
         System.out.println("response = " + response);
         while (recommendPosts.isEmpty() || recommendPosts.size() == 0) {
@@ -116,50 +116,12 @@ public class PostService {
             System.out.println("비어서 다시 요청");
             request = new GeminiRequest(prompt);
             response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
-            recommendPosts = extractRecommendedPosts(response);
+            recommendPosts = response.extractRecommendedPosts(response, postRepository);
         }
 
         post.setRecommendPost(recommendPosts);
         return recommendPosts;
     }
-
-
-    private List<Post> extractRecommendedPosts(GeminiResponse response) {
-        List<Post> recommendPosts = new ArrayList<>();
-
-        if (response.getCandidates() != null) {
-            for (GeminiResponse.Candidate candidate : response.getCandidates()) {
-                GeminiResponse.Content content = candidate.getContent();
-                if (content != null && content.getParts() != null && !content.getParts().isEmpty()) {
-                    String combinedString = content.getParts().get(0).getText();
-
-                    int startIndex = combinedString.indexOf('[') + 1;
-                    int endIndex = combinedString.indexOf(']');
-                    if (startIndex > 0 && endIndex > startIndex) {
-                        String postIdPart = combinedString.substring(startIndex, endIndex);
-                        String[] postIdStrings = postIdPart.split(",\\s*");
-
-                        for (String postIdString : postIdStrings) {
-                            try {
-                                Long postId = Long.parseLong(postIdString.trim());
-                                postRepository.findById(postId).ifPresent(recommendPosts::add);
-                            } catch (NumberFormatException e) {
-                                System.out.println("Invalid postId format: " + postIdString);
-                            }
-                        }
-                    } else {
-                        System.out.println("Invalid postId format in the response.");
-                    }
-                } else {
-                    System.out.println("Content or parts are null or empty.");
-                }
-            }
-        } else {
-            System.out.println("Candidates are null.");
-        }
-        return recommendPosts;
-    }
-
 
     public Object scrappedById(long id, CustomUserDetails customUserDetails) {
 
