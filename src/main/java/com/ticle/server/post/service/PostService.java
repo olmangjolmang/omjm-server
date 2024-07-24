@@ -26,8 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -71,44 +70,109 @@ public class PostService {
     }
 
     //post id별 함께 읽으면 좋을 아티클 추천
-    public Post ArticleReadRecommend(Long id) {
+    public List<Post> ArticleReadRecommend(Long id) {
 
         Optional<Post> optionalPost = postRepository.findById(id);
         Post post = optionalPost.orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + id));
 
+        Category now_post_category = post.getCategory();
+
+        // 같은 카테고리 post들의 id와 title
+        List<PostIdTitleDto> same_category_posts = postRepository.findIdByCategory(now_post_category);
+        System.out.println("원래의 same_category_posts = " + same_category_posts);
+
+        Collections.shuffle(same_category_posts, new Random()); //무작위로 섞음
+        System.out.println("랜덤 same_category_posts = " + same_category_posts);
+
+        //비교 title의 개수는 20개까지
+        if (same_category_posts.size() >= 20) {
+            same_category_posts = same_category_posts.subList(0, 20);
+        }
+
         String now_post_title = post.getTitle();
-        List<PostIdTitleDto> alltitle = postRepository.findAllPostSummaries();
 
         // Gemini에 요청 전송
         String requestUrl = apiUrl + "?key=" + geminiApiKey;
         String prompt = "현재 기사의 제목은 " + now_post_title + " 이야. " +
                 "다음은 기사의 리스트야. 리스트 안의 title과 비교해서 " +
-                "현재의 기사 제목과 가장 연관 된 기사 3개의 id, title을 각각의 리스트로 추출해줘." +
+                "현재의 기사 제목과 가장 연관 된 기사 3개의 id를 리스트로 추출해줘." +
                 "단, 현재 기사는 제외하고 무조건 3개를 추출해." +
-                "postId=[게시글번호,게시글번호,게시글번호]\n" +
-                "postTitle=[게시글제목,게시글제목,게시글제목]\n" +
-                "위의 형식을 꼭 지켜서 순서대로 출력해줘, (postId=, postTitle= 텍스트가 무조건 포함되어야해." +
-                "다음은 기사의 리스트야. " + alltitle;
+                "예시: [게시글번호,게시글번호,게시글번호]\n" +
+                "위의 형식을 꼭 지켜서 배열로 출력해줘." +
+                "다음은 기사의 리스트야. " + same_category_posts;
 
 //        System.out.println(prompt);
 
         GeminiRequest request = new GeminiRequest(prompt);
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
-        List recommendPost = response.formatRecommendPost(); // 리턴 형식 지정하는 함수
-
         System.out.println("response = " + response);
-        while (recommendPost.isEmpty() || recommendPost.size() == 0) {
-            // 추천 포스트가 비어있을 경우 다시 요청
-            System.out.println("recommendPost = " + recommendPost);
-            System.out.println("비어서 다시 요청");
-            request = new GeminiRequest(prompt);
-            response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
-            recommendPost = response.formatRecommendPost(); // 새로운 추천 포스트 리스트 업데이트
-        }
-        post.setRecommendPost(recommendPost);
+//        Long[] postIds = response.toArray(new Long[0]);
+//
+//        List recommendPost = response.formatRecommendPost(response); // 리턴 형식 지정하는 함수
 
-        return post;
+        List<Post> recommendPosts = new ArrayList<>();
+
+        if (response.getCandidates() != null) {
+            for (GeminiResponse.Candidate candidate : response.getCandidates()) {
+                GeminiResponse.Content content = candidate.getContent();
+                if (content != null && content.getParts() != null && !content.getParts().isEmpty()) {
+                    String combinedString = content.getParts().get(0).getText();
+
+                    // Check if the combinedString contains the expected pattern
+                    int startIndex = combinedString.indexOf('[') + 1;
+                    int endIndex = combinedString.indexOf(']');
+                    if (startIndex > 0 && endIndex > startIndex) {
+                        String postIdPart = combinedString.substring(startIndex, endIndex);
+                        String[] postIdStrings = postIdPart.split(",\\s*");
+
+                        for (String postIdString : postIdStrings) {
+                            try {
+                                Long postId = Long.parseLong(postIdString.trim());
+                                // Verify if the postId exists in the repository
+                                postRepository.findById(postId).ifPresent(recommendPosts::add);
+                            } catch (NumberFormatException e) {
+                                System.out.println("Invalid postId format: " + postIdString);
+                            }
+                        }
+                    } else {
+                        System.out.println("Invalid postId format in the response.");
+                    }
+
+                } else {
+                    System.out.println("Content or parts are null or empty.");
+                }
+            }
+        } else {
+            System.out.println("Candidates are null.");
+        }
+        System.out.println("recommendPosts = " + recommendPosts);
+        return recommendPosts;
     }
+
+//        List<Post> posts = new ArrayList<>();
+//
+//        for (Long postId : postIds) {
+//            Optional<Post> optionalPost = postRepository.findById(postId);
+//            if (optionalPost.isPresent()) {
+//                posts.add(optionalPost.get());
+//            } else {
+//                // 필요한 경우, 해당 ID에 해당하는 포스트가 없을 때의 처리 로직 추가 가능
+//                System.out.println("Post not found with ID: " + postId);
+//            }
+//        }
+
+//        System.out.println("response = " + response);
+//        while (recommendPost.isEmpty() || recommendPost.size() == 0) {
+//            // 추천 포스트가 비어있을 경우 다시 요청
+//            System.out.println("recommendPost = " + recommendPost);
+//            System.out.println("비어서 다시 요청");
+//            request = new GeminiRequest(prompt);
+//            response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
+//            recommendPost = response.formatRecommendPost(); // 새로운 추천 포스트 리스트 업데이트
+//        }
+//        post.setRecommendPost(recommendPost);
+
+//        return (Post) recommendPost;
 
 
     public Object scrappedById(long id, CustomUserDetails customUserDetails) {
@@ -319,5 +383,6 @@ public class PostService {
         return quizSet;
 
     }
+
 
 }

@@ -1,5 +1,6 @@
 package com.ticle.server.post.dto;
 
+import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import lombok.*;
 import org.springframework.util.CollectionUtils;
@@ -46,40 +47,43 @@ public class GeminiResponse {
         private List<SafetyRating> safetyRatings;
     }
 
-    // Gemini 리턴
-    // postDetail의 recommenPosts 결과를 List 형태로 만들어주는 함수
-    public List<Map<String, Object>> formatRecommendPost() {
-        List<Map<String, Object>> recommendPosts = new ArrayList<>();
-
-        if (candidates != null) {
-            for (Candidate candidate : candidates) {
-                Content content = candidate.getContent();
-                if (content != null && content.getParts() != null && content.getParts().size() > 0) {
-                    String combinedString = content.getParts().get(0).getText();
-
-                    String[] parts = combinedString.split("postTitle=");
-
-                    if (parts.length == 2) {
-                        String postId = parts[0].substring(parts[0].indexOf("[") + 1, parts[0].indexOf("]"));
-                        String postTitle = parts[1].substring(parts[1].indexOf("[") + 1, parts[1].indexOf("]"));
-
-                        //postid, posttitle를 각각 list화
-                        String[] postIds = postId.split(", ");
-                        String[] postTitles = postTitle.split(", ");
-
-                        for (int i = 0; i < postIds.length; i++) {
-                            Map<String, Object> postMap = new LinkedHashMap<>();
-                            postMap.put("postId", Long.parseLong(postIds[i]));
-                            postMap.put("postTitle", postTitles[i].replaceAll("'", ""));
-                            recommendPosts.add(postMap);
-                        }
-                    }
-                }
-            }
-        }
-
-        return recommendPosts;
-    }
+//    // postDetail의 recommenPosts 결과를 List 형태로 만들어주는 함수
+//    public List<Post> formatRecommendPost(GeminiResponse response) {
+//        List<Post> recommendPosts = new ArrayList<>();
+//
+//        if (response.getCandidates() != null) {
+//            for (GeminiResponse.Candidate candidate : response.getCandidates()) {
+//                GeminiResponse.Content content = candidate.getContent();
+//                if (content != null && content.getParts() != null && !content.getParts().isEmpty()) {
+//                    String combinedString = content.getParts().get(0).getText();
+//                    String[] parts = combinedString.split("결과 =");
+//
+//                    if (parts.length == 2) {
+//                        String postIdPart = parts[1].trim();
+//                        // Extracting the numbers between the brackets
+//                        int startIndex = postIdPart.indexOf('[') + 1;
+//                        int endIndex = postIdPart.indexOf(']');
+//                        if (startIndex > 0 && endIndex > startIndex) {
+//                            postIdPart = postIdPart.substring(startIndex, endIndex);
+//                            String[] postIdStrings = postIdPart.split(",\\s*");
+//
+//                            for (String postIdString : postIdStrings) {
+//                                try {
+//                                    Long postId = Long.parseLong(postIdString.trim());
+//                                    postRepository.findById(postId).ifPresent(recommendPosts::add);
+//                                } catch (NumberFormatException e) {
+//                                    // Handle the case where the ID is not a valid number
+//                                    System.out.println("Invalid postId format: " + postIdString);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//        return recommendPosts;
+//    }
 
 
     // quiz 생성 데이터 format

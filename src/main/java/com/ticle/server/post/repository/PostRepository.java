@@ -16,17 +16,21 @@ import java.util.Set;
 
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Page<Post> findByCategory(Category category, Pageable pageable);
 
     @Query("SELECT new com.ticle.server.post.dto.PostIdTitleDto(p.postId, p.title) FROM Post p")
     List<PostIdTitleDto> findAllPostSummaries();
 
-    // 카테고리 검색
+    // 가장 인기있는 카테고리 검색
     @Query("SELECT p " +
             "FROM Post p " +
             "WHERE p.category = :category " +
             "ORDER BY p.createdDate DESC LIMIT 1")
     Optional<Post> findTopPostByCategory(@Param("category") List<Category> category);
+
+    // 카테고리로 검색 (id와 title 추출)
+    @Query("SELECT new com.ticle.server.post.dto.PostIdTitleDto(p.postId, p.title) FROM Post p WHERE p.category = :category")
+    List<PostIdTitleDto> findIdByCategory(@Param("category") Category category);
+
 
     @Query("SELECT new com.ticle.server.home.dto.response.PostSetsResponse(p.postId, p.title, p.image.imageUrl, p.category, p.author, p.createdDate) " +
             "FROM Post p " +
