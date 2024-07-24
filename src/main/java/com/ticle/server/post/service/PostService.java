@@ -106,10 +106,25 @@ public class PostService {
         GeminiRequest request = new GeminiRequest(prompt);
         GeminiResponse response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
         System.out.println("response = " + response);
-//        Long[] postIds = response.toArray(new Long[0]);
-//
-//        List recommendPost = response.formatRecommendPost(response); // 리턴 형식 지정하는 함수
 
+        List<Post> recommendPosts = extractRecommendedPosts(response);
+
+        System.out.println("response = " + response);
+        while (recommendPosts.isEmpty() || recommendPosts.size() == 0) {
+            // 추천 포스트가 비어있을 경우 다시 요청
+            System.out.println("recommendPost = " + recommendPosts);
+            System.out.println("비어서 다시 요청");
+            request = new GeminiRequest(prompt);
+            response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
+            recommendPosts = extractRecommendedPosts(response);
+        }
+
+        post.setRecommendPost(recommendPosts);
+        return recommendPosts;
+    }
+
+
+    private List<Post> extractRecommendedPosts(GeminiResponse response) {
         List<Post> recommendPosts = new ArrayList<>();
 
         if (response.getCandidates() != null) {
@@ -118,7 +133,6 @@ public class PostService {
                 if (content != null && content.getParts() != null && !content.getParts().isEmpty()) {
                     String combinedString = content.getParts().get(0).getText();
 
-                    // Check if the combinedString contains the expected pattern
                     int startIndex = combinedString.indexOf('[') + 1;
                     int endIndex = combinedString.indexOf(']');
                     if (startIndex > 0 && endIndex > startIndex) {
@@ -128,7 +142,6 @@ public class PostService {
                         for (String postIdString : postIdStrings) {
                             try {
                                 Long postId = Long.parseLong(postIdString.trim());
-                                // Verify if the postId exists in the repository
                                 postRepository.findById(postId).ifPresent(recommendPosts::add);
                             } catch (NumberFormatException e) {
                                 System.out.println("Invalid postId format: " + postIdString);
@@ -137,7 +150,6 @@ public class PostService {
                     } else {
                         System.out.println("Invalid postId format in the response.");
                     }
-
                 } else {
                     System.out.println("Content or parts are null or empty.");
                 }
@@ -145,34 +157,8 @@ public class PostService {
         } else {
             System.out.println("Candidates are null.");
         }
-        System.out.println("recommendPosts = " + recommendPosts);
         return recommendPosts;
     }
-
-//        List<Post> posts = new ArrayList<>();
-//
-//        for (Long postId : postIds) {
-//            Optional<Post> optionalPost = postRepository.findById(postId);
-//            if (optionalPost.isPresent()) {
-//                posts.add(optionalPost.get());
-//            } else {
-//                // 필요한 경우, 해당 ID에 해당하는 포스트가 없을 때의 처리 로직 추가 가능
-//                System.out.println("Post not found with ID: " + postId);
-//            }
-//        }
-
-//        System.out.println("response = " + response);
-//        while (recommendPost.isEmpty() || recommendPost.size() == 0) {
-//            // 추천 포스트가 비어있을 경우 다시 요청
-//            System.out.println("recommendPost = " + recommendPost);
-//            System.out.println("비어서 다시 요청");
-//            request = new GeminiRequest(prompt);
-//            response = restTemplate.postForObject(requestUrl, request, GeminiResponse.class);
-//            recommendPost = response.formatRecommendPost(); // 새로운 추천 포스트 리스트 업데이트
-//        }
-//        post.setRecommendPost(recommendPost);
-
-//        return (Post) recommendPost;
 
 
     public Object scrappedById(long id, CustomUserDetails customUserDetails) {

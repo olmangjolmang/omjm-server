@@ -15,6 +15,7 @@ public class GeminiResponse {
 
     private List<Candidate> candidates;
     private PromptFeedback promptFeedback;
+
     private PostRepository postRepository;
 
     @Data
@@ -47,44 +48,45 @@ public class GeminiResponse {
         private List<SafetyRating> safetyRatings;
     }
 
-//    // postDetail의 recommenPosts 결과를 List 형태로 만들어주는 함수
-//    public List<Post> formatRecommendPost(GeminiResponse response) {
-//        List<Post> recommendPosts = new ArrayList<>();
-//
-//        if (response.getCandidates() != null) {
-//            for (GeminiResponse.Candidate candidate : response.getCandidates()) {
-//                GeminiResponse.Content content = candidate.getContent();
-//                if (content != null && content.getParts() != null && !content.getParts().isEmpty()) {
-//                    String combinedString = content.getParts().get(0).getText();
-//                    String[] parts = combinedString.split("결과 =");
-//
-//                    if (parts.length == 2) {
-//                        String postIdPart = parts[1].trim();
-//                        // Extracting the numbers between the brackets
-//                        int startIndex = postIdPart.indexOf('[') + 1;
-//                        int endIndex = postIdPart.indexOf(']');
-//                        if (startIndex > 0 && endIndex > startIndex) {
-//                            postIdPart = postIdPart.substring(startIndex, endIndex);
-//                            String[] postIdStrings = postIdPart.split(",\\s*");
-//
-//                            for (String postIdString : postIdStrings) {
-//                                try {
-//                                    Long postId = Long.parseLong(postIdString.trim());
-//                                    postRepository.findById(postId).ifPresent(recommendPosts::add);
-//                                } catch (NumberFormatException e) {
-//                                    // Handle the case where the ID is not a valid number
-//                                    System.out.println("Invalid postId format: " + postIdString);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        return recommendPosts;
-//    }
 
+    public List<Post> formatRecommendPosts(GeminiResponse response) {
+        List<Post> recommendPosts = new ArrayList<>();
+
+        if (response.getCandidates() != null) {
+            for (GeminiResponse.Candidate candidate : response.getCandidates()) {
+                GeminiResponse.Content content = candidate.getContent();
+                if (content != null && content.getParts() != null && !content.getParts().isEmpty()) {
+                    String combinedString = content.getParts().get(0).getText();
+
+                    // Check if the combinedString contains the expected pattern
+                    int startIndex = combinedString.indexOf('[') + 1;
+                    int endIndex = combinedString.indexOf(']');
+                    if (startIndex > 0 && endIndex > startIndex) {
+                        String postIdPart = combinedString.substring(startIndex, endIndex);
+                        String[] postIdStrings = postIdPart.split(",\\s*");
+
+                        for (String postIdString : postIdStrings) {
+                            try {
+                                Long postId = Long.parseLong(postIdString.trim());
+                                // Verify if the postId exists in the repository
+                                postRepository.findById(postId).ifPresent(recommendPosts::add);
+                            } catch (NumberFormatException e) {
+                                System.out.println("Invalid postId format: " + postIdString);
+                            }
+                        }
+                    } else {
+                        System.out.println("Invalid postId format in the response.");
+                    }
+                } else {
+                    System.out.println("Content or parts are null or empty.");
+                }
+            }
+        } else {
+            System.out.println("Candidates are null.");
+        }
+
+        return recommendPosts;
+    }
 
     // quiz 생성 데이터 format
     public List<QuizResponse> formatQuiz(String postTitle) {
