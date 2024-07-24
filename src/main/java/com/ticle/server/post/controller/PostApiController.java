@@ -8,6 +8,7 @@ import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.domain.type.PostSort;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.post.dto.QuizResponse;
+import com.ticle.server.post.dto.ReadRecommendPost;
 import com.ticle.server.post.service.PostService;
 import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.scrapped.dto.ScrappedDto;
@@ -49,7 +50,6 @@ public class PostApiController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResponseTemplate.from(postPage));
-
     }
 
     //특정 아티클 조회
@@ -60,8 +60,19 @@ public class PostApiController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ResponseTemplate.from(PostResponse.from((Post) post)));
+                .body(ResponseTemplate.from(PostResponse.from(post)));
+    }
 
+
+    //함께 읽으면 좋을 아티클 추천
+    @Operation(summary = "함께 읽으면 좋을 아티클 추천", description = "함께 읽으면 좋을 아티클 추천")
+    @GetMapping("/recommend/{id}")
+    public ResponseEntity<ResponseTemplate<Object>> ReadRecommendPost(@PathVariable long id) {
+        Post post = postService.ArticleReadRecommend(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.from(ReadRecommendPost.from(post)));
     }
 
     @Operation(summary = "아티클 스크랩", description = "새로운 아티클 스크랩, 스크랩 취소")

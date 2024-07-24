@@ -67,6 +67,15 @@ public class PostService {
         Optional<Post> optionalPost = postRepository.findById(id);
         Post post = optionalPost.orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + id));
 
+        return post;
+    }
+
+    //post id별 함께 읽으면 좋을 아티클 추천
+    public Post ArticleReadRecommend(Long id) {
+
+        Optional<Post> optionalPost = postRepository.findById(id);
+        Post post = optionalPost.orElseThrow(() -> new IllegalArgumentException("Post not found with ID: " + id));
+
         String now_post_title = post.getTitle();
         List<PostIdTitleDto> alltitle = postRepository.findAllPostSummaries();
 
@@ -100,6 +109,7 @@ public class PostService {
 
         return post;
     }
+
 
     public Object scrappedById(long id, CustomUserDetails customUserDetails) {
 

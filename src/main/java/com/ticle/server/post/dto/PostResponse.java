@@ -24,7 +24,7 @@ public class PostResponse {
     private Date createdDate;
     private Category postCategory;
     private S3Info image;
-    private List recommendPost;
+//    private List recommendPost;
 
     public static PostResponse from(Post post) {
         return new PostResponse(
@@ -34,8 +34,8 @@ public class PostResponse {
                 post.getAuthor(),
                 post.getCreatedDate(),
                 post.getCategory(),
-                post.getImage(),
-                post.getRecommendPost()
+                post.getImage()
+//                post.getRecommendPost()
         );
     }
 }
