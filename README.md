@@ -5,14 +5,40 @@
 | `아티클, 퀴즈 생성`  | `메인화면, 티클문답, CICD 환경 구축` | `로그인, 마이페이지, 크롤링` |
 
 ## 🔧 Tech Stack
-- **Language**: TypeScript, Java
-- **Library & Framework** : React.js, Spring Boot
+- **Language**: Java 17
+- **Library & Framework** : Spring Boot 3.3.1
 - **Database** : AWS RDS (MySQL), AWS S3
 - **ORM** : JPA
-- **Deploy**: AWS EC2, Docker, Gihub Action
+- **Deploy**: AWS EC2, Docker, Gihub Action, Nginx
+- **Dependency**: Lombok, Swagger, Spring Security, JWT, SMTP, Redis
 
-### ERD
+### 🌱 ERD
 ![image](https://github.com/user-attachments/assets/400e528f-a6d6-4a91-b54a-aaa8dad1e419)
 
-### Infra Structure
+### 🛠️ Infra Structure
 ![image](https://github.com/user-attachments/assets/e9bedb10-9a07-4057-ab03-99d2e63933af)
+
+## 🗂️ Project Structure
+
+```markdown
+src
+├── main
+│   ├── global
+│   ├── home
+│   ├── memo
+│   ├── mypage
+│   ├── opinion
+│   ├── post
+│   ├── scrapped
+│   └── user
+│       ├── controller
+│       ├── domain
+│       ├── dto
+│       |    ├── request
+│       |    └── response
+│       ├── exception
+│       ├── repository
+│       └── service
+└── resources
+    └── application.yml
+```
