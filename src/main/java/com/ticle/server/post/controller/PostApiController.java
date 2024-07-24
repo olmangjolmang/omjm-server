@@ -66,7 +66,7 @@ public class PostApiController {
 
     //함께 읽으면 좋을 아티클 추천
     @Operation(summary = "함께 읽으면 좋을 아티클 추천", description = "함께 읽으면 좋을 아티클 추천")
-    @GetMapping("/{id}/recommend")
+    @GetMapping("/recommend/{id}")
     public ResponseEntity<ResponseTemplate<Object>> ReadRecommendPost(@PathVariable long id) {
         Post post = postService.ArticleReadRecommend(id);
 
