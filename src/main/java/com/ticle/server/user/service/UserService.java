@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +63,7 @@ public class UserService {
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authentication);
-        redisDao.setRefreshToken(email, jwtTokenResponse.refreshToken(), ExpireTime.REFRESH_TOKEN_EXPIRE_TIME);
+        redisDao.setRefreshToken(email, jwtTokenResponse.getRefreshToken(), ExpireTime.REFRESH_TOKEN_EXPIRE_TIME);
 
         return jwtTokenResponse;
     }
@@ -79,14 +80,16 @@ public class UserService {
     }
 
 
-    @CacheEvict(cacheNames = CacheNames.USERBYEMAIL, key = "#p1")
+//    @CacheEvict(cacheNames = CacheNames.USERBYEMAIL, key = "#p1")
     @Transactional
     public ResponseEntity logout(CustomUserDetails customUserDetails, HttpServletRequest request) {
-        String email = "";
         String accessToken = jwtTokenProvider.resolveToken(request);
-        if(userRepository.findById(customUserDetails.getUserId()).isPresent()){
-            email = userRepository.findById(customUserDetails.getUserId()).get().getEmail();
-        }
+        log.info("여기까진 실행함!");
+
+        User user = userRepository.findById(customUserDetails.getUserId()).orElseThrow(()-> {
+                log.info("useruseruser");
+                return new UserNotFoundException(USER_NOT_FOUND);});
+        String email = user.getEmail();
         // 레디스에 accessToken 사용못하도록 등록
         Long expiration = jwtTokenProvider.getExpiration(accessToken);
         redisDao.setBlackList(accessToken, "logout", expiration);
@@ -95,6 +98,9 @@ public class UserService {
         } else {
             throw new IllegalArgumentException("이미 로그아웃한 유저입니다.");
         }
+
+        log.info("Logout successful for user with email: {}", email);
+
         return ResponseEntity.ok("로그아웃 완료");
     }
 
@@ -116,8 +122,8 @@ public class UserService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,null,user.get().getAuthorities());
 //        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authenticationToken);
-        String newAccessToken = jwtTokenResponse.accessToken();
-        String newRefreshToken = jwtTokenResponse.refreshToken();
+        String newAccessToken = jwtTokenResponse.getAccessToken();
+        String newRefreshToken = jwtTokenResponse.getRefreshToken();
 
         redisDao.setRefreshToken(email, newRefreshToken, ExpireTime.REFRESH_TOKEN_EXPIRE_TIME);
 
