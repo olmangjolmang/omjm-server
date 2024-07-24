@@ -44,3 +44,6 @@ src/main/resources/data.sql
 ### crawling ###
 **/crawling/chromedriver.exe
 **/crawling/velog_url.csv
+
+### Readme ###
+README.md
