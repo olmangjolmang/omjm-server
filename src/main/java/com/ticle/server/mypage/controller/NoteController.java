@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name="TicleNote",description = "티클노트 관련 API")
+@Tag(name="MyPage",description = "마이페이지 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
@@ -26,7 +26,7 @@ public class NoteController {
 
     private final MyPageService myPageService;
 
-    @Operation(summary="티클노트 조회",description = "userId에 해당하는 note들을 불러옴")
+    @Operation(summary="티클노트 조회",description = "userId에 해당하는 note들을 불러옵니다.")
     @GetMapping("/my-note")
     public ResponseEntity<ResponseTemplate<Object>> getMyNotes(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PageableDefault(page=0,size=9,sort="createdDate",direction = Sort.Direction.DESC) Pageable pageable){
         Long userId = customUserDetails.getUserId();
@@ -36,7 +36,7 @@ public class NoteController {
                 .body(ResponseTemplate.from(noteResponses));
     }
 
-    @Operation(summary="티클노트 수정",description = "noteId에 해당하는 note들을 수정함")
+    @Operation(summary="티클노트 수정",description = "noteId에 해당하는 note들을 수정합니다.")
     @PutMapping("/my-note/{id}")
     public ResponseEntity<ResponseTemplate<Object>> updateMyNotes(@AuthenticationPrincipal CustomUserDetails customUserDetails,@PathVariable("id") Long id, @RequestBody NoteUpdateRequest noteUpdateRequest){
         myPageService.updateNote(customUserDetails,id,noteUpdateRequest);
@@ -45,7 +45,7 @@ public class NoteController {
                 .body(ResponseTemplate.from(id + "번 노트가 수정되었습니다."));
     }
 
-    @Operation(summary="티클노트 삭제",description = "noteId에 해당하는 note들을 삭제함")
+    @Operation(summary="티클노트 삭제",description = "noteId에 해당하는 note들을 삭제합니다.")
     @DeleteMapping("/my-note/{id}")
     public ResponseEntity<ResponseTemplate<Object>> deleteMyNotes(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable("id") Long id){
         myPageService.deleteNote(customUserDetails,id);

@@ -100,7 +100,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token){
         try{
             if (redisDao.hasKey(token)){
-                throw new RuntimeException("로그아웃 했지롱~~");
+                throw new RuntimeException("이미 로그아웃 된 계정입니다.");
             }
             Jwts.parserBuilder()
                     .setSigningKey(key)

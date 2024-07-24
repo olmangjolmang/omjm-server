@@ -57,7 +57,6 @@ public class UserService {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
-
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 //        SecurityContextHolder.getContext().setAuthentication(authentication);

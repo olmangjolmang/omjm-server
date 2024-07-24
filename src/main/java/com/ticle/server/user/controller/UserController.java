@@ -31,7 +31,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Operation(summary = "로그인", description = "로그인하기")
+    @Operation(summary = "로그인", description = "email과 password로 로그인을 진행합니다.")
     @PostMapping("/sign-in")
     public ResponseEntity<ResponseTemplate<Object>> signIn(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 
@@ -41,7 +41,7 @@ public class UserController {
                 .body(ResponseTemplate.from(jwtTokenResponse));
     }
 
-    @Operation(summary = "회원가입", description = "회원가입하기")
+    @Operation(summary = "회원가입", description = "회원가입을 진행합니다.")
     @PostMapping("/sign-up")
     public ResponseEntity<ResponseTemplate<Object>> signUp(@RequestBody JoinRequest joinRequest) {
         UserResponse savedUserDto = userService.signUp(joinRequest);
@@ -60,7 +60,7 @@ public class UserController {
 //                .body(ResponseTemplate.from(categoryRequest.toString()));
 //    }
 
-    @Operation(summary = "로그아웃", description = "로그아웃하기")
+    @Operation(summary = "로그아웃", description = "user의 email을 받아와서 redis에서 email을 삭제, accessToken을 블랙리스트 처리합니다. ")
     @DeleteMapping("/logout")
     public ResponseEntity<ResponseTemplate<Object>> logout(@AuthenticationPrincipal CustomUserDetails userDetails, HttpServletRequest request){
 
@@ -69,6 +69,7 @@ public class UserController {
                 .body(ResponseTemplate.from(userService.logout(userDetails, request)));
     }
 
+    @Operation(summary = "토큰 재발급", description = "Header의 accessToken과 RequestBody로 refreshToken을 넣어서 토큰을 재발급받을 수 있습니다.")
     @PostMapping("/reissue")
     public ResponseEntity<ResponseTemplate<Object>> reissueToken(@AuthenticationPrincipal CustomUserDetails userDetails,
                                       @RequestBody ReissueTokenRequest tokenRequest){
@@ -100,7 +101,7 @@ public class UserController {
                 .body(ResponseTemplate.from(customUserDetails.getUserId() + "님의 회원정보가 수정되었습니다.\n" + categoryUpdateRequest.toString()));
     }
 
-    @Operation(summary = "탈퇴하기", description ="유저의 정보를 삭제합니다.")
+    @Operation(summary = "탈퇴하기", description ="유저의 정보를 DB에서 삭제합니다.")
     @DeleteMapping("/profile")
     public ResponseEntity<ResponseTemplate<Object>> deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         userService.deleteUser(customUserDetails);

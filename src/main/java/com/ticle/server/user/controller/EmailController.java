@@ -33,7 +33,7 @@ public class EmailController {
         String code = emailService.sendSimpleMessage(email);
         return code;
     }
-
+    @Operation(summary = "이메일 테스트", description = "이메일 구독서비스 test")
     @PostMapping("/email-test")
     public String mailTest(@RequestParam(value = "email", required = false) String email) throws Exception{
         Post post = postRepository.findById(1L).orElseThrow(()-> new RuntimeException("해당하는 게시글이 없습니다"));
