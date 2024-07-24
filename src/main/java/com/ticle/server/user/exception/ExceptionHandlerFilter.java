@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -29,9 +30,13 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         response.setStatus(status.value());
         response.setContentType("application/json;charset=UTF-8");
 
+        Date nowDate = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
+        String strNowDate = simpleDateFormat.format(nowDate);
+
         response.getWriter().write(
                 new JwtErrorResponse(
-                        LocalDateTime.now(),
+                        strNowDate,
                         HttpStatus.UNAUTHORIZED.toString(),
                         "Unauthorized",
                         ex.getMessage(),

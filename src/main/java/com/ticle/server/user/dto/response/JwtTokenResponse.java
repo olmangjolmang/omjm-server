@@ -5,12 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class JwtTokenResponse {
-    private String grantType;
-    private String accessToken;
-    private String refreshToken;
+
+public record JwtTokenResponse(String grantType,String accessToken,String refreshToken) {
+
 }

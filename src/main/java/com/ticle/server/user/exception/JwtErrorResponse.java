@@ -18,7 +18,7 @@ public class JwtErrorResponse {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final LocalDateTime timestamp;
+    private final String timestamp;
     private final String status;
     private final String error;
     private final String message;

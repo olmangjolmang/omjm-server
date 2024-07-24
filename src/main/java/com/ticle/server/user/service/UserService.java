@@ -62,7 +62,7 @@ public class UserService {
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authentication);
-        redisDao.setRefreshToken(email, jwtTokenResponse.getRefreshToken(), ExpireTime.REFRESH_TOKEN_EXPIRE_TIME);
+        redisDao.setRefreshToken(email, jwtTokenResponse.refreshToken(), ExpireTime.REFRESH_TOKEN_EXPIRE_TIME);
 
         return jwtTokenResponse;
     }
@@ -113,12 +113,14 @@ public class UserService {
             throw new RuntimeException("Refresh");
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,null,user.get().getAuthorities());
+//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authenticationToken);
+        String newAccessToken = jwtTokenResponse.accessToken();
+        String newRefreshToken = jwtTokenResponse.refreshToken();
 
-        String newAccessToken = jwtTokenProvider.generateToken(authentication).getAccessToken();
-        String newRefreshToken = jwtTokenProvider.generateToken(authentication).getRefreshToken();
         redisDao.setRefreshToken(email, newRefreshToken, ExpireTime.REFRESH_TOKEN_EXPIRE_TIME);
+
         return new JwtTokenResponse("Bearer",newAccessToken, newRefreshToken);
     }
 

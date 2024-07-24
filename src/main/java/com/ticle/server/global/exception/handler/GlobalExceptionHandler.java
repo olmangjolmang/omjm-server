@@ -9,6 +9,7 @@ import com.ticle.server.opinion.exception.CommentNotFoundException;
 import com.ticle.server.opinion.exception.OpinionNotFoundException;
 import com.ticle.server.post.exception.PostNotFoundException;
 import com.ticle.server.user.exception.InvalidPasswordException;
+import com.ticle.server.user.exception.TokenNotValidationException;
 import com.ticle.server.user.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
