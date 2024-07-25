@@ -45,6 +45,9 @@ public class Post {
     @Column
     private S3Info image;
 
+    @Column(name = "origin_url")
+    private String originUrl;
+
     @Column(name = "scrap_count")
     private Integer scrapCount;
 
