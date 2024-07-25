@@ -6,6 +6,7 @@ import com.ticle.server.memo.dto.MemoDto;
 import com.ticle.server.memo.dto.MemoRequest;
 import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.domain.type.PostSort;
+import com.ticle.server.post.dto.PostIsSavedResponse;
 import com.ticle.server.post.dto.PostResponse;
 import com.ticle.server.post.dto.QuizResponse;
 import com.ticle.server.post.service.PostService;
@@ -22,6 +23,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 
@@ -60,6 +62,18 @@ public class PostApiController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ResponseTemplate.from(PostResponse.from(post)));
+    }
+
+    //아티클의 스크랩 유무
+    @Operation(summary = "특정 아티클의 스크랩 유무")
+    @GetMapping("/is-scrapped/{id}")
+    public ResponseEntity<ResponseTemplate<Object>> getArticleIsSaved(@PathVariable long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        boolean isScrapped = postService.ArticleIsScrapped(id, customUserDetails);
+
+        PostIsSavedResponse response = new PostIsSavedResponse(id, isScrapped);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseTemplate.from(response));
     }
 
 

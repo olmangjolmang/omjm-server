@@ -330,5 +330,18 @@ public class PostService {
 
     }
 
+    public boolean ArticleIsScrapped(long postId, CustomUserDetails customUserDetails) {
+        if (customUserDetails == null) {
+            throw new IllegalArgumentException("로그인 상태가 아닙니다.");
+        }
 
+        Long userId = customUserDetails.getUserId();
+        userRepository.findById(userId).orElseThrow(() ->
+                new IllegalArgumentException("해당 id의 user 찾을 수 없음 id: " + userId)
+        );
+
+
+        Optional<Scrapped> existingScrap = scrappedRepository.findByUserIdAndPost_PostId(userId, postId);
+        return existingScrap.isPresent();
+    }
 }
