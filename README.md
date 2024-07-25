@@ -1,8 +1,8 @@
 ## 💘 팀원 
 | **공채연** | **이현지** | **이은재** | 
 | :------: |  :------: | :------: | 
-| [<img src="https://avatars.githubusercontent.com/u/106502312?v=4" height=150 width=150> <br/> @chaeyeonKong](https://github.com/chaeyeonKong) | [<img src="https://avatars.githubusercontent.com/u/110108243?v=4" height=150 width=150> <br/> @Amepistheo](https://github.com/Amepistheo) | [<img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20130307_24%2Fcocowablog_13626569090078ScMB_PNG%2F%25B6%25D7%25C0%25CC.png&type=sc960_832" height=150 width=150> <br/> @lej8924](https://github.com/lej8924) | 
-| `아티클, 퀴즈 생성`  | `메인화면, 티클문답, CICD 환경 구축` | `로그인, 마이페이지, 크롤링` |
+| [<img src="https://github.com/user-attachments/assets/b8af050c-605e-4426-9389-7685f0aa4927" height=150 width=150> <br/> @chaeyeonKong](https://github.com/chaeyeonKong) | [<img src="https://avatars.githubusercontent.com/u/110108243?v=4" height=150 width=150> <br/> @Amepistheo](https://github.com/Amepistheo) | [<img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20130307_24%2Fcocowablog_13626569090078ScMB_PNG%2F%25B6%25D7%25C0%25CC.png&type=sc960_832" height=150 width=150> <br/> @lej8924](https://github.com/lej8924) | 
+| `아티클, AI 퀴즈 생성`  | `메인화면, 티클문답, CICD 환경 구축` | `로그인, 마이페이지, 크롤링` |
 
 ## 🔧 Tech Stack
 - **Language**: Java 17
