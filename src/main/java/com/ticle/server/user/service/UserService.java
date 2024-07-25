@@ -6,26 +6,25 @@ import com.ticle.server.user.dto.request.JoinRequest;
 import com.ticle.server.user.dto.request.LoginRequest;
 import com.ticle.server.user.dto.request.ProfileUpdateRequest;
 import com.ticle.server.user.dto.response.JwtTokenResponse;
+import com.ticle.server.user.dto.response.UserInfoResponse;
 import com.ticle.server.user.dto.response.UserResponse;
 import com.ticle.server.user.exception.InvalidPasswordException;
 import com.ticle.server.user.exception.UserNotFoundException;
+import com.ticle.server.user.exception.UserNotLoginException;
 import com.ticle.server.user.jwt.CustomUserDetails;
 import com.ticle.server.user.jwt.ExpireTime;
 import com.ticle.server.user.jwt.JwtTokenProvider;
-import com.ticle.server.user.redis.CacheNames;
 import com.ticle.server.user.redis.RedisDao;
 import com.ticle.server.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.ticle.server.user.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
+import static com.ticle.server.user.exception.errorcode.UserErrorCode.USER_NOT_LOGIN;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +47,6 @@ public class UserService {
     private final RedisDao redisDao;
 
 
-//    @Cacheable(cacheNames = CacheNames.LOGINUSER, key = "#p0.email()", unless = "#result== null")
     @Transactional
     public JwtTokenResponse signIn(LoginRequest loginRequest){
         String email = loginRequest.email();
@@ -59,7 +58,6 @@ public class UserService {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authentication);
         redisDao.setRefreshToken(email, jwtTokenResponse.getRefreshToken(), ExpireTime.REFRESH_TOKEN_EXPIRE_TIME);
@@ -79,7 +77,6 @@ public class UserService {
     }
 
 
-//    @CacheEvict(cacheNames = CacheNames.USERBYEMAIL, key = "#p1")
     @Transactional
     public ResponseEntity logout(CustomUserDetails customUserDetails, HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
@@ -119,7 +116,6 @@ public class UserService {
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,null,user.get().getAuthorities());
-//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         JwtTokenResponse jwtTokenResponse = jwtTokenProvider.generateToken(authenticationToken);
         String newAccessToken = jwtTokenResponse.getAccessToken();
         String newRefreshToken = jwtTokenResponse.getRefreshToken();
@@ -158,4 +154,14 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public UserInfoResponse getUserInfo(CustomUserDetails userDetails){
+        if (ObjectUtils.isEmpty(userDetails)) {
+            throw new UserNotLoginException(USER_NOT_LOGIN);
+        }
+
+        User user = userRepository.findById(userDetails.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND));
+
+        return UserInfoResponse.from(user);
+    }
 }
