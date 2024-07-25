@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -23,8 +22,8 @@ public class PostResponse {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createdDate;
     private Category postCategory;
+    private String originUrl;
     private S3Info image;
-//    private List recommendPost;
 
     public static PostResponse from(Post post) {
         return new PostResponse(
@@ -34,8 +33,8 @@ public class PostResponse {
                 post.getAuthor(),
                 post.getCreatedDate(),
                 post.getCategory(),
+                post.getOriginUrl(),
                 post.getImage()
-//                post.getRecommendPost()
         );
     }
 }
