@@ -3,9 +3,8 @@ package com.ticle.server.user.controller;
 import com.ticle.server.global.dto.ResponseTemplate;
 import com.ticle.server.user.dto.request.*;
 import com.ticle.server.user.dto.response.JwtTokenResponse;
+import com.ticle.server.user.dto.response.UserInfoResponse;
 import com.ticle.server.user.dto.response.UserResponse;
-import com.ticle.server.user.jwt.JwtTokenProvider;
-import com.ticle.server.user.repository.UserRepository;
 import com.ticle.server.user.jwt.CustomUserDetails;
 import com.ticle.server.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,8 +27,6 @@ import static org.springframework.http.HttpStatus.OK;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "로그인", description = "email과 password로 로그인을 진행합니다.")
     @PostMapping("/sign-in")
@@ -49,16 +46,6 @@ public class UserController {
                 .status(OK)
                 .body(ResponseTemplate.from(savedUserDto));
     }
-
-//    @Operation(summary = "관심직무 선택", description = "회원가입 이후 ")
-//    @PostMapping("/sign-up/category")
-//    public ResponseEntity<ResponseTemplate<Object>> selectCategory(@RequestBody CategoryRequest categoryRequest){
-//        userService.addCategory(categoryRequest);
-//
-//        return ResponseEntity
-//                .status(OK)
-//                .body(ResponseTemplate.from(categoryRequest.toString()));
-//    }
 
     @Operation(summary = "로그아웃", description = "user의 email을 받아와서 redis에서 email을 삭제, accessToken을 블랙리스트 처리합니다. ")
     @DeleteMapping("/logout")
@@ -111,4 +98,15 @@ public class UserController {
                 .body(ResponseTemplate.from(customUserDetails.getUserId() + "님의 회원정보가 삭제되었습니다.\n" ));
     }
 
+    @Operation(summary = "유저 정보 조회", description = "유저의 정보를 조회")
+    @GetMapping("/profile")
+    public ResponseEntity<ResponseTemplate<Object>> getUserInfo(
+            @AuthenticationPrincipal CustomUserDetails userDetails){
+
+        UserInfoResponse response = userService.getUserInfo(userDetails);
+
+        return ResponseEntity
+                .status(OK)
+                .body(ResponseTemplate.from(response));
+    }
 }
