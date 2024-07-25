@@ -1,5 +1,6 @@
 package com.ticle.server.post.dto;
 
+import com.ticle.server.post.domain.Post;
 import com.ticle.server.post.repository.PostRepository;
 import lombok.*;
 import org.springframework.util.CollectionUtils;
@@ -14,7 +15,6 @@ public class GeminiResponse {
 
     private List<Candidate> candidates;
     private PromptFeedback promptFeedback;
-    private PostRepository postRepository;
 
     @Data
     public static class Candidate {
@@ -46,41 +46,49 @@ public class GeminiResponse {
         private List<SafetyRating> safetyRatings;
     }
 
-    // Gemini 리턴
-    // postDetail의 recommenPosts 결과를 List 형태로 만들어주는 함수
-    public List<Map<String, Object>> formatRecommendPost() {
-        List<Map<String, Object>> recommendPosts = new ArrayList<>();
 
-        if (candidates != null) {
-            for (Candidate candidate : candidates) {
-                Content content = candidate.getContent();
-                if (content != null && content.getParts() != null && content.getParts().size() > 0) {
+    public List<Post> extractRecommendedPosts(GeminiResponse response, PostRepository postRepository) {
+        List<Post> recommendPosts = new ArrayList<>();
+
+        if (response.getCandidates() != null) {
+            for (GeminiResponse.Candidate candidate : response.getCandidates()) {
+                GeminiResponse.Content content = candidate.getContent();
+                if (content != null && content.getParts() != null && !content.getParts().isEmpty()) {
                     String combinedString = content.getParts().get(0).getText();
 
-                    String[] parts = combinedString.split("postTitle=");
+                    // Check if the combinedString contains the expected pattern
+                    int startIndex = combinedString.indexOf('[') + 1;
+                    int endIndex = combinedString.indexOf(']');
+                    if (startIndex > 0 && endIndex > startIndex) {
+                        String postIdPart = combinedString.substring(startIndex, endIndex);
+                        String[] postIdStrings = postIdPart.split(",\\s*");
 
-                    if (parts.length == 2) {
-                        String postId = parts[0].substring(parts[0].indexOf("[") + 1, parts[0].indexOf("]"));
-                        String postTitle = parts[1].substring(parts[1].indexOf("[") + 1, parts[1].indexOf("]"));
-
-                        //postid, posttitle를 각각 list화
-                        String[] postIds = postId.split(", ");
-                        String[] postTitles = postTitle.split(", ");
-
-                        for (int i = 0; i < postIds.length; i++) {
-                            Map<String, Object> postMap = new LinkedHashMap<>();
-                            postMap.put("postId", Long.parseLong(postIds[i]));
-                            postMap.put("postTitle", postTitles[i].replaceAll("'", ""));
-                            recommendPosts.add(postMap);
+                        for (String postIdString : postIdStrings) {
+                            try {
+                                Long postId = Long.parseLong(postIdString.trim());
+                                // Verify if the postId exists in the repository
+//                                postRepository.findById(postId).ifPresent(recommendPosts::add);
+                                postRepository.findById(postId).ifPresent(post -> {
+                                    post.setScrappeds(null); // scrappeds 필드를 null로 설정
+                                    recommendPosts.add(post);
+                                });
+                            } catch (NumberFormatException e) {
+                                System.out.println("Invalid postId format: " + postIdString);
+                            }
                         }
+                    } else {
+                        System.out.println("Invalid postId format in the response.");
                     }
+                } else {
+                    System.out.println("Content or parts are null or empty.");
                 }
             }
+        } else {
+            System.out.println("Candidates are null.");
         }
 
         return recommendPosts;
     }
-
 
     // quiz 생성 데이터 format
     public List<QuizResponse> formatQuiz(String postTitle) {

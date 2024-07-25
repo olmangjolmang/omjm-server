@@ -51,10 +51,6 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Scrapped> scrappeds;
 
-    @Transient
-    @Column(name = "recommend_post")
-    private List recommendPost;
-
 
     public void increaseScrapCount() {
         this.scrapCount++; //스크랩 수 증가
