@@ -5,6 +5,7 @@ import com.ticle.server.scrapped.domain.Scrapped;
 import com.ticle.server.user.domain.type.Category;
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -38,6 +39,7 @@ public class Post {
     @Column(name = "category")
     private Category category;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "created_date")
     Date createdDate;
 
